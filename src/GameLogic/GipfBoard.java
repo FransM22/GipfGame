@@ -77,6 +77,30 @@ public class GipfBoard {
         getCol(pos.col).set(pos.row - 1, piece);
     }
 
+    public Piece getPiece(Position pos) {
+        return getCol(pos.col).get(pos.row - 1);
+    }
+
+    /**
+     * applyMove applies the given move to the board.
+     * First, the new piece is added to the startPos
+     * Then the pieces are moved in the direction of the move,
+     * and finally pieces that need to be removed are removed from the board
+     *
+     * @param m
+     */
+    public void applyMove(Move m) {
+        // Add the piece to the new pieces
+        setPiece(m.startPos, m.addedPiece);
+
+        movePiecesTowards(m.startPos, m.endPos);
+
+        // Remove the pieces that need to be removed
+        for (Position p : m.removedPiecePositions) {
+            setPiece(p, Piece.EMPTY);
+        }
+    }
+
     /**
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
      */
@@ -118,13 +142,39 @@ public class GipfBoard {
             this.col = col;
             this.row = (short) row;
         }
+
+        public Position(Position p) {
+            this.col = p.col;
+            this.row = p.row;
+        }
+    }
+
+    private void movePiecesTowards(Position startPos, Position endPos) {
+        short colDirection = (short) (endPos.col - startPos.col);
+        short rowDirection = (short) (endPos.row - startPos.row);
+
+        Position currentPosition = new Position(startPos);
+        Piece previousPiece = Piece.EMPTY;
+
+        while (positionExists(currentPosition)) {
+            setPiece(currentPosition, previousPiece);
+            currentPosition.row += rowDirection;
+            currentPosition.col += colDirection;
+        }
+    }
+
+    private boolean positionExists(Position p) {
+        if (p.col >= 'a' && p.row >= 1) {                           // If the col and row are above or equal to the minimum
+            if (p.col <= 'i' && getCol(p.col).size() >= p.row) {    // and if they are at most the maximum
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
      * TODO: Methods that still need to be implemented:
      *  - isValidMove(Move m)
-     *  - applyMove(Move m)
-     *  - getPiece(Position p)
-     *  - setPiece(Position p)
+     *  * method to get all the allowed moves from a specific board
      */
 }

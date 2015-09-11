@@ -16,8 +16,11 @@ public class Game {
                 new GipfBoard.Position('a', 5),
                 new GipfBoard.Position('b', 5)
         );
-        gipfBoard.setPiece(new GipfBoard.Position('a', 5), GipfBoard.Piece.BLACK_GIPF);
+        gipfBoard.setPiece(new GipfBoard.Position('a', 3), GipfBoard.Piece.BLACK_GIPF);
+
+        gipfBoard.applyMove(m);
         printBoard(gipfBoard);
+
 
         System.out.println("Gipf game started");
     }
