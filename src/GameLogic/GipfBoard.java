@@ -147,6 +147,14 @@ public class GipfBoard {
             this.col = p.col;
             this.row = p.row;
         }
+
+        @Override
+        public String toString() {
+            return "Position{" +
+                    "col=" + col +
+                    ", row=" + row +
+                    '}';
+        }
     }
 
     private void movePiecesTowards(Position startPos, Position endPos) {
@@ -157,18 +165,28 @@ public class GipfBoard {
         Piece previousPiece = Piece.EMPTY;
 
         while (positionExists(currentPosition)) {
+            Piece nextPiece = getPiece(currentPosition);
             setPiece(currentPosition, previousPiece);
+
+            if (nextPiece == Piece.EMPTY) {
+                break;          // We can't move past empty spots
+            }
+            previousPiece = nextPiece;
             currentPosition.row += rowDirection;
             currentPosition.col += colDirection;
         }
     }
 
+    private boolean positionEmpty(Position p) {
+        return getPiece(p) == Piece.EMPTY;
+    }
     private boolean positionExists(Position p) {
         if (p.col >= 'a' && p.row >= 1) {                           // If the col and row are above or equal to the minimum
             if (p.col <= 'i' && getCol(p.col).size() >= p.row) {    // and if they are at most the maximum
                 return true;
             }
         }
+
         return false;
     }
 

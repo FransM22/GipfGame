@@ -16,11 +16,21 @@ public class Game {
                 new GipfBoard.Position('a', 5),
                 new GipfBoard.Position('b', 5)
         );
-        gipfBoard.setPiece(new GipfBoard.Position('a', 3), GipfBoard.Piece.BLACK_GIPF);
+
+        Move m2 = new Move(
+                GipfBoard.Piece.BLACK_GIPF,
+                new GipfBoard.Position('a', 5),
+                new GipfBoard.Position('b', 5)
+        );
+
+        gipfBoard.setPiece(new GipfBoard.Position('e', 5), GipfBoard.Piece.WHITE_SINGLE);
 
         gipfBoard.applyMove(m);
         printBoard(gipfBoard);
-
+        gipfBoard.applyMove(m2);
+        printBoard(gipfBoard);
+        gipfBoard.applyMove(m2);
+        printBoard(gipfBoard);
 
         System.out.println("Gipf game started");
     }
