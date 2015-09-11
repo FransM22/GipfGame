@@ -1,6 +1,7 @@
 package GameLogic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,15 +20,15 @@ public class GipfBoard {
      */
     public GipfBoard() {
         // Initialize the lists
-        a = new ArrayList<>(5);
-        b = new ArrayList<>(6);
-        c = new ArrayList<>(7);
-        d = new ArrayList<>(8);
-        e = new ArrayList<>(9);
-        f = new ArrayList<>(8);
-        g = new ArrayList<>(7);
-        h = new ArrayList<>(6);
-        i = new ArrayList<>(5);
+        a = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        b = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        c = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        d = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        e = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        f = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        g = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        h = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        i = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
     }
 
     /**
@@ -46,8 +47,8 @@ public class GipfBoard {
         i = new ArrayList<>(old.i);
     }
 
-    public List<Piece> getRow(char row) {
-        switch (row) {
+    public List<Piece> getCol(char col) {
+        switch (col) {
             case 'a':
                 return a;
             case 'b':
@@ -68,20 +69,47 @@ public class GipfBoard {
                 return i;
         }
 
-        System.err.println("ERROR: Row not found");
+        System.err.println("ERROR: Column not found");
         return null;
+    }
+
+    public void setPiece(Position pos, Piece piece) {
+        getCol(pos.col).set(pos.row - 1, piece);
     }
 
     /**
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
      */
     public enum Piece {
-        WHITE_SINGLE,
-        WHITE_GIPF,
-        BLACK_SINGLE,
-        BLACK_GIPF
+        EMPTY,          // .
+        WHITE_SINGLE,   // w
+        WHITE_GIPF,     // W
+        BLACK_SINGLE,   // b
+        BLACK_GIPF;     // B
+
+        @Override
+        public String toString() {
+            switch (super.name()) {
+                case "EMPTY":
+                    return ".";
+                case "WHITE_SINGLE":
+                    return "w";
+                case "WHITE_GIPF":
+                    return "W";
+                case "BLACK_SINGLE":
+                    return "b";
+                case "BLACK_GIPF":
+                    return "B";
+                default:
+                    return "[Piece not known]";
+            }
+        }
     }
 
+    /**
+     * The columns are stored with lowercase letters a..i, and the rows with numbers 1..9. This means we're following
+     * the Gipf standards, and we're NOT starting from row 0.
+     */
     public static class Position {
         char col;   // A letter (a, b, ..., i)
         short row;  // A number (1, 2, ..., 9)
@@ -96,7 +124,7 @@ public class GipfBoard {
      * TODO: Methods that still need to be implemented:
      *  - isValidMove(Move m)
      *  - applyMove(Move m)
-     *  - getRow(char row)
      *  - getPiece(Position p)
+     *  - setPiece(Position p)
      */
 }
