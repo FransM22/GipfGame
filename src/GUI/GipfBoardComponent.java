@@ -49,6 +49,8 @@ public class GipfBoardComponent extends JComponent {
         gb.setPiece(new Position('i', 3), GipfBoard.Piece.WHITE_SINGLE);
         gb.setPiece(new Position('i', 4), GipfBoard.Piece.WHITE_SINGLE);
 
+        gb.setPiece(new Position('e', 5), GipfBoard.Piece.WHITE_SINGLE);
+
         JFrame frame = new JFrame();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -62,7 +64,87 @@ public class GipfBoardComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
+        g2.setColor(Color.white);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+
         paintBoard(g2);
+        paintPieces(g2);
+    }
+
+    private void paintBoard(Graphics2D g2) {
+        g2.setColor(Color.gray);
+
+        // Draw the lines between a2 - g1 and a5 - i1
+        for (int i = 0; i < 4; i++) {
+            Position start = new Position(12 + i);      // 12 is the id of a2
+            Position end = new Position(62 + i * 11);   // 62 is the id of g1
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
+
+        // Draw the lines between b6 - g6 and d8 - i4
+        for (int i = 0; i < 3; i++) {
+            Position start = new Position(26 + i * 11);      // 26 is the id of b6
+            Position end = new Position(96 + i);         // 96 is the id of i2
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
+
+        // Draw the lines between d1 - i2 and a1 - i5
+        for (int i = 0; i < 4; i++) {
+            Position start = new Position(41 - i * 10);      // 41 is the id of d1
+            Position end = new Position(96 + i);             // 96 is the id of i2
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
+
+        // Draw the lines between a2 - h6 and a4 - f8
+        for (int i = 0; i < 3; i++) {
+            Position start = new Position(12 + i);             // 12 is the id of a2
+            Position end = new Position(89 - i * 10);          // 89 is the id of h6
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
+
+        // Draw the lines between b1 - b6 and e1 - e9
+        for (int i = 0; i < 4; i++) {
+            Position start = new Position(21 + i * 10);          // 21 is the id of b1
+            Position end = new Position(26 + i * 11);            // 26 is the id of b6
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
+
+        // Draw the lines between f1 - f8 and h1 - h6
+        for (int i = 0; i < 4; i++) {
+            Position start = new Position(62 + i * 11);          // 62 is the id of g1
+            Position end = new Position(69 + i * 10);            // 68 is the id of g8
+            g2.drawLine(
+                    positionToScreenX(start),
+                    positionToScreenY(start),
+                    positionToScreenX(end),
+                    positionToScreenY(end)
+            );
+        }
     }
 
     private void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor) {
@@ -109,9 +191,12 @@ public class GipfBoardComponent extends JComponent {
                 borderColor = Color.pink;
         }
         centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), 30, fillColor, borderColor);
+
+        g2.setColor(Color.blue);
+        g2.drawString(position.toString(), positionToScreenX(position), positionToScreenY(position));
     }
 
-    private void paintBoard(Graphics2D g2) {
+    private void paintPieces(Graphics2D g2) {
         for (Map.Entry<Position, GipfBoard.Piece> entry : gipfBoard.getPieceMap().entrySet()) {
             Position position = entry.getKey();
             GipfBoard.Piece piece = entry.getValue();
@@ -127,8 +212,7 @@ public class GipfBoardComponent extends JComponent {
 
         if (colNumber <= 5) {
             return (int) Math.round(height - (p.getRowNumber() - 1 - 0.5 * (colNumber - 5)) * colHeight);
-        }
-        else {
+        } else {
             return (int) Math.round(height - (p.getRowNumber() - 1 + 0.5 * (colNumber - 5)) * colHeight);
         }
     }
