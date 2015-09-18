@@ -58,31 +58,28 @@ public class GipfBoard {
         }
     }
 
-    private void movePiecesTowards(Position startPos, Move.Direction direction) {
-
+    public int getDeltaPos(Move.Direction direction) {
         // Determine the deltaPos value based on the direction
-        int deltaPos = 0;   // We need an initial value
         switch (direction) {
             case NORTH:
-                deltaPos = 1;
-                break;
+                return 1;
             case NORTH_EAST:
-                deltaPos = 11;
-                break;
+                return 11;
             case SOUTH_EAST:
-                deltaPos = 10;
-                break;
+                return 10;
             case SOUTH:
-                deltaPos = -1;
-                break;
+                return -1;
             case SOUTH_WEST:
-                deltaPos = -11;
-                break;
+                return -11;
             case NORTH_WEST:
-                deltaPos = -10;
-                break;
+                return -10;
         }
 
+        return -1;
+    }
+
+    private void movePiecesTowards(Position startPos, Move.Direction direction) {
+        int deltaPos = getDeltaPos(direction);
 
         Position currentPosition = new Position(startPos);
 

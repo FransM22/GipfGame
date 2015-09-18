@@ -1,10 +1,12 @@
 package GUI;
 
 import GameLogic.GipfBoard;
+import GameLogic.Move;
 import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -12,24 +14,50 @@ import java.util.Map;
  */
 public class GipfBoardComponent extends JComponent {
     // Variables which can be changed to change the look
-    final int pieceSize = 50;                       // The size in pixels in which the pieces are displayed
-    final boolean displayPiecePosition = false;     // Displays the piece positions above the pieces
-    final int nrOfColumnsOnGipfBoard = 9;           // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
-    final int nrOfRowsOnGipfBoard = 9;              // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    final int marginSize = 5;                       // The margin on the sides of the board
+    final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
+    final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces
+    final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
+    final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
+    final int marginSize = 5;                               // The margin on the sides of the board
 
     // Colors used
-    final Color backgroundColor = new Color(0xD2FF9B);
-    final Color centerColor = new Color(0xE5FFCE);
-    final Color lineColor = new Color(0x8D8473);
-    final Color whiteSingleColor = new Color(0x525252);
-    final Color whiteGipfColor = whiteSingleColor;
-    final Color blackSingleColor = new Color(0xF9F9F9);
-    final Color blackGipfColor = blackSingleColor;
-    final Color singlePieceBorderColor = Color.black;
-    final Color gipfPieceBorderColor = Color.red;
+    final Color backgroundColor = new Color(0xD2FF9B);      // The background of the component
+    final Color centerColor = new Color(0xE5FFCE);          // The hexagon in the center
+    final Color lineColor = new Color(0x8D8473);            // The lines showing how pieces are allowed to move
+    final Color whiteSingleColor = new Color(0x525252);     // Color of the normal white piece
+    final Color whiteGipfColor = whiteSingleColor;          // Color of the white gipf piece
+    final Color blackSingleColor = new Color(0xF9F9F9);     // Color of the normal black piece
+    final Color blackGipfColor = blackSingleColor;          // Color of the black gipf piece
+    final Color singlePieceBorderColor = Color.black;       // Border color of normal single pieces
+    final Color gipfPieceBorderColor = Color.red;           // Border color of gipf pieces
 
+    // These mark the center hexagon on the obard
+    Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
+            new Position('b', 2),
+            new Position('b', 5),
+            new Position('e', 8),
+            new Position('h', 5),
+            new Position('h', 2),
+            new Position('e', 2)
+    };
+
+    /*
+     * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
+     * Each line set contains a start and endpoint of a line on the board. In addition to each of these two points a direction
+     * is stored, in which the next (parallel) line can be found. The last number indicates how many times a parallel
+     * line can be drawn.
+     * Each set of parallel lines is divided into two, because the direction in which the points move changes halfway
+     */
+    LineSet[] lineSets = {
+            new LineSet(new Position('a', 2), new Position('f', 1), Move.Direction.NORTH, Move.Direction.NORTH_EAST, 4),
+            new LineSet(new Position('b', 6), new Position('i', 2), Move.Direction.NORTH_EAST, Move.Direction.NORTH, 3),
+            new LineSet(new Position('d', 1), new Position('i', 2), Move.Direction.NORTH_WEST, Move.Direction.NORTH, 4),
+            new LineSet(new Position('a', 2), new Position('h', 6), Move.Direction.NORTH, Move.Direction.NORTH_WEST, 3),
+            new LineSet(new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
+            new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
+    };
     GipfBoard gipfBoard;
+
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
@@ -79,106 +107,53 @@ public class GipfBoardComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
+        // Set anti aliasing. Makes the drawing slightly slower, but look nicer
+        // can be removed for performance.
         g2.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2.setColor(backgroundColor);
-        g2.fillRect(0, 0, getWidth(), getHeight());
 
         paintBoard(g2);
         paintPieces(g2);
     }
 
+    /**
+     * Paints the board itself, including the background, center part, and the lines. This method is usually called from
+     * the paintComponent method.
+     *
+     * @param g2
+     */
     private void paintBoard(Graphics2D g2) {
-        // Fill the board itself, this needs a polygon with 6 corners
-        g2.setColor(centerColor);
-        Position corner1 = new Position(22);    // b2
-        Position corner2 = new Position(25);    // b5
-        Position corner3 = new Position(58);    // e8
-        Position corner4 = new Position(88);    // h5
-        Position corner5 = new Position(85);    // h2
-        Position corner6 = new Position(52);    // e2
+        // Paint the background of the component
+        g2.setColor(backgroundColor);
+        g2.fillRect(0, 0, getWidth(), getHeight());
 
+        g2.setColor(centerColor);
+        // Java8 stuff. Basically maps each of the positions in cornerPositions to a x and y value.
         g2.fillPolygon(
-                new int[]{positionToScreenX(corner1), positionToScreenX(corner2), positionToScreenX(corner3), positionToScreenX(corner4), positionToScreenX(corner5), positionToScreenX(corner6),},
-                new int[]{positionToScreenY(corner1), positionToScreenY(corner2), positionToScreenY(corner3), positionToScreenY(corner4), positionToScreenY(corner5), positionToScreenY(corner6),},
-                6
+                Arrays.stream(centerCornerPositions).mapToInt(this::positionToScreenX).toArray(),
+                Arrays.stream(centerCornerPositions).mapToInt(this::positionToScreenY).toArray(),
+                centerCornerPositions.length
         );
 
         // Draw the lines
         g2.setColor(lineColor);
 
-        // Draw the lines between a2 - g1 and a5 - i1
-        for (int i = 0; i < 4; i++) {
-            Position start = new Position(12 + i);      // 12 is the id of a2
-            Position end = new Position(62 + i * 11);   // 62 is the id of g1
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
-        }
+        for (LineSet lineSet : lineSets) {
+            int startDeltaPos = gipfBoard.getDeltaPos(lineSet.nextStart);
+            int endDeltaPos = gipfBoard.getDeltaPos(lineSet.nextEnd);
 
-        // Draw the lines between b6 - g6 and d8 - i4
-        for (int i = 0; i < 3; i++) {
-            Position start = new Position(26 + i * 11);      // 26 is the id of b6
-            Position end = new Position(96 + i);         // 96 is the id of i2
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
-        }
+            for (int lineNr = 0; lineNr < lineSet.nr; lineNr++) {
+                Position start = new Position(lineSet.start.getPosId() + lineNr * startDeltaPos);
+                Position end = new Position(lineSet.end.getPosId() + lineNr * endDeltaPos);
 
-        // Draw the lines between d1 - i2 and a1 - i5
-        for (int i = 0; i < 4; i++) {
-            Position start = new Position(41 - i * 10);      // 41 is the id of d1
-            Position end = new Position(96 + i);             // 96 is the id of i2
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
-        }
-
-        // Draw the lines between a2 - h6 and a4 - f8
-        for (int i = 0; i < 3; i++) {
-            Position start = new Position(12 + i);             // 12 is the id of a2
-            Position end = new Position(89 - i * 10);          // 89 is the id of h6
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
-        }
-
-        // Draw the lines between b1 - b6 and e1 - e9
-        for (int i = 0; i < 4; i++) {
-            Position start = new Position(21 + i * 10);          // 21 is the id of b1
-            Position end = new Position(26 + i * 11);            // 26 is the id of b6
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
-        }
-
-        // Draw the lines between f1 - f8 and h1 - h6
-        for (int i = 0; i < 3; i++) {
-            Position start = new Position(62 + i * 11);          // 62 is the id of g1
-            Position end = new Position(69 + i * 10);            // 68 is the id of g8
-            g2.drawLine(
-                    positionToScreenX(start),
-                    positionToScreenY(start),
-                    positionToScreenX(end),
-                    positionToScreenY(end)
-            );
+                g2.drawLine(
+                        positionToScreenX(start),
+                        positionToScreenY(start),
+                        positionToScreenX(end),
+                        positionToScreenY(end)
+                );
+            }
         }
     }
 
@@ -255,5 +230,21 @@ public class GipfBoardComponent extends JComponent {
         int width = getWidth() - (2 * marginSize);
         // nrOfColumns - 1, because n columns are  divided by n - 1 equal spaces
         return (p.getColName() - 'a') * (width / (nrOfColumnsOnGipfBoard - 1)) + marginSize;
+    }
+
+    private class LineSet {
+        Position start;
+        Position end;
+        Move.Direction nextStart;
+        Move.Direction nextEnd;
+        int nr;
+
+        public LineSet(Position start, Position end, Move.Direction nextStart, Move.Direction nextEnd, int nr) {
+            this.start = start;
+            this.end = end;
+            this.nextStart = nextStart;
+            this.nextEnd = nextEnd;
+            this.nr = nr;
+        }
     }
 }
