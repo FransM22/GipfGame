@@ -11,11 +11,24 @@ import java.util.Map;
  * Created by frans on 18-9-2015.
  */
 public class GipfBoardComponent extends JComponent {
-    final int pieceSize = 50;
-    final boolean displayPiecePosition = true;
-    final int nrOfColumnsOnGipfBoard = 9;
-    final int nrOfRowsOnGipfBoard = 9;
-    final int marginSize = 20;
+    // Variables which can be changed to change the look
+    final int pieceSize = 50;                       // The size in pixels in which the pieces are displayed
+    final boolean displayPiecePosition = false;     // Displays the piece positions above the pieces
+    final int nrOfColumnsOnGipfBoard = 9;           // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
+    final int nrOfRowsOnGipfBoard = 9;              // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
+    final int marginSize = 5;                       // The margin on the sides of the board
+
+    // Colors used
+    final Color backgroundColor = new Color(0xD2FF9B);
+    final Color centerColor = new Color(0xE5FFCE);
+    final Color lineColor = new Color(0x8D8473);
+    final Color whiteSingleColor = new Color(0x525252);
+    final Color whiteGipfColor = whiteSingleColor;
+    final Color blackSingleColor = new Color(0xF9F9F9);
+    final Color blackGipfColor = blackSingleColor;
+    final Color singlePieceBorderColor = Color.black;
+    final Color gipfPieceBorderColor = Color.red;
+
     GipfBoard gipfBoard;
 
     /**
@@ -70,7 +83,7 @@ public class GipfBoardComponent extends JComponent {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setColor(new Color(0xeeeeee));
+        g2.setColor(backgroundColor);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         paintBoard(g2);
@@ -79,7 +92,7 @@ public class GipfBoardComponent extends JComponent {
 
     private void paintBoard(Graphics2D g2) {
         // Fill the board itself, this needs a polygon with 6 corners
-        g2.setColor(Color.white);
+        g2.setColor(centerColor);
         Position corner1 = new Position(22);    // b2
         Position corner2 = new Position(25);    // b5
         Position corner3 = new Position(58);    // e8
@@ -94,7 +107,7 @@ public class GipfBoardComponent extends JComponent {
         );
 
         // Draw the lines
-        g2.setColor(Color.gray);
+        g2.setColor(lineColor);
 
         // Draw the lines between a2 - g1 and a5 - i1
         for (int i = 0; i < 4; i++) {
@@ -188,29 +201,26 @@ public class GipfBoardComponent extends JComponent {
     }
 
     private void drawPiece(Graphics2D g2, Position position, GipfBoard.Piece piece) {
-        Color fillColor;
-        Color borderColor;
+        Color fillColor = null;     // Needs an initial value
+        Color borderColor = null;   // Needs an initial value
 
         switch (piece) {
             case WHITE_SINGLE:
-                fillColor = Color.white;
-                borderColor = Color.lightGray;
+                fillColor = whiteSingleColor;
+                borderColor = singlePieceBorderColor;
                 break;
             case WHITE_GIPF:
-                fillColor = Color.white;
-                borderColor = Color.red;
+                fillColor = whiteGipfColor;
+                borderColor = gipfPieceBorderColor;
                 break;
             case BLACK_SINGLE:
-                fillColor = Color.darkGray;
-                borderColor = Color.lightGray;
+                fillColor = blackSingleColor;
+                borderColor = singlePieceBorderColor;
                 break;
             case BLACK_GIPF:
-                fillColor = Color.darkGray;
-                borderColor = Color.red;
+                fillColor = blackGipfColor;
+                borderColor = gipfPieceBorderColor;
                 break;
-            default:
-                fillColor = Color.pink;
-                borderColor = Color.pink;
         }
         centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), pieceSize, fillColor, borderColor);
 
