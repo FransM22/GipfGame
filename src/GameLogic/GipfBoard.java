@@ -125,16 +125,13 @@ public class GipfBoard {
         int row = p.getRowNumber();
 
         // See google doc for explanation of the formula
-        if (row <= 0 ||
+        return !(row <= 0 ||
                 row - col <= -5 ||
                 col >= 10 ||
                 row >= 10 ||
                 row - col >= 5 ||
-                col <= 0) {
-            return false;
-        }
+                col <= 0);
 
-        return true;
     }
 
     /**

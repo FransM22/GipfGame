@@ -11,16 +11,28 @@ import java.util.Map;
  * Created by frans on 18-9-2015.
  */
 public class GipfBoardComponent extends JComponent {
+    final int pieceSize = 50;
+    final boolean displayPiecePosition = true;
+    final int nrOfColumnsOnGipfBoard = 9;
+    final int nrOfRowsOnGipfBoard = 9;
+    final int marginSize = 20;
     GipfBoard gipfBoard;
 
+    /**
+     * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
+     *
+     * @param gipfBoard
+     */
     public GipfBoardComponent(GipfBoard gipfBoard) {
         this.gipfBoard = gipfBoard;
 
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(600, 600));
     }
 
     public static void main(String argv[]) {
         GipfBoard gb = new GipfBoard();
+
+        // These are only for checking whether the component works
         gb.setPiece(new Position('b', 2), GipfBoard.Piece.WHITE_SINGLE);
         gb.setPiece(new Position('b', 3), GipfBoard.Piece.WHITE_SINGLE);
         gb.setPiece(new Position('b', 4), GipfBoard.Piece.WHITE_SINGLE);
@@ -36,7 +48,6 @@ public class GipfBoardComponent extends JComponent {
         gb.setPiece(new Position('e', 4), GipfBoard.Piece.BLACK_GIPF);
         gb.setPiece(new Position('f', 6), GipfBoard.Piece.WHITE_GIPF);
 
-
         JFrame frame = new JFrame();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -46,6 +57,11 @@ public class GipfBoardComponent extends JComponent {
         frame.setVisible(true);
     }
 
+    /**
+     * Main paint class, from here all the other methods that paint something are called
+     *
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -141,7 +157,7 @@ public class GipfBoardComponent extends JComponent {
         }
 
         // Draw the lines between f1 - f8 and h1 - h6
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             Position start = new Position(62 + i * 11);          // 62 is the id of g1
             Position end = new Position(69 + i * 10);            // 68 is the id of g8
             g2.drawLine(
@@ -196,10 +212,12 @@ public class GipfBoardComponent extends JComponent {
                 fillColor = Color.pink;
                 borderColor = Color.pink;
         }
-        centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), 30, fillColor, borderColor);
+        centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), pieceSize, fillColor, borderColor);
 
-        g2.setColor(Color.blue);
-        g2.drawString(position.toString(), positionToScreenX(position), positionToScreenY(position));
+        if (displayPiecePosition) {
+            g2.setColor(Color.blue);
+            g2.drawString(position.toString(), positionToScreenX(position), positionToScreenY(position));
+        }
     }
 
     private void paintPieces(Graphics2D g2) {
@@ -212,18 +230,20 @@ public class GipfBoardComponent extends JComponent {
     }
 
     private int positionToScreenY(Position p) {
-        int height = getHeight();
-        int colNumber = p.getColName() - 'a' + 1;   // Colnumber, starting at 1
-        double colHeight = height / 8;
+        int height = getHeight() - (2 * marginSize);
+        int colNumber = p.getColName() - 'a' + 1;               // Colnumber, starting at 1
+        double rowHeight = height / (nrOfRowsOnGipfBoard - 1);  // The first and last piece are shown at the beginning and end, so we only need nrOfRows - 1 equally divided rows
 
         if (colNumber <= 5) {
-            return (int) Math.round(height - (p.getRowNumber() - 1 - 0.5 * (colNumber - 5)) * colHeight);
+            return (int) Math.round(height - (p.getRowNumber() - 1 - 0.5 * (colNumber - 5)) * rowHeight) + marginSize;
         } else {
-            return (int) Math.round(height - (p.getRowNumber() - 1 + 0.5 * (colNumber - 5)) * colHeight);
+            return (int) Math.round(height - (p.getRowNumber() - 1 + 0.5 * (colNumber - 5)) * rowHeight) + marginSize;
         }
     }
 
     private int positionToScreenX(Position p) {
-        return (p.getColName() - 'a') * (getWidth() / 8);
+        int width = getWidth() - (2 * marginSize);
+        // nrOfColumns - 1, because n columns are  divided by n - 1 equal spaces
+        return (p.getColName() - 'a') * (width / (nrOfColumnsOnGipfBoard - 1)) + marginSize;
     }
 }
