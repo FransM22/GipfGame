@@ -82,6 +82,10 @@ public final class Position {
         }
     }
 
+    public String getName() {
+        return "" + getColName() + getRowNumber();
+    }
+
     @Override
     public String toString() {
         return "Pos: " + getColName() + getRowNumber();// + " posId=(" + posId + ")";

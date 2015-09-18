@@ -15,10 +15,10 @@ import java.util.Map;
 public class GipfBoardComponent extends JComponent {
     // Variables which can be changed to change the look
     final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
-    final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces
+    final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
     final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    final int marginSize = 5;                               // The margin on the sides of the board
+    final int marginSize = 10;                              // The margin on the sides of the board
 
     // Colors used
     final Color backgroundColor = new Color(0xD2FF9B);      // The background of the component
@@ -30,6 +30,7 @@ public class GipfBoardComponent extends JComponent {
     final Color blackGipfColor = blackSingleColor;          // Color of the black gipf piece
     final Color singlePieceBorderColor = Color.black;       // Border color of normal single pieces
     final Color gipfPieceBorderColor = Color.red;           // Border color of gipf pieces
+    final Color positionNameColor = Color.red;              // Color of position names
 
     // These mark the center hexagon on the obard
     Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -39,6 +40,28 @@ public class GipfBoardComponent extends JComponent {
             new Position('h', 5),
             new Position('h', 2),
             new Position('e', 2)
+    };
+
+    // These positions are named on the board
+    Position[] namedPositionsOnBoard = {
+            new Position('a', 1),
+            new Position('b', 1),
+            new Position('c', 1),
+            new Position('d', 1),
+            new Position('e', 1),
+            new Position('f', 1),
+            new Position('g', 1),
+            new Position('h', 1),
+            new Position('i', 1),
+            new Position('a', 5),
+            new Position('b', 6),
+            new Position('c', 7),
+            new Position('d', 8),
+            new Position('e', 9),
+            new Position('f', 8),
+            new Position('g', 7),
+            new Position('h', 6),
+            new Position('i', 5)
     };
 
     /*
@@ -115,6 +138,7 @@ public class GipfBoardComponent extends JComponent {
 
         paintBoard(g2);
         paintPieces(g2);
+        drawPositionNames(g2);
     }
 
     /**
@@ -200,8 +224,17 @@ public class GipfBoardComponent extends JComponent {
         centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), pieceSize, fillColor, borderColor);
 
         if (displayPiecePosition) {
-            g2.setColor(Color.blue);
-            g2.drawString(position.toString(), positionToScreenX(position), positionToScreenY(position));
+            g2.setColor(positionNameColor);
+            g2.drawString(position.getName(), positionToScreenX(position), positionToScreenY(position));
+        }
+    }
+
+    private void drawPositionNames(Graphics2D g2) {
+        g2.setColor(positionNameColor);
+
+        for (Position position : namedPositionsOnBoard) {
+            g2.setColor(positionNameColor);
+            g2.drawString(position.getName(), positionToScreenX(position), positionToScreenY(position));
         }
     }
 
