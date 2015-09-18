@@ -1,84 +1,41 @@
 package GameLogic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by frans on 8-9-2015.
  * This class represents the board that is used in the game.
- *
+ * <p/>
  * Is still room for optimization, but should be done only if this code seems
  * to be a bottleneck.
  */
 public class GipfBoard {
-    // Each of these lists represents a vertical line on the gipf board
-    List<Piece> a, b, c, d, e, f, g, h, i;
+    private Map<Position, Piece> pieceMap;
 
     /**
      * Initialize an empty Gipf board
      */
     public GipfBoard() {
         // Initialize the lists
-        a = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        b = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        c = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        d = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        e = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        f = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        g = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        h = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
-        i = new ArrayList<>(Arrays.asList(Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY, Piece.EMPTY));
+        pieceMap = new HashMap<>();
     }
 
     /**
      * Initialize a new Gipf board, with the same pieces on the same locations as an old board.
+     *
      * @param old board with pieces that should be copied
      */
     public GipfBoard(GipfBoard old) {
-        a = new ArrayList<>(old.a);
-        b = new ArrayList<>(old.b);
-        c = new ArrayList<>(old.c);
-        d = new ArrayList<>(old.d);
-        e = new ArrayList<>(old.e);
-        f = new ArrayList<>(old.f);
-        g = new ArrayList<>(old.g);
-        h = new ArrayList<>(old.h);
-        i = new ArrayList<>(old.i);
-    }
-
-    public List<Piece> getCol(char col) {
-        switch (col) {
-            case 'a':
-                return a;
-            case 'b':
-                return b;
-            case 'c':
-                return c;
-            case 'd':
-                return d;
-            case 'e':
-                return e;
-            case 'f':
-                return f;
-            case 'g':
-                return g;
-            case 'h':
-                return h;
-            case 'i':
-                return i;
-        }
-
-        System.err.println("ERROR: Column not found");
-        return null;
+        pieceMap = new HashMap<>(old.pieceMap);
     }
 
     public void setPiece(Position pos, Piece piece) {
-        getCol(pos.col).set(pos.row - 1, piece);
+        pieceMap.put(pos, piece);
     }
 
-    public Piece getPiece(Position pos) {
-        return getCol(pos.col).get(pos.row - 1);
+    public Map<Position, Piece> getPieceMap() {
+        return pieceMap;
     }
 
     /**
@@ -93,12 +50,91 @@ public class GipfBoard {
         // Add the piece to the new pieces
         setPiece(m.startPos, m.addedPiece);
 
-        movePiecesTowards(m.startPos, m.endPos);
+        movePiecesTowards(m.startPos, m.direction);
 
         // Remove the pieces that need to be removed
         for (Position p : m.removedPiecePositions) {
-            setPiece(p, Piece.EMPTY);
+            pieceMap.remove(p);
         }
+    }
+
+    private void movePiecesTowards(Position startPos, Move.Direction direction) {
+
+        // Determine the deltaPos value based on the direction
+        int deltaPos = 0;   // We need an initial value
+        switch (direction) {
+            case NORTH:
+                deltaPos = 1;
+                break;
+            case NORTH_EAST:
+                deltaPos = 11;
+                break;
+            case SOUTH_EAST:
+                deltaPos = 10;
+                break;
+            case SOUTH:
+                deltaPos = -1;
+                break;
+            case SOUTH_WEST:
+                deltaPos = -11;
+                break;
+            case NORTH_WEST:
+                deltaPos = -10;
+                break;
+        }
+
+
+        Position currentPosition = new Position(startPos);
+
+        try {
+            movePiece(currentPosition, deltaPos);
+        } catch (Exception e) {
+            System.out.println("Piece is not moved");
+        }
+    }
+
+    private void movePiece(Position currentPosition, int deltaPos) throws Exception {
+        Position nextPosition = new Position(currentPosition.posId + deltaPos);
+
+        if (!isPositionOnBoard(nextPosition)) {
+            throw new InvalidPositionException();
+        }
+
+        try {
+            if (!isPositionEmpty(nextPosition)) {
+                movePiece(nextPosition, deltaPos);
+            }
+
+            pieceMap.put(nextPosition, pieceMap.remove(currentPosition));
+        } catch (InvalidPositionException e) {
+            System.out.println("Position " + nextPosition + " is invalid");
+        }
+    }
+
+    private boolean isPositionEmpty(Position p) {
+        return !pieceMap.containsKey(p);
+    }
+
+    /**
+     * Checks whether the position is located on the board
+     *
+     * @param p
+     */
+    private boolean isPositionOnBoard(Position p) {
+        int col = p.getColName() - 'a' + 1;
+        int row = p.getRowNumber();
+
+        // See google doc for explanation of the formula
+        if (row <= 0 ||
+                row - col <= -5 ||
+                col >= 10 ||
+                row >= 10 ||
+                row - col >= 5 ||
+                col <= 0) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -125,69 +161,9 @@ public class GipfBoard {
                 case "BLACK_GIPF":
                     return "B";
                 default:
-                    return "[Piece not known]";
+                    return "[Piece type not known]";
             }
         }
-    }
-
-    /**
-     * The columns are stored with lowercase letters a..i, and the rows with numbers 1..9. This means we're following
-     * the Gipf standards, and we're NOT starting from row 0.
-     */
-    public static class Position {
-        char col;   // A letter (a, b, ..., i)
-        short row;  // A number (1, 2, ..., 9)
-
-        public Position(char col, int row) {
-            this.col = col;
-            this.row = (short) row;
-        }
-
-        public Position(Position p) {
-            this.col = p.col;
-            this.row = p.row;
-        }
-
-        @Override
-        public String toString() {
-            return "Position{" +
-                    "col=" + col +
-                    ", row=" + row +
-                    '}';
-        }
-    }
-
-    private void movePiecesTowards(Position startPos, Position endPos) {
-        short colDirection = (short) (endPos.col - startPos.col);
-        short rowDirection = (short) (endPos.row - startPos.row);
-
-        Position currentPosition = new Position(startPos);
-        Piece previousPiece = Piece.EMPTY;
-
-        while (positionExists(currentPosition)) {
-            Piece nextPiece = getPiece(currentPosition);
-            setPiece(currentPosition, previousPiece);
-
-            if (nextPiece == Piece.EMPTY) {
-                break;          // We can't move past empty spots
-            }
-            previousPiece = nextPiece;
-            currentPosition.row += rowDirection;
-            currentPosition.col += colDirection;
-        }
-    }
-
-    private boolean positionEmpty(Position p) {
-        return getPiece(p) == Piece.EMPTY;
-    }
-    private boolean positionExists(Position p) {
-        if (p.col >= 'a' && p.row >= 1) {                           // If the col and row are above or equal to the minimum
-            if (p.col <= 'i' && getCol(p.col).size() >= p.row) {    // and if they are at most the maximum
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /*
@@ -195,4 +171,17 @@ public class GipfBoard {
      *  - isValidMove(Move m)
      *  * method to get all the allowed moves from a specific board
      */
+
+    public static void main(String argv[]) {
+        GipfBoard gb = new GipfBoard();
+
+        Position invalidPos = new Position('a', 6);
+        System.out.println(invalidPos + " is on board?" + gb.isPositionOnBoard(invalidPos));
+
+        Position validPos = new Position('b', 6);
+        System.out.println(validPos + " is on board?" + gb.isPositionOnBoard(validPos));
+
+        Position validPos2 = new Position('e', 5);
+        System.out.println(validPos2 + " is on board?" + gb.isPositionOnBoard(validPos2));
+    }
 }

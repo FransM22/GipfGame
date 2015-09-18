@@ -8,39 +8,50 @@ import java.util.Set;
  */
 public class Move {
     GipfBoard.Piece addedPiece;             // The piece that is added to the board
-    GipfBoard.Position startPos;            // A newly added piece moves from the startPos to the endPos
-    GipfBoard.Position endPos;
-    Set<GipfBoard.Position> removedPiecePositions;  // Pieces that are removed during this move
+    Position startPos;                      // A newly added piece moves from the startPos to the endPos
+    Direction direction;                    // The direction in which the piece moves
+    Set<Position> removedPiecePositions;    // Pieces that are removed during this move
 
     /**
      * Constructor, creates a Move with the following properties
-     * @param addedPiece the piece that is added to the board
-     * @param startPos the position where the piece is added
-     * @param endPos the position to where the newly added piece is moved
+     *
+     * @param addedPiece            the piece that is added to the board
+     * @param startPos              the position where the piece is added
+     * @param direction             the direction in which the newly added piece is moved
      * @param removedPiecePositions the pieces that are removed
      */
     public Move(GipfBoard.Piece addedPiece,
-                GipfBoard.Position startPos,
-                GipfBoard.Position endPos,
-                Set<GipfBoard.Position> removedPiecePositions) {
+                Position startPos,
+                Direction direction,
+                Set<Position> removedPiecePositions) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
-        this.endPos = endPos;
+        this.direction = direction;
         this.removedPiecePositions = removedPiecePositions;
     }
 
     /**
      * Constructor, creates a Move with the following properties. This constructor only uses the required fields.
+     *
      * @param addedPiece the piece that is added to the board
-     * @param startPos the position where the piece is added
-     * @param endPos the position to where the newly added piece is moved
+     * @param startPos   the position where the piece is added
+     * @param direction  the direction in which the piece moves
      */
     public Move(GipfBoard.Piece addedPiece,
-                GipfBoard.Position startPos,
-                GipfBoard.Position endPos) {
+                Position startPos,
+                Direction direction) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
-        this.endPos = endPos;
+        this.direction = direction;
         this.removedPiecePositions = new HashSet<>();   // An empty set
+    }
+
+    public enum Direction {
+        NORTH,
+        NORTH_EAST,
+        NORTH_WEST,
+        SOUTH,
+        SOUTH_EAST,
+        SOUTH_WEST
     }
 }
