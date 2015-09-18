@@ -21,35 +21,21 @@ public class GipfBoardComponent extends JComponent {
 
     public static void main(String argv[]) {
         GipfBoard gb = new GipfBoard();
-        gb.setPiece(new Position('a', 1), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('a', 2), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('a', 3), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('a', 4), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('a', 5), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('b', 2), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('b', 3), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('b', 4), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('b', 5), GipfBoard.Piece.WHITE_SINGLE);
 
-        gb.setPiece(new Position('b', 1), GipfBoard.Piece.WHITE_GIPF);
-        gb.setPiece(new Position('c', 1), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('d', 1), GipfBoard.Piece.BLACK_GIPF);
-        gb.setPiece(new Position('e', 1), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('f', 1), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('g', 1), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('h', 1), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('i', 1), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('c', 6), GipfBoard.Piece.BLACK_SINGLE);
+        gb.setPiece(new Position('d', 7), GipfBoard.Piece.BLACK_SINGLE);
+        gb.setPiece(new Position('e', 8), GipfBoard.Piece.BLACK_SINGLE);
+        gb.setPiece(new Position('f', 7), GipfBoard.Piece.BLACK_SINGLE);
+        gb.setPiece(new Position('g', 6), GipfBoard.Piece.BLACK_SINGLE);
+        gb.setPiece(new Position('h', 5), GipfBoard.Piece.BLACK_SINGLE);
 
-        gb.setPiece(new Position('b', 6), GipfBoard.Piece.WHITE_GIPF);
-        gb.setPiece(new Position('c', 7), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('d', 8), GipfBoard.Piece.BLACK_GIPF);
-        gb.setPiece(new Position('e', 9), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('f', 8), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('g', 7), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('h', 6), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('i', 5), GipfBoard.Piece.WHITE_SINGLE);
+        gb.setPiece(new Position('e', 4), GipfBoard.Piece.BLACK_GIPF);
+        gb.setPiece(new Position('f', 6), GipfBoard.Piece.WHITE_GIPF);
 
-        gb.setPiece(new Position('i', 2), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('i', 3), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('i', 4), GipfBoard.Piece.WHITE_SINGLE);
-
-        gb.setPiece(new Position('e', 5), GipfBoard.Piece.WHITE_SINGLE);
 
         JFrame frame = new JFrame();
 
@@ -68,7 +54,7 @@ public class GipfBoardComponent extends JComponent {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setColor(Color.white);
+        g2.setColor(new Color(0xeeeeee));
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         paintBoard(g2);
@@ -76,6 +62,22 @@ public class GipfBoardComponent extends JComponent {
     }
 
     private void paintBoard(Graphics2D g2) {
+        // Fill the board itself, this needs a polygon with 6 corners
+        g2.setColor(Color.white);
+        Position corner1 = new Position(22);    // b2
+        Position corner2 = new Position(25);    // b5
+        Position corner3 = new Position(58);    // e8
+        Position corner4 = new Position(88);    // h5
+        Position corner5 = new Position(85);    // h2
+        Position corner6 = new Position(52);    // e2
+
+        g2.fillPolygon(
+                new int[]{positionToScreenX(corner1), positionToScreenX(corner2), positionToScreenX(corner3), positionToScreenX(corner4), positionToScreenX(corner5), positionToScreenX(corner6),},
+                new int[]{positionToScreenY(corner1), positionToScreenY(corner2), positionToScreenY(corner3), positionToScreenY(corner4), positionToScreenY(corner5), positionToScreenY(corner6),},
+                6
+        );
+
+        // Draw the lines
         g2.setColor(Color.gray);
 
         // Draw the lines between a2 - g1 and a5 - i1
