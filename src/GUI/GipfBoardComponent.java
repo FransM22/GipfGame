@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Created by frans on 18-9-2015.
@@ -16,9 +17,11 @@ public class GipfBoardComponent extends JComponent {
     // Variables which can be changed to change the look
     final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
+    final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions
     final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
     final int marginSize = 10;                              // The margin on the sides of the board
+    final int filledCircleSize = 10;                        // The size of the filled circles
 
     // Colors used
     final Color backgroundColor = new Color(0xD2FF9B);      // The background of the component
@@ -31,6 +34,8 @@ public class GipfBoardComponent extends JComponent {
     final Color singlePieceBorderColor = Color.black;       // Border color of normal single pieces
     final Color gipfPieceBorderColor = Color.red;           // Border color of gipf pieces
     final Color positionNameColor = Color.red;              // Color of position names
+    final Color filledCircleColor = new Color(0xD4EEBD);    // Color of the circles that are filled
+    final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
 
     // These mark the center hexagon on the obard
     Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -42,8 +47,7 @@ public class GipfBoardComponent extends JComponent {
             new Position('e', 2)
     };
 
-    // These positions are named on the board
-    Position[] namedPositionsOnBoard = {
+    Position[] topAndBottomPositions = {
             new Position('a', 1),
             new Position('b', 1),
             new Position('c', 1),
@@ -63,6 +67,22 @@ public class GipfBoardComponent extends JComponent {
             new Position('h', 6),
             new Position('i', 5)
     };
+
+    Position[] sidePositions = {
+            new Position('a', 2),
+            new Position('a', 3),
+            new Position('a', 4),
+            new Position('i', 2),
+            new Position('i', 3),
+            new Position('i', 4)
+    };
+
+    // These positions are named on the board
+    Position[] namedPositionsOnBoard = topAndBottomPositions;
+
+    // These positions have a bigger on their position
+    // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
+    Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
 
     /*
      * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
@@ -138,6 +158,9 @@ public class GipfBoardComponent extends JComponent {
 
         paintBoard(g2);
         paintPieces(g2);
+        if (drawFilledCircles) {
+            paintFilledCircles(g2);
+        }
         drawPositionNames(g2);
     }
 
@@ -197,6 +220,12 @@ public class GipfBoardComponent extends JComponent {
                 size,
                 size
         );
+    }
+
+    private void paintFilledCircles(Graphics2D g2) {
+        for (Position position : filledCirclePositions) {
+            centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), filledCircleSize, filledCircleColor, filledCircleBorderColor);
+        }
     }
 
     private void drawPiece(Graphics2D g2, Position position, GipfBoard.Piece piece) {
