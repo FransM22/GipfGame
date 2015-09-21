@@ -23,18 +23,23 @@ public class GipfBoardComponent extends JComponent {
     final int marginSize = 10;                              // The margin on the sides of the board
     final int filledCircleSize = 10;                        // The size of the filled circles
 
+
+    // Line types
+    final Stroke normalPieceStroke = new BasicStroke(1);
+    final Stroke gipfPieceStroke = new BasicStroke(3);
+
     // Colors used
-    final Color backgroundColor = new Color(0xD2FF9B);      // The background of the component
-    final Color centerColor = new Color(0xE5FFCE);          // The hexagon in the center
-    final Color lineColor = new Color(0x8D8473);            // The lines showing how pieces are allowed to move
-    final Color whiteSingleColor = new Color(0x525252);     // Color of the normal white piece
-    final Color whiteGipfColor = whiteSingleColor;          // Color of the white gipf piece
-    final Color blackSingleColor = new Color(0xF9F9F9);     // Color of the normal black piece
-    final Color blackGipfColor = blackSingleColor;          // Color of the black gipf piece
-    final Color singlePieceBorderColor = Color.black;       // Border color of normal single pieces
-    final Color gipfPieceBorderColor = Color.red;           // Border color of gipf pieces
-    final Color positionNameColor = Color.red;              // Color of position names
-    final Color filledCircleColor = new Color(0xD4EEBD);    // Color of the circles that are filled
+    final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
+    final Color centerColor = new Color(0xE5FFCE);              // The hexagon in the center
+    final Color lineColor = new Color(0x8D8473);                // The lines showing how pieces are allowed to move
+    final Color whiteSingleColor = new Color(0x525252);         // Color of the normal white piece
+    final Color whiteGipfColor = whiteSingleColor;              // Color of the white gipf piece
+    final Color blackSingleColor = new Color(0xF9F9F9);         // Color of the normal black piece
+    final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
+    final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
+    final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
+    final Color positionNameColor = Color.red;                  // Color of position names
+    final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
     final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
 
     // These mark the center hexagon on the obard
@@ -204,7 +209,7 @@ public class GipfBoardComponent extends JComponent {
         }
     }
 
-    private void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor) {
+    private void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
         g2.setColor(fillColor);
         g2.fillOval(
                 x - (size / 2),
@@ -213,6 +218,7 @@ public class GipfBoardComponent extends JComponent {
                 size
         );
 
+        g2.setStroke(strokeStyle);
         g2.setColor(borderColor);
         g2.drawOval(
                 x - (size / 2),
@@ -220,6 +226,10 @@ public class GipfBoardComponent extends JComponent {
                 size,
                 size
         );
+    }
+
+    private void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor) {
+        centerCircleOn(g2, x, y, size, fillColor, borderColor, new BasicStroke(1));
     }
 
     private void paintFilledCircles(Graphics2D g2) {
@@ -231,6 +241,7 @@ public class GipfBoardComponent extends JComponent {
     private void drawPiece(Graphics2D g2, Position position, GipfBoard.Piece piece) {
         Color fillColor = null;     // Needs an initial value
         Color borderColor = null;   // Needs an initial value
+        Stroke strokeType = normalPieceStroke;
 
         switch (piece) {
             case WHITE_SINGLE:
@@ -240,6 +251,7 @@ public class GipfBoardComponent extends JComponent {
             case WHITE_GIPF:
                 fillColor = whiteGipfColor;
                 borderColor = gipfPieceBorderColor;
+                strokeType = gipfPieceStroke;
                 break;
             case BLACK_SINGLE:
                 fillColor = blackSingleColor;
@@ -248,9 +260,10 @@ public class GipfBoardComponent extends JComponent {
             case BLACK_GIPF:
                 fillColor = blackGipfColor;
                 borderColor = gipfPieceBorderColor;
+                strokeType = gipfPieceStroke;
                 break;
         }
-        centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), pieceSize, fillColor, borderColor);
+        centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), pieceSize, fillColor, borderColor, strokeType);
 
         if (displayPiecePosition) {
             g2.setColor(positionNameColor);
