@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -30,6 +31,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
     private final int marginSize = 20;                              // The margin on the sides of the board
     private final int filledCircleSize = 15;                        // The size of the filled circles
+    private final int hoverCircleSize = 20;
 
 
     // Line types
@@ -49,6 +51,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color positionNameColor = Color.red;                  // Color of position names
     private final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
+    private final Color hoverBorderColor = new Color(0x7D8972);
+    private final Color hoverFillColor = new Color(0xFCFFEE);
 
     // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -113,6 +117,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
             new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
     };
     private final GipfBoard gipfBoard;
+    private Position currentHoverPosition = null;
+    private Thread hoverThread;
 
 
     /**
@@ -178,6 +184,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         if (drawFilledCircles) {
             paintFilledCircles(g2);
         }
+        paintHoverCircle(g2, currentHoverPosition);
         paintPieces(g2);
         drawPositionNames(g2);
     }
@@ -219,6 +226,12 @@ class GipfBoardComponent extends JComponent implements MouseListener{
                         positionToScreenY(end)
                 );
             }
+        }
+    }
+
+    private void paintHoverCircle(Graphics2D g2, Position position) {
+        if (position != null) {
+            centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), hoverCircleSize, hoverFillColor, hoverBorderColor);
         }
     }
 
@@ -350,8 +363,6 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-//        System.out.println("X: " + e.getX() + ", Y: " + e.getY());
-
         gipfBoard.setPiece(
                 screenCoordinateToPosition(e.getX(), e.getY()),
                 GipfBoard.Piece.BLACK_SINGLE);
@@ -371,12 +382,16 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        hoverThread = new Thread(new UpdateHoverPosition(this));
+        hoverThread.start();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        hoverThread.interrupt();
 
+        currentHoverPosition = null;
+        repaint();
     }
 
     private class LineSet {
@@ -392,6 +407,33 @@ class GipfBoardComponent extends JComponent implements MouseListener{
             this.nextStart = nextStart;
             this.nextEnd = nextEnd;
             this.nr = nr;
+        }
+    }
+
+    private class UpdateHoverPosition implements Runnable {
+        GipfBoardComponent gipfBoardComponent;
+
+        UpdateHoverPosition(GipfBoardComponent gipfBoardComponent) {
+            this.gipfBoardComponent = gipfBoardComponent;
+        }
+
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(200);
+                } catch (InterruptedException e) {
+                    // Interrupt the thread
+                    break;
+                }
+
+                Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+                Point componentPosition = getLocationOnScreen();
+                mouseLocation.translate((int) -componentPosition.getX(), (int) - componentPosition.getY());
+                currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                gipfBoardComponent.repaint();
+            }
         }
     }
 }
