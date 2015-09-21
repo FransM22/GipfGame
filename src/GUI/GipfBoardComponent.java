@@ -38,9 +38,9 @@ class GipfBoardComponent extends JComponent {
     private final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
     private final Color centerColor = new Color(0xE5FFCE);              // The hexagon in the center
     private final Color lineColor = new Color(0x8D8473);                // The lines showing how pieces are allowed to move
-    private final Color whiteSingleColor = new Color(0x525252);         // Color of the normal white piece
+    private final Color whiteSingleColor = new Color(0xF9F9F9);         // Color of the normal white piece
     private final Color whiteGipfColor = whiteSingleColor;              // Color of the white gipf piece
-    private final Color blackSingleColor = new Color(0xF9F9F9);         // Color of the normal black piece
+    private final Color blackSingleColor = new Color(0x525252);         // Color of the normal black piece
     private final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
     private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
     private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
