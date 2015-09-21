@@ -42,6 +42,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Stroke gipfPieceStroke = new BasicStroke(4.0f);
     private final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[] {6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
 
+    private final Font positionNameFont = new Font("default", Font.BOLD, 14);
+
     // Colors used
     private final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
     private final Color centerColor = new Color(0xE5FFCE);              // The hexagon in the center
@@ -52,7 +54,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
     private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
     private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
-    private final Color positionNameColor = Color.red;                  // Color of position names
+    private final Color positionNameColor = new Color(0xFF0000);        // Color of position names
     private final Color filledCircleColor = new Color(0xD2FF9B);        // Color of the circles that are filled
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
     private final Color hoverBorderColor = new Color(0x8D8473);
@@ -297,6 +299,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
         if (displayPiecePosition) {
             g2.setColor(positionNameColor);
+            g2.setFont(positionNameFont);
             g2.drawString(position.getName(), positionToScreenX(position), positionToScreenY(position));
         }
     }
@@ -306,6 +309,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
         for (Position position : namedPositionsOnBoard) {
             g2.setColor(positionNameColor);
+            g2.setFont(positionNameFont);
             g2.drawString(position.getName(), positionToScreenX(position) + 10, positionToScreenY(position));   // x + 10, to make text not overlap with lines
         }
     }
