@@ -24,15 +24,18 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
     private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions (at the ends of the lines on the board)
     private final boolean antiAliasingEnabled = true;               // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
+    private final boolean hoveringEnabled = true;                   // Displays a circle on the position where the mouse is hovering
+
 
     // Variables which can be changed to change the look
-    private final int pieceSize = 55;                               // The size in pixels in which the pieces are displayed
+    private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     private final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    private final int marginSize = 20;                              // The margin on the sides of the board
+    private final int marginSize = 10;                              // The margin on the sides of the board
     private final int filledCircleSize = 15;                        // The size of the filled circles
     private final int hoverCircleSize = 20;
 
+    private final int hoverUpdateIntervalMs = 100;                  // The update interval in milliseconds of the component when the hover circle is displayed
 
     // Line types
     private final Stroke normalPieceStroke = new BasicStroke(1);
@@ -97,7 +100,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     // These positions are named on the board
     private final Position[] namedPositionsOnBoard = topAndBottomPositions;
 
-    // These positions have a bigger on their position
+    // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     private final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
 
@@ -382,16 +385,21 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        hoverThread = new Thread(new UpdateHoverPosition(this));
-        hoverThread.start();
+
+        if (hoveringEnabled) {
+            hoverThread = new Thread(new UpdateHoverPosition(this));
+            hoverThread.start();
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        hoverThread.interrupt();
+        if (hoveringEnabled) {
+            hoverThread.interrupt();
 
-        currentHoverPosition = null;
-        repaint();
+            currentHoverPosition = null;
+            repaint();
+        }
     }
 
     private class LineSet {
@@ -412,27 +420,39 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     private class UpdateHoverPosition implements Runnable {
         GipfBoardComponent gipfBoardComponent;
+        private Position previousPosition = null;
 
         UpdateHoverPosition(GipfBoardComponent gipfBoardComponent) {
             this.gipfBoardComponent = gipfBoardComponent;
         }
 
-
         @Override
         public void run() {
             while (true) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(200);
+                    TimeUnit.MILLISECONDS.sleep(hoverUpdateIntervalMs);
                 } catch (InterruptedException e) {
                     // Interrupt the thread
                     break;
                 }
 
-                Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                Point componentPosition = getLocationOnScreen();
-                mouseLocation.translate((int) -componentPosition.getX(), (int) - componentPosition.getY());
-                currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
-                gipfBoardComponent.repaint();
+                Point mouseLocation = MouseInfo.getPointerInfo().getLocation();                             // Get the mouse position relative to the screen
+                Point componentPosition = getLocationOnScreen();                                            // Get the component position relative to the screen
+                mouseLocation.translate((int) -componentPosition.getX(), (int) - componentPosition.getY()); // Calculate the mouse position relative to the component
+
+                // Only update the position if the new position is different from the old position, and if the new
+                // position is actually located on the board
+                Position newHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                if (newHoverPosition != previousPosition) {
+                    if (gipfBoardComponent.gipfBoard.isPositionOnBoard(newHoverPosition)) {
+                        currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                        previousPosition = currentHoverPosition;
+                    }
+                    else {
+                        currentHoverPosition = null;
+                    }
+                    gipfBoardComponent.repaint();
+                }
             }
         }
     }
