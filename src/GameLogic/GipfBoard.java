@@ -116,7 +116,7 @@ public class GipfBoard {
      *
      * @param p the position of which should be determined whether it is empty
      */
-    private boolean isPositionOnBoard(Position p) {
+    public boolean isPositionOnBoard(Position p) {
         int col = p.getColName() - 'a' + 1;
         int row = p.getRowNumber();
 

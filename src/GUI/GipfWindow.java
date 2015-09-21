@@ -5,12 +5,10 @@ import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * The GipfWindow uses a GipfBoardComponent to show the board. More information about the game can be added to the window
- *
+ * <p/>
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
@@ -48,6 +46,9 @@ class GipfWindow extends JFrame {
         contentPane.add(newPieceCoordinateTextField);
 
         contentPane.add(newPieceCoordinateEnterButton);
+
+        // Add listeners
+        newPieceCoordinateTextField.addActionListener(e -> listenerAddNewPiece());
         newPieceCoordinateEnterButton.addActionListener(e -> listenerAddNewPiece());
 
 
@@ -57,27 +58,35 @@ class GipfWindow extends JFrame {
         setVisible(true);
     }
 
+    public static void main(String argv[]) {
+        new GipfWindow();
+
+    }
+
     private void listenerAddNewPiece() {
         String newCoordinateText = newPieceCoordinateTextField.getText();
         newPieceCoordinateTextField.setText("");
         newPieceCoordinateTextField.requestFocus();
 
-        char colName = newCoordinateText.charAt(0);
-        int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
+        try {
+            char colName = newCoordinateText.charAt(0);
+            int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
+            Position newPiecePosition = new Position(colName, rowNumber);
 
-        Position newPiecePosition = new Position(colName, rowNumber);
-        addDebugInfo("Placing new piece at " + newPiecePosition.getName());
+            if (gipfBoard.isPositionOnBoard(newPiecePosition)) {
+                addDebugInfo("Placing new piece at " + newPiecePosition.getName());
 
-        gipfBoard.getPieceMap().put(newPiecePosition, GipfBoard.Piece.WHITE_SINGLE);
-        gipfBoardComponent.repaint();
+                gipfBoard.getPieceMap().put(newPiecePosition, GipfBoard.Piece.WHITE_SINGLE);
+                gipfBoardComponent.repaint();
+            } else {
+                addDebugInfo("Position " + newPiecePosition.getName() + " is invalid");
+            }
+        } catch (Exception e) {
+            addDebugInfo("Can't parse '" + newCoordinateText + "'");
+        }
     }
 
     private void addDebugInfo(String s) {
         debugTextArea.append(s + "\n");
-    }
-
-    public static void main(String argv[]) {
-        new GipfWindow();
-
     }
 }

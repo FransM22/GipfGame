@@ -20,7 +20,7 @@ class GipfBoardComponent extends JComponent {
     // Some basic flags to set
     private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
     private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions (at the ends of the lines on the board)
-    private final boolean antiAliasingEnabled = false;              // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
+    private final boolean antiAliasingEnabled = true;               // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
 
     // Variables which can be changed to change the look
     private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
