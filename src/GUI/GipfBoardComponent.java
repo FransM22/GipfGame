@@ -6,6 +6,8 @@ import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -16,7 +18,7 @@ import java.util.stream.Stream;
  *
  * Created by frans on 18-9-2015.
  */
-class GipfBoardComponent extends JComponent {
+class GipfBoardComponent extends JComponent implements MouseListener{
     // Some basic flags to set
     private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
     private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions (at the ends of the lines on the board)
@@ -120,6 +122,7 @@ class GipfBoardComponent extends JComponent {
      */
     public GipfBoardComponent(GipfBoard gipfBoard) {
         this.gipfBoard = gipfBoard;
+        addMouseListener(this);
 
         setPreferredSize(new Dimension(600, 600));
     }
@@ -314,6 +317,43 @@ class GipfBoardComponent extends JComponent {
         int width = getWidth() - (2 * marginSize);
         // nrOfColumns - 1, because n columns are  divided by n - 1 equal spaces
         return (p.getColName() - 'a') * (width / (nrOfColumnsOnGipfBoard - 1)) + marginSize;
+    }
+
+    private char screenXToColumnName(int screenX) {
+        int columnWidth = (getWidth() - (2 * marginSize)) / (nrOfColumnsOnGipfBoard - 1);
+        int xOnBoard = screenX - marginSize;
+
+        int columnNrInt = (int) Math.round((double) xOnBoard / columnWidth);
+//        System.out.println("ColumnNr:  " + columnNrInt);
+        return (char) (columnNrInt + 'a');
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("X: " + e.getX() + ", Y: " + e.getY());
+
+        gipfBoard.setPiece(new Position(screenXToColumnName(e.getX()), 2), GipfBoard.Piece.BLACK_SINGLE);
+        repaint();
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     private class LineSet {
