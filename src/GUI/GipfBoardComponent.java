@@ -328,11 +328,30 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         return (char) (columnNrInt + 'a');
     }
 
+    private int screenYToRowNumber(int screenX, int screenY) {
+        int rowHeight = (getHeight() - (2 * marginSize)) / (nrOfRowsOnGipfBoard - 1);
+        int yOnBoard = getHeight() - screenY - marginSize;
+
+        int rowNrInt = (int) Math.round((double) yOnBoard / rowHeight) + 1;         // At this point it is assumed that all rows are on the same y-level
+        double horizontalDistanceFromCenter = Math.abs(0.5 * getWidth() - screenX);
+        double columnWidth = ((getWidth()) - (2* marginSize)) / (nrOfColumnsOnGipfBoard - 1);
+
+        double columnsFromCenter = horizontalDistanceFromCenter / columnWidth;
+        System.out.println("columns from center: " + columnsFromCenter);
+        System.out.println("RowNr:  " + ((double) yOnBoard / rowHeight) + 1);
+
+        int rowNrFixed = (int) (rowNrInt - Math.round(columnsFromCenter * 0.5));
+        return rowNrFixed;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("X: " + e.getX() + ", Y: " + e.getY());
 
-        gipfBoard.setPiece(new Position(screenXToColumnName(e.getX()), 2), GipfBoard.Piece.BLACK_SINGLE);
+        gipfBoard.setPiece(new Position(
+                screenXToColumnName(e.getX()),
+                screenYToRowNumber(e.getX(), e.getY())),
+                GipfBoard.Piece.BLACK_SINGLE);
         repaint();
     }
 
