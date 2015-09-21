@@ -39,7 +39,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     // Line types
     private final Stroke normalPieceStroke = new BasicStroke(1);
-    private final Stroke gipfPieceStroke = new BasicStroke(3);
+    private final Stroke gipfPieceStroke = new BasicStroke(4.0f);
+    private final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[] {6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
 
     // Colors used
     private final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
@@ -52,10 +53,10 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
     private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
     private final Color positionNameColor = Color.red;                  // Color of position names
-    private final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
+    private final Color filledCircleColor = new Color(0xD2FF9B);        // Color of the circles that are filled
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
-    private final Color hoverBorderColor = new Color(0x7D8972);
-    private final Color hoverFillColor = new Color(0xFCFFEE);
+    private final Color hoverBorderColor = new Color(0x8D8473);
+    private final Color hoverFillColor = new Color(0xFFFFFB);
 
     // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -234,7 +235,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     private void paintHoverCircle(Graphics2D g2, Position position) {
         if (position != null) {
-            centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), hoverCircleSize, hoverFillColor, hoverBorderColor);
+            centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), hoverCircleSize, hoverFillColor, hoverBorderColor, hoverPositionStroke);
         }
     }
 
