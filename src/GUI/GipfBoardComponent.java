@@ -17,10 +17,13 @@ import java.util.stream.Stream;
  * Created by frans on 18-9-2015.
  */
 class GipfBoardComponent extends JComponent {
+    // Some basic flags to set
+    private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
+    private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions (at the ends of the lines on the board)
+    private final boolean antiAliasingEnabled = false;              // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
+
     // Variables which can be changed to change the look
     private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
-    private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
-    private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions
     private final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
     private final int marginSize = 10;                              // The margin on the sides of the board
@@ -158,17 +161,20 @@ class GipfBoardComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        // Set anti aliasing. Makes the drawing slightly slower, but look nicer
-        // can be removed for performance.
-        g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        if (antiAliasingEnabled) {
+            // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
+        // The order of the following methods determines the order in which the elements are drawn. A method on top indicates
+        // that the object is drawn at the bottom.
         paintBoard(g2);
-        paintPieces(g2);
         if (drawFilledCircles) {
             paintFilledCircles(g2);
         }
+        paintPieces(g2);
         drawPositionNames(g2);
     }
 
