@@ -31,7 +31,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     private final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    private final int marginSize = 10;                              // The margin on the sides of the board
+    private final int marginSize = 25;                              // The margin on the sides of the board
     private final int filledCircleSize = 15;                        // The size of the filled circles
     private final int hoverCircleSize = 20;
 
@@ -306,7 +306,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
         for (Position position : namedPositionsOnBoard) {
             g2.setColor(positionNameColor);
-            g2.drawString(position.getName(), positionToScreenX(position), positionToScreenY(position));
+            g2.drawString(position.getName(), positionToScreenX(position) + 10, positionToScreenY(position));   // x + 10, to make text not overlap with lines
         }
     }
 

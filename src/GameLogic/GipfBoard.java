@@ -132,22 +132,22 @@ public class GipfBoard {
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
      */
     public enum Piece {
-        WHITE_SINGLE,   // w
-        WHITE_GIPF,     // W
-        BLACK_SINGLE,   // b
-        BLACK_GIPF;     // B
+        WHITE_SINGLE,
+        WHITE_GIPF,
+        BLACK_SINGLE,
+        BLACK_GIPF;
 
         @Override
         public String toString() {
             switch (super.name()) {
                 case "WHITE_SINGLE":
-                    return "w";
+                    return "White Single";
                 case "WHITE_GIPF":
-                    return "W";
+                    return "White Gipf";
                 case "BLACK_SINGLE":
-                    return "b";
+                    return "Black Single";
                 case "BLACK_GIPF":
-                    return "B";
+                    return "Black Gipf";
                 default:
                     return "[Piece type not known]";
             }

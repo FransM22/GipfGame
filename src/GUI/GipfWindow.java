@@ -17,6 +17,7 @@ class GipfWindow extends JFrame {
     private JTextField newPieceCoordinateTextField;
     private JButton newPieceCoordinateEnterButton;
     private JTextArea debugTextArea;
+    private JComboBox<GipfBoard.Piece> pieceTypeCombobox;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -28,6 +29,7 @@ class GipfWindow extends JFrame {
         gipfBoard = new GipfBoard();
         gipfBoardComponent = new GipfBoardComponent(gipfBoard);
         debugTextArea = new JTextArea("Debug information\n");
+        pieceTypeCombobox = new JComboBox<>(GipfBoard.Piece.values());
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -44,7 +46,7 @@ class GipfWindow extends JFrame {
 
         contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
         contentPane.add(newPieceCoordinateTextField);
-
+        contentPane.add(pieceTypeCombobox);
         contentPane.add(newPieceCoordinateEnterButton);
 
         // Add listeners
@@ -74,9 +76,11 @@ class GipfWindow extends JFrame {
             Position newPiecePosition = new Position(colName, rowNumber);
 
             if (gipfBoard.isPositionOnBoard(newPiecePosition)) {
-                addDebugInfo("Placing new piece at " + newPiecePosition.getName());
+                GipfBoard.Piece pieceType = (GipfBoard.Piece) pieceTypeCombobox.getModel().getSelectedItem();
 
-                gipfBoard.getPieceMap().put(newPiecePosition, GipfBoard.Piece.WHITE_SINGLE);
+                addDebugInfo("Placing new " + pieceType + " at " + newPiecePosition.getName());
+
+                gipfBoard.getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
                 addDebugInfo("Position " + newPiecePosition.getName() + " is invalid");
