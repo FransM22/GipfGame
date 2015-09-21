@@ -122,12 +122,10 @@ public class GipfBoard {
 
         // See google doc for explanation of the formula
         return !(row <= 0 ||
-                row - col <= -5 ||
                 col >= 10 ||
                 row >= 10 ||
                 row - col >= 5 ||
                 col <= 0);
-
     }
 
     /**

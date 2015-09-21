@@ -91,7 +91,7 @@ public final class Position {
 
     @Override
     public String toString() {
-        return "Pos: " + getColName() + getRowNumber();// + " posId=(" + posId + ")";
+        return "Pos: " + getColName() + getRowNumber() + " posId=(" + posId + ")";
     }
 
     @Override
