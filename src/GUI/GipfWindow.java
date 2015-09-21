@@ -6,12 +6,14 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * The GipfWindow uses a GipfBoardComponent to show the board. More information about the game can be added to the window
+ *
  * Created by frans on 18-9-2015.
  */
-public class GipfWindow extends JFrame {
-    JPanel contentPane;
+class GipfWindow extends JFrame {
+    private final JPanel contentPane;
 
-    public GipfWindow() throws HeadlessException {
+    private GipfWindow() throws HeadlessException {
         super();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -1,11 +1,14 @@
 package GameLogic;
 
 /**
+ * A position is determined by a position id. A position id can be converted to a col name (a..i) and a row
+ * number (1..9), and vice versa.
+ *
  * Created by frans on 17-9-2015.
  */
 
 public final class Position {
-    int posId;
+    final int posId;    // Final, because a different position is supposed to be a different object
 
     /**
      * Set a position with only a position id (internal notation)
@@ -33,7 +36,7 @@ public final class Position {
     /**
      * Duplicate a position
      *
-     * @param p
+     * @param p the position that should be deleted
      */
     public Position(Position p) {
         this.posId = p.posId;

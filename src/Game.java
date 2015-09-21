@@ -3,9 +3,11 @@ import GameLogic.Move;
 import GameLogic.Position;
 
 /**
+ * The Game class keeps track of the running game.
+ *
  * Created by frans on 7-9-2015.
  */
-public class Game {
+class Game {
     public static void main(String argv[]) {
         GipfBoard gipfBoard = new GipfBoard();
 

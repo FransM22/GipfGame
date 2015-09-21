@@ -44,7 +44,7 @@ public class GipfBoard {
      * Then the pieces are moved in the direction of the move,
      * and finally pieces that need to be removed are removed from the board
      *
-     * @param m
+     * @param m the move that is applied
      */
     public void applyMove(Move m) {
         // Add the piece to the new pieces
@@ -53,9 +53,8 @@ public class GipfBoard {
         movePiecesTowards(m.startPos, m.direction);
 
         // Remove the pieces that need to be removed
-        for (Position p : m.removedPiecePositions) {
-            pieceMap.remove(p);
-        }
+        // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
+        m.removedPiecePositions.forEach(pieceMap::remove);
     }
 
     public int getDeltaPos(Move.Direction direction) {
@@ -115,7 +114,7 @@ public class GipfBoard {
     /**
      * Checks whether the position is located on the board
      *
-     * @param p
+     * @param p the position of which should be determined whether it is empty
      */
     private boolean isPositionOnBoard(Position p) {
         int col = p.getColName() - 'a' + 1;
@@ -135,7 +134,6 @@ public class GipfBoard {
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
      */
     public enum Piece {
-        EMPTY,          // .
         WHITE_SINGLE,   // w
         WHITE_GIPF,     // W
         BLACK_SINGLE,   // b
@@ -144,8 +142,6 @@ public class GipfBoard {
         @Override
         public String toString() {
             switch (super.name()) {
-                case "EMPTY":
-                    return ".";
                 case "WHITE_SINGLE":
                     return "w";
                 case "WHITE_GIPF":

@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Stores all information related to a move operation. Can be used to track back to a previous state on the board, or to
+ * determine which possible moves there are from a given board state.
+ *
  * Created by frans on 9-9-2015.
  */
 public class Move {

@@ -11,39 +11,42 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
+ * The GipfBoardComponent is a Swing component which can be embedded in a JPanel. This component only shows the board itself
+ * and everyting that is positioned on it.
+ *
  * Created by frans on 18-9-2015.
  */
-public class GipfBoardComponent extends JComponent {
+class GipfBoardComponent extends JComponent {
     // Variables which can be changed to change the look
-    final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
-    final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
-    final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions
-    final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
-    final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    final int marginSize = 10;                              // The margin on the sides of the board
-    final int filledCircleSize = 10;                        // The size of the filled circles
+    private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
+    private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
+    private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions
+    private final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
+    private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
+    private final int marginSize = 10;                              // The margin on the sides of the board
+    private final int filledCircleSize = 10;                        // The size of the filled circles
 
 
     // Line types
-    final Stroke normalPieceStroke = new BasicStroke(1);
-    final Stroke gipfPieceStroke = new BasicStroke(3);
+    private final Stroke normalPieceStroke = new BasicStroke(1);
+    private final Stroke gipfPieceStroke = new BasicStroke(3);
 
     // Colors used
-    final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
-    final Color centerColor = new Color(0xE5FFCE);              // The hexagon in the center
-    final Color lineColor = new Color(0x8D8473);                // The lines showing how pieces are allowed to move
-    final Color whiteSingleColor = new Color(0x525252);         // Color of the normal white piece
-    final Color whiteGipfColor = whiteSingleColor;              // Color of the white gipf piece
-    final Color blackSingleColor = new Color(0xF9F9F9);         // Color of the normal black piece
-    final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
-    final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
-    final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
-    final Color positionNameColor = Color.red;                  // Color of position names
-    final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
-    final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
+    private final Color backgroundColor = new Color(0xD2FF9B);          // The background of the component
+    private final Color centerColor = new Color(0xE5FFCE);              // The hexagon in the center
+    private final Color lineColor = new Color(0x8D8473);                // The lines showing how pieces are allowed to move
+    private final Color whiteSingleColor = new Color(0x525252);         // Color of the normal white piece
+    private final Color whiteGipfColor = whiteSingleColor;              // Color of the white gipf piece
+    private final Color blackSingleColor = new Color(0xF9F9F9);         // Color of the normal black piece
+    private final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
+    private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
+    private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
+    private final Color positionNameColor = Color.red;                  // Color of position names
+    private final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
+    private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
 
     // These mark the center hexagon on the obard
-    Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
+    private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
             new Position('b', 2),
             new Position('b', 5),
             new Position('e', 8),
@@ -52,7 +55,7 @@ public class GipfBoardComponent extends JComponent {
             new Position('e', 2)
     };
 
-    Position[] topAndBottomPositions = {
+    private final Position[] topAndBottomPositions = {
             new Position('a', 1),
             new Position('b', 1),
             new Position('c', 1),
@@ -73,7 +76,7 @@ public class GipfBoardComponent extends JComponent {
             new Position('i', 5)
     };
 
-    Position[] sidePositions = {
+    private final Position[] sidePositions = {
             new Position('a', 2),
             new Position('a', 3),
             new Position('a', 4),
@@ -83,11 +86,11 @@ public class GipfBoardComponent extends JComponent {
     };
 
     // These positions are named on the board
-    Position[] namedPositionsOnBoard = topAndBottomPositions;
+    private final Position[] namedPositionsOnBoard = topAndBottomPositions;
 
     // These positions have a bigger on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
-    Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
+    private final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
 
     /*
      * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
@@ -96,7 +99,7 @@ public class GipfBoardComponent extends JComponent {
      * line can be drawn.
      * Each set of parallel lines is divided into two, because the direction in which the points move changes halfway
      */
-    LineSet[] lineSets = {
+    private final LineSet[] lineSets = {
             new LineSet(new Position('a', 2), new Position('f', 1), Move.Direction.NORTH, Move.Direction.NORTH_EAST, 4),
             new LineSet(new Position('b', 6), new Position('i', 2), Move.Direction.NORTH_EAST, Move.Direction.NORTH, 3),
             new LineSet(new Position('d', 1), new Position('i', 2), Move.Direction.NORTH_WEST, Move.Direction.NORTH, 4),
@@ -104,13 +107,13 @@ public class GipfBoardComponent extends JComponent {
             new LineSet(new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
             new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
     };
-    GipfBoard gipfBoard;
+    private final GipfBoard gipfBoard;
 
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
      *
-     * @param gipfBoard
+     * @param gipfBoard the GipfBoard that is shown in the GipfBoardComponent
      */
     public GipfBoardComponent(GipfBoard gipfBoard) {
         this.gipfBoard = gipfBoard;
@@ -149,7 +152,7 @@ public class GipfBoardComponent extends JComponent {
     /**
      * Main paint class, from here all the other methods that paint something are called
      *
-     * @param g
+     * @param g the Graphics object to which is drawn
      */
     @Override
     protected void paintComponent(Graphics g) {
@@ -173,7 +176,7 @@ public class GipfBoardComponent extends JComponent {
      * Paints the board itself, including the background, center part, and the lines. This method is usually called from
      * the paintComponent method.
      *
-     * @param g2
+     * @param g2 the Graphics2D object to which is drawn
      */
     private void paintBoard(Graphics2D g2) {
         // Paint the background of the component
@@ -291,7 +294,7 @@ public class GipfBoardComponent extends JComponent {
 
     private int positionToScreenY(Position p) {
         int height = getHeight() - (2 * marginSize);
-        int colNumber = p.getColName() - 'a' + 1;               // Colnumber, starting at 1
+        int colNumber = p.getColName() - 'a' + 1;               // Column number, starting at 1
         double rowHeight = height / (nrOfRowsOnGipfBoard - 1);  // The first and last piece are shown at the beginning and end, so we only need nrOfRows - 1 equally divided rows
 
         if (colNumber <= 5) {
@@ -308,11 +311,11 @@ public class GipfBoardComponent extends JComponent {
     }
 
     private class LineSet {
-        Position start;
-        Position end;
-        Move.Direction nextStart;
-        Move.Direction nextEnd;
-        int nr;
+        final Position start;
+        final Position end;
+        final Move.Direction nextStart;
+        final Move.Direction nextEnd;
+        final int nr;
 
         public LineSet(Position start, Position end, Move.Direction nextStart, Move.Direction nextEnd, int nr) {
             this.start = start;
