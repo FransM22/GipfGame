@@ -319,39 +319,42 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         return (p.getColName() - 'a') * (width / (nrOfColumnsOnGipfBoard - 1)) + marginSize;
     }
 
-    private char screenXToColumnName(int screenX) {
+    private Position screenCoordinateToPosition(int screenX, int screenY) {
+        // Calculate the column and row sizes
         int columnWidth = (getWidth() - (2 * marginSize)) / (nrOfColumnsOnGipfBoard - 1);
-        int xOnBoard = screenX - marginSize;
-
-        int columnNrInt = (int) Math.round((double) xOnBoard / columnWidth);
-//        System.out.println("ColumnNr:  " + columnNrInt);
-        return (char) (columnNrInt + 'a');
-    }
-
-    private int screenYToRowNumber(int screenX, int screenY) {
         int rowHeight = (getHeight() - (2 * marginSize)) / (nrOfRowsOnGipfBoard - 1);
+
+        // Take into account the margins. Also flip the y coordinate so we can access the board coordinates start from
+        // row 1.
+        int xOnBoard = screenX - marginSize;
         int yOnBoard = getHeight() - screenY - marginSize;
 
-        int rowNrInt = (int) Math.round((double) yOnBoard / rowHeight) + 1;         // At this point it is assumed that all rows are on the same y-level
-        double horizontalDistanceFromCenter = Math.abs(0.5 * getWidth() - screenX);
-        double columnWidth = ((getWidth()) - (2* marginSize)) / (nrOfColumnsOnGipfBoard - 1);
+        int columnNumber = (int) ((Math.round((double) xOnBoard / columnWidth)));   // The column number, starting at 0 (!)
+        char columnName = (char) (columnNumber + 'a');
 
-        double columnsFromCenter = horizontalDistanceFromCenter / columnWidth;
-        System.out.println("columns from center: " + columnsFromCenter);
-        System.out.println("RowNr:  " + ((double) yOnBoard / rowHeight) + 1);
+        // These numbers do not take into account that the rows are not horizontally. This means that the result is only
+        // correct for the middle column
+        double rowNumberStartFromBottom = (double) yOnBoard / rowHeight;
+        int horizontalDistanceFromCenter = Math.abs(screenX - (getWidth()/2));
 
-        int rowNrFixed = (int) (rowNrInt - Math.round(columnsFromCenter * 0.5));
-        return rowNrFixed;
+        double columnsFromCenter = (double) horizontalDistanceFromCenter / columnWidth;
+
+        // This row number is the correct row number according to the letter notation (a3). This means that the first row
+        // is number 1.
+        double rowNumberFixed = (rowNumberStartFromBottom - (0.5 * columnsFromCenter)) + 1;
+        int rowNumberInt = (int) Math.round(rowNumberFixed);
+
+        return new Position(columnName, rowNumberInt);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("X: " + e.getX() + ", Y: " + e.getY());
+//        System.out.println("X: " + e.getX() + ", Y: " + e.getY());
 
-        gipfBoard.setPiece(new Position(
-                screenXToColumnName(e.getX()),
-                screenYToRowNumber(e.getX(), e.getY())),
+        gipfBoard.setPiece(
+                screenCoordinateToPosition(e.getX(), e.getY()),
                 GipfBoard.Piece.BLACK_SINGLE);
+
         repaint();
     }
 
