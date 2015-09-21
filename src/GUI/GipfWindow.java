@@ -12,7 +12,6 @@ import java.awt.*;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
-    private final JPanel contentPane;
     private GipfBoard gipfBoard;
     private GipfBoardComponent gipfBoardComponent;
     private JTextField newPieceCoordinateTextField;
@@ -23,7 +22,7 @@ class GipfWindow extends JFrame {
         super();
 
         // Initialize the fields
-        contentPane = new JPanel();
+        final JPanel contentPane = new JPanel();
         newPieceCoordinateTextField = new JTextField();
         newPieceCoordinateEnterButton = new JButton("Enter");
         gipfBoard = new GipfBoard();
@@ -32,6 +31,7 @@ class GipfWindow extends JFrame {
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
+        gipfBoardComponent.addMouseListener(gipfBoardComponent);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("GIPF");

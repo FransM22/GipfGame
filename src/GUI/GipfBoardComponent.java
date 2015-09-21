@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 /**
  * The GipfBoardComponent is a Swing component which can be embedded in a JPanel. This component only shows the board itself
- * and everyting that is positioned on it.
+ * and everything that is positioned on it.
  *
  * Created by frans on 18-9-2015.
  */
@@ -25,11 +25,11 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final boolean antiAliasingEnabled = true;               // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
 
     // Variables which can be changed to change the look
-    private final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
+    private final int pieceSize = 55;                               // The size in pixels in which the pieces are displayed
     private final int nrOfColumnsOnGipfBoard = 9;                   // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
     private final int nrOfRowsOnGipfBoard = 9;                      // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    private final int marginSize = 10;                              // The margin on the sides of the board
-    private final int filledCircleSize = 10;                        // The size of the filled circles
+    private final int marginSize = 20;                              // The margin on the sides of the board
+    private final int filledCircleSize = 15;                        // The size of the filled circles
 
 
     // Line types
@@ -50,7 +50,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color filledCircleColor = new Color(0xD4EEBD);        // Color of the circles that are filled
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
 
-    // These mark the center hexagon on the obard
+    // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
             new Position('b', 2),
             new Position('b', 5),
@@ -122,13 +122,14 @@ class GipfBoardComponent extends JComponent implements MouseListener{
      */
     public GipfBoardComponent(GipfBoard gipfBoard) {
         this.gipfBoard = gipfBoard;
-        addMouseListener(this);
 
         setPreferredSize(new Dimension(600, 600));
     }
 
     public static void main(String argv[]) {
         GipfBoard gb = new GipfBoard();
+        GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(gb);
+        gipfBoardComponent.addMouseListener(gipfBoardComponent);
 
         // These are only for checking whether the component works
         gb.setPiece(new Position('b', 2), GipfBoard.Piece.WHITE_SINGLE);
@@ -149,7 +150,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         JFrame frame = new JFrame();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new GipfBoardComponent(gb));
+        frame.getContentPane().add(gipfBoardComponent);
 
         frame.pack();
         frame.setVisible(true);
