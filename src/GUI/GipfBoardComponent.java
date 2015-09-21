@@ -1,5 +1,6 @@
 package GUI;
 
+import GameLogic.Game;
 import GameLogic.GipfBoard;
 import GameLogic.Move;
 import GameLogic.Position;
@@ -9,7 +10,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -38,7 +41,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final int hoverUpdateIntervalMs = 100;                  // The update interval in milliseconds of the component when the hover circle is displayed
 
     // Line types
-    private final Stroke normalPieceStroke = new BasicStroke(1);
+    private final Stroke normalPieceStroke = new BasicStroke(4.0f);
     private final Stroke gipfPieceStroke = new BasicStroke(4.0f);
     private final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[] {6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
 
@@ -54,11 +57,11 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
     private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
     private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
-    private final Color positionNameColor = new Color(0xFF0000);        // Color of position names
+    private final Color positionNameColor = new Color(0x8D8473);        // Color of position names
     private final Color filledCircleColor = new Color(0xD2FF9B);        // Color of the circles that are filled
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
     private final Color hoverBorderColor = new Color(0x8D8473);
-    private final Color hoverFillColor = new Color(0xFFFFFB);
+    private final Color hoverFillColor = new Color(0xD2FF9B);
 
     // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -106,6 +109,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     private final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
+    private Set<Position> selectablePositions = new HashSet<>(Arrays.asList(filledCirclePositions));
+    private Position selectedPosition;                                                                  // The position that is currently selected for a new move
 
     /*
      * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
@@ -122,7 +127,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
             new LineSet(new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
             new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
     };
-    private final GipfBoard gipfBoard;
+    private final Game game;
     private Position currentHoverPosition = null;
     private Thread hoverThread;
 
@@ -132,32 +137,33 @@ class GipfBoardComponent extends JComponent implements MouseListener{
      *
      * @param gipfBoard the GipfBoard that is shown in the GipfBoardComponent
      */
-    public GipfBoardComponent(GipfBoard gipfBoard) {
-        this.gipfBoard = gipfBoard;
+    public GipfBoardComponent(Game game) {
+        this.game = game;
 
         setPreferredSize(new Dimension(600, 600));
     }
 
     public static void main(String argv[]) {
-        GipfBoard gb = new GipfBoard();
-        GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(gb);
+        Game game = new Game();
+        GipfBoard gb = game.getGipfBoard();
+        GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
         gipfBoardComponent.addMouseListener(gipfBoardComponent);
 
         // These are only for checking whether the component works
-        gb.setPiece(new Position('b', 2), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('b', 3), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('b', 4), GipfBoard.Piece.WHITE_SINGLE);
-        gb.setPiece(new Position('b', 5), GipfBoard.Piece.WHITE_SINGLE);
+        game.setPiece(new Position('b', 2), Game.Piece.WHITE_SINGLE);
+        game.setPiece(new Position('b', 3), Game.Piece.WHITE_SINGLE);
+        game.setPiece(new Position('b', 4), Game.Piece.WHITE_SINGLE);
+        game.setPiece(new Position('b', 5), Game.Piece.WHITE_SINGLE);
 
-        gb.setPiece(new Position('c', 6), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('d', 7), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('e', 8), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('f', 7), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('g', 6), GipfBoard.Piece.BLACK_SINGLE);
-        gb.setPiece(new Position('h', 5), GipfBoard.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('c', 6), Game.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('d', 7), Game.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('e', 8), Game.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('f', 7), Game.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('g', 6), Game.Piece.BLACK_SINGLE);
+        game.setPiece(new Position('h', 5), Game.Piece.BLACK_SINGLE);
 
-        gb.setPiece(new Position('e', 4), GipfBoard.Piece.BLACK_GIPF);
-        gb.setPiece(new Position('f', 6), GipfBoard.Piece.WHITE_GIPF);
+        game.setPiece(new Position('e', 4), Game.Piece.BLACK_GIPF);
+        game.setPiece(new Position('f', 6), Game.Piece.WHITE_GIPF);
 
         JFrame frame = new JFrame();
 
@@ -192,6 +198,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         }
         paintHoverCircle(g2, currentHoverPosition);
         paintPieces(g2);
+        paintSelectedPosition(g2);
         drawPositionNames(g2);
     }
 
@@ -218,8 +225,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         g2.setColor(lineColor);
 
         for (LineSet lineSet : lineSets) {
-            int startDeltaPos = gipfBoard.getDeltaPos(lineSet.nextStart);
-            int endDeltaPos = gipfBoard.getDeltaPos(lineSet.nextEnd);
+            int startDeltaPos = game.getDeltaPos(lineSet.nextStart);
+            int endDeltaPos = game.getDeltaPos(lineSet.nextEnd);
 
             for (int lineNr = 0; lineNr < lineSet.nr; lineNr++) {
                 Position start = new Position(lineSet.start.getPosId() + lineNr * startDeltaPos);
@@ -238,6 +245,12 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private void paintHoverCircle(Graphics2D g2, Position position) {
         if (position != null) {
             centerCircleOn(g2, positionToScreenX(position), positionToScreenY(position), hoverCircleSize, hoverFillColor, hoverBorderColor, hoverPositionStroke);
+        }
+    }
+
+    private void paintSelectedPosition(Graphics2D g2) {
+        if (selectedPosition != null) {
+            centerCircleOn(g2, positionToScreenX(selectedPosition), positionToScreenY(selectedPosition), pieceSize, whiteSingleColor, singlePieceBorderColor, hoverPositionStroke);
         }
     }
 
@@ -270,7 +283,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         }
     }
 
-    private void drawPiece(Graphics2D g2, Position position, GipfBoard.Piece piece) {
+    private void drawPiece(Graphics2D g2, Position position, Game.Piece piece) {
         Color fillColor = null;     // Needs an initial value
         Color borderColor = null;   // Needs an initial value
         Stroke strokeType = normalPieceStroke;
@@ -310,14 +323,14 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         for (Position position : namedPositionsOnBoard) {
             g2.setColor(positionNameColor);
             g2.setFont(positionNameFont);
-            g2.drawString(position.getName(), positionToScreenX(position) + 10, positionToScreenY(position));   // x + 10, to make text not overlap with lines
+            g2.drawString(position.getName(), positionToScreenX(position) + 10, positionToScreenY(position) + 5);   // Translated by (10, 5), to make text not overlap with lines
         }
     }
 
     private void paintPieces(Graphics2D g2) {
-        for (Map.Entry<Position, GipfBoard.Piece> entry : gipfBoard.getPieceMap().entrySet()) {
+        for (Map.Entry<Position, Game.Piece> entry : game.getGipfBoard().getPieceMap().entrySet()) {
             Position position = entry.getKey();
-            GipfBoard.Piece piece = entry.getValue();
+            Game.Piece piece = entry.getValue();
 
             drawPiece(g2, position, piece);
         }
@@ -371,11 +384,14 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        gipfBoard.setPiece(
-                screenCoordinateToPosition(e.getX(), e.getY()),
-                GipfBoard.Piece.BLACK_SINGLE);
+        Position selectedPosition = screenCoordinateToPosition(e.getX(), e.getY());
 
-        repaint();
+        // Only allow to put pieces on selectable positions
+        if (selectablePositions.contains(selectedPosition)) {
+            this.selectedPosition = selectedPosition;
+
+            repaint();
+        }
     }
 
     @Override
@@ -449,9 +465,9 @@ class GipfBoardComponent extends JComponent implements MouseListener{
                 // position is actually located on the board
                 Position newHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                 if (newHoverPosition != previousPosition) {
-                    if (gipfBoardComponent.gipfBoard.isPositionOnBoard(newHoverPosition)) {
-                        currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
-                        previousPosition = currentHoverPosition;
+                    if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition) && selectablePositions.contains(newHoverPosition)) {
+                            currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                            previousPosition = currentHoverPosition;
                     }
                     else {
                         currentHoverPosition = null;

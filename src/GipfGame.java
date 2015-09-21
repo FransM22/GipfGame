@@ -1,38 +1,40 @@
+import GameLogic.Game;
 import GameLogic.GipfBoard;
 import GameLogic.Move;
 import GameLogic.Position;
 
 /**
- * The Game class keeps track of the running game.
- *
+ * The GipfGame class keeps track of the running game.
+ * <p/>
  * Created by frans on 7-9-2015.
  */
-class Game {
+class GipfGame {
     public static void main(String argv[]) {
-        GipfBoard gipfBoard = new GipfBoard();
+        Game game = new Game();
+        GipfBoard gipfBoard = game.getGipfBoard();
 
         printBoard(gipfBoard);
 
         System.out.println("Adding piece");
         Move m = new Move(
-                GipfBoard.Piece.WHITE_GIPF,
+                Game.Piece.WHITE_GIPF,
                 new Position('a', 5),
                 Move.Direction.SOUTH_EAST
         );
 
         Move m2 = new Move(
-                GipfBoard.Piece.BLACK_GIPF,
+                Game.Piece.BLACK_GIPF,
                 new Position('a', 5),
                 Move.Direction.SOUTH_EAST
         );
 
-        gipfBoard.setPiece(new Position('e', 5), GipfBoard.Piece.WHITE_SINGLE);
+        game.setPiece(new Position('e', 5), Game.Piece.WHITE_SINGLE);
 
-        gipfBoard.applyMove(m);
+        game.applyMove(m);
         printBoard(gipfBoard);
-        gipfBoard.applyMove(m2);
+        game.applyMove(m2);
         printBoard(gipfBoard);
-        gipfBoard.applyMove(m2);
+        game.applyMove(m2);
         printBoard(gipfBoard);
 
         System.out.println("Gipf game started");

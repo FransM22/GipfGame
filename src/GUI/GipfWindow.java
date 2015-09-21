@@ -1,5 +1,6 @@
 package GUI;
 
+import GameLogic.Game;
 import GameLogic.GipfBoard;
 import GameLogic.Position;
 
@@ -12,12 +13,12 @@ import java.awt.*;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
-    private GipfBoard gipfBoard;
+    private Game game;
     private GipfBoardComponent gipfBoardComponent;
     private JTextField newPieceCoordinateTextField;
     private JButton newPieceCoordinateEnterButton;
     private JTextArea debugTextArea;
-    private JComboBox<GipfBoard.Piece> pieceTypeCombobox;
+    private JComboBox<Game.Piece> pieceTypeCombobox;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -26,10 +27,10 @@ class GipfWindow extends JFrame {
         final JPanel contentPane = new JPanel();
         newPieceCoordinateTextField = new JTextField();
         newPieceCoordinateEnterButton = new JButton("Enter");
-        gipfBoard = new GipfBoard();
-        gipfBoardComponent = new GipfBoardComponent(gipfBoard);
+        game = new Game();
+        gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new JTextArea("Debug information\n");
-        pieceTypeCombobox = new JComboBox<>(GipfBoard.Piece.values());
+        pieceTypeCombobox = new JComboBox<>(Game.Piece.values());
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -75,12 +76,12 @@ class GipfWindow extends JFrame {
             int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
             Position newPiecePosition = new Position(colName, rowNumber);
 
-            if (gipfBoard.isPositionOnBoard(newPiecePosition)) {
-                GipfBoard.Piece pieceType = (GipfBoard.Piece) pieceTypeCombobox.getModel().getSelectedItem();
+            if (game.isPositionOnBoard(newPiecePosition)) {
+                Game.Piece pieceType = (Game.Piece) pieceTypeCombobox.getModel().getSelectedItem();
 
                 addDebugInfo("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
-                gipfBoard.getPieceMap().put(newPiecePosition, pieceType);
+                game.getGipfBoard().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
                 addDebugInfo("Position " + newPiecePosition.getName() + " is invalid");

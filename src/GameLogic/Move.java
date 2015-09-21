@@ -10,7 +10,7 @@ import java.util.Set;
  * Created by frans on 9-9-2015.
  */
 public class Move {
-    GipfBoard.Piece addedPiece;             // The piece that is added to the board
+    Game.Piece addedPiece;             // The piece that is added to the board
     Position startPos;                      // A newly added piece moves from the startPos to the endPos
     Direction direction;                    // The direction in which the piece moves
     Set<Position> removedPiecePositions;    // Pieces that are removed during this move
@@ -23,7 +23,7 @@ public class Move {
      * @param direction             the direction in which the newly added piece is moved
      * @param removedPiecePositions the pieces that are removed
      */
-    public Move(GipfBoard.Piece addedPiece,
+    public Move(Game.Piece addedPiece,
                 Position startPos,
                 Direction direction,
                 Set<Position> removedPiecePositions) {
@@ -40,7 +40,7 @@ public class Move {
      * @param startPos   the position where the piece is added
      * @param direction  the direction in which the piece moves
      */
-    public Move(GipfBoard.Piece addedPiece,
+    public Move(Game.Piece addedPiece,
                 Position startPos,
                 Direction direction) {
         this.addedPiece = addedPiece;
