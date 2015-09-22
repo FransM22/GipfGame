@@ -1,12 +1,16 @@
 package GUI.GipfBoardComponent;
 
+import GameLogic.Position;
+
 import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Singleton type class. Produces a single instance that will return values and objects related to the behaviour of the
  * program.
  * UIval stands for User Interface Values, but is shortened to reduce verbosity.
- *
+ * <p/>
  * Created by frans on 22-9-2015.
  */
 public class UIval {
@@ -41,6 +45,49 @@ public class UIval {
     public final Color gipfPieceBorderColor = new Color(0xDA0000);       // Border color of gipf pieces
     public final Color hoverBorderColor = lineColor;           // The border color of positions that is hovered over
     public final Color hoverFillColor = backgroundColor;       // The filling color of positions that is hovered over
+
+    // These mark the center hexagon on the board
+    public final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
+            new Position('b', 2),
+            new Position('b', 5),
+            new Position('e', 8),
+            new Position('h', 5),
+            new Position('h', 2),
+            new Position('e', 2)
+    };
+    private final Position[] topAndBottomPositions = {
+            new Position('a', 1),
+            new Position('b', 1),
+            new Position('c', 1),
+            new Position('d', 1),
+            new Position('e', 1),
+            new Position('f', 1),
+            new Position('g', 1),
+            new Position('h', 1),
+            new Position('i', 1),
+            new Position('a', 5),
+            new Position('b', 6),
+            new Position('c', 7),
+            new Position('d', 8),
+            new Position('e', 9),
+            new Position('f', 8),
+            new Position('g', 7),
+            new Position('h', 6),
+            new Position('i', 5)
+    };
+    private final Position[] sidePositions = {
+            new Position('a', 2),
+            new Position('a', 3),
+            new Position('a', 4),
+            new Position('i', 2),
+            new Position('i', 3),
+            new Position('i', 4)
+    };
+    // These positions are named on the board
+    public final Position[] namedPositionsOnBoard = topAndBottomPositions;
+    // These positions have a circle on their position
+    // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
+    public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
 
     protected UIval() {
         // Exists only to prohibit instantiation

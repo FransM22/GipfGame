@@ -1,5 +1,6 @@
 package GUI.GipfBoardComponent;
 
+import GUI.GipfBoardComponent.DrawableObjects.*;
 import GameLogic.Game;
 import GameLogic.Move;
 import GameLogic.Position;
@@ -8,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -19,71 +19,15 @@ import java.util.stream.Stream;
  * Created by frans on 18-9-2015.
  */
 public class GipfBoardComponent extends JComponent {
-    final Game game;
-    // These mark the center hexagon on the board
-    private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
-            new Position('b', 2),
-            new Position('b', 5),
-            new Position('e', 8),
-            new Position('h', 5),
-            new Position('h', 2),
-            new Position('e', 2)
-    };
-    private final Position[] topAndBottomPositions = {
-            new Position('a', 1),
-            new Position('b', 1),
-            new Position('c', 1),
-            new Position('d', 1),
-            new Position('e', 1),
-            new Position('f', 1),
-            new Position('g', 1),
-            new Position('h', 1),
-            new Position('i', 1),
-            new Position('a', 5),
-            new Position('b', 6),
-            new Position('c', 7),
-            new Position('d', 8),
-            new Position('e', 9),
-            new Position('f', 8),
-            new Position('g', 7),
-            new Position('h', 6),
-            new Position('i', 5)
-    };
-    private final Position[] sidePositions = {
-            new Position('a', 2),
-            new Position('a', 3),
-            new Position('a', 4),
-            new Position('i', 2),
-            new Position('i', 3),
-            new Position('i', 4)
-    };
-    // These positions are named on the board
-    private final Position[] namedPositionsOnBoard = topAndBottomPositions;
-    // These positions have a circle on their position
-    // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
-    private final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
-    /*
-     * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
-     * Each line set contains a start and endpoint of a line on the board. In addition to each of these two points a direction
-     * is stored, in which the next (parallel) line can be found. The last number indicates how many times a parallel
-     * line can be drawn.
-     * Each set of parallel lines is divided into two, because the direction in which the points move changes halfway
-     */
-    private final LineSet[] lineSets = {
-            new LineSet(new Position('a', 2), new Position('f', 1), Move.Direction.NORTH, Move.Direction.NORTH_EAST, 4),
-            new LineSet(new Position('b', 6), new Position('i', 2), Move.Direction.NORTH_EAST, Move.Direction.NORTH, 3),
-            new LineSet(new Position('d', 1), new Position('i', 2), Move.Direction.NORTH_WEST, Move.Direction.NORTH, 4),
-            new LineSet(new Position('a', 2), new Position('h', 6), Move.Direction.NORTH, Move.Direction.NORTH_WEST, 3),
-            new LineSet(new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
-            new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
-    };
+    public final Game game;
+
 
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMoueListener
-    Set<Position> selectablePositions = new HashSet<>(Arrays.asList(filledCirclePositions));                    // Default; needs to be accessible from GipfBoardComponentMouseListener
-    Position selectedPosition;                                                                                  // The position that is currently selected for a new move
+    Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));                    // Default; needs to be accessible from GipfBoardComponentMouseListener
+    public Position selectedPosition;                                                                                  // The position that is currently selected for a new move
     Set<Position> moveToPositions = new HashSet<>(Arrays.asList(new Position('h', 2), new Position('h', 3)));
-    Position selectedMoveToPosition;
-    Position currentHoverPosition = null;
+    public Position selectedMoveToPosition;
+    public Position currentHoverPosition = null;
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
@@ -134,8 +78,14 @@ public class GipfBoardComponent extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        PositionHelper positionHelper = new PositionHelper(this);
-        GipfPiecePainter gipfPiecePainter = new GipfPiecePainter(this);
+
+        DrawableObject gipfPieces = new GipfPieces(g2, this);
+        DrawableObject selectedPosition = new SelectedPosition(g2, this);
+        DrawableObject hoverCircle = new HoverCircle(g2, this);
+        DrawableObject drawableGipfBoard = new DrawableGipfBoard(g2, this);
+        DrawableObject filledCircles = new FilledCircles(g2, this);
+        DrawableObject selectedMoveToArrow = new SelectedMoveToArrow(g2, this);
+        DrawableObject positionNames = new PositionNames(g2, this);
 
         if (UIval.get().antiAliasingEnabled) {
             // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
@@ -146,112 +96,12 @@ public class GipfBoardComponent extends JComponent {
 
         // The order of the following methods determines the order in which the elements are drawn. A method on top indicates
         // that the object is drawn at the bottom.
-        paintBoard(g2, positionHelper);
-        paintFilledCircles(g2, positionHelper);
-        paintSelectedMoveToArrow(g2, positionHelper);
-        gipfPiecePainter.paintHoverCircle(g2, positionHelper);
-        paintPieces(g2, gipfPiecePainter, positionHelper);
-        gipfPiecePainter.paintSelectedPosition(g2, positionHelper);
-        drawPositionNames(g2, positionHelper);
-    }
-
-    /**
-     * Paints the board itself, including the background, center part, and the lines. This method is usually called from
-     * the paintComponent method.
-     *
-     * @param g2             the Graphics2D object to which is drawn
-     * @param positionHelper
-     */
-    private void paintBoard(Graphics2D g2, PositionHelper positionHelper) {
-        // Paint the background of the component
-        g2.setColor(UIval.get().backgroundColor);
-        g2.fillRect(0, 0, getWidth(), getHeight());
-
-        g2.setColor(UIval.get().centerColor);
-        // Java8 stuff. Basically maps each of the positions in cornerPositions to a x and y value.
-        g2.fillPolygon(
-                Arrays.stream(centerCornerPositions).mapToInt(positionHelper::positionToScreenX).toArray(),
-                Arrays.stream(centerCornerPositions).mapToInt(positionHelper::positionToScreenY).toArray(),
-                centerCornerPositions.length
-        );
-
-        // Draw the lines
-        g2.setColor(UIval.get().lineColor);
-
-        for (LineSet lineSet : lineSets) {
-            int startDeltaPos = game.getDeltaPos(lineSet.nextStart);
-            int endDeltaPos = game.getDeltaPos(lineSet.nextEnd);
-
-            for (int lineNr = 0; lineNr < lineSet.nr; lineNr++) {
-                Position start = new Position(lineSet.start.getPosId() + lineNr * startDeltaPos);
-                Position end = new Position(lineSet.end.getPosId() + lineNr * endDeltaPos);
-
-                g2.drawLine(
-                        positionHelper.positionToScreenX(start),
-                        positionHelper.positionToScreenY(start),
-                        positionHelper.positionToScreenX(end),
-                        positionHelper.positionToScreenY(end)
-                );
-            }
-        }
-    }
-
-    private void paintSelectedMoveToArrow(Graphics2D g2, PositionHelper positionHelper) {
-        if (selectedMoveToPosition != null) {
-            // Get the allowed positions from here
-            g2.setColor(UIval.get().moveToArrowColor);
-            g2.setStroke(UIval.get().moveToArrowStroke);
-            g2.drawLine(
-                    positionHelper.positionToScreenX(selectedPosition),
-                    positionHelper.positionToScreenY(selectedPosition),
-                    positionHelper.positionToScreenX(selectedMoveToPosition),
-                    positionHelper.positionToScreenY(selectedMoveToPosition)
-            );
-        }
-    }
-
-    private void paintFilledCircles(Graphics2D g2, PositionHelper positionHelper) {
-        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
-        for (Position position : filledCirclePositions) {
-            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), UIval.get().filledCircleSize, UIval.get().filledCircleColor, UIval.get().filledCircleBorderColor);
-        }
-    }
-
-    private void drawPositionNames(Graphics2D g2, PositionHelper positionHelper) {
-        g2.setColor(UIval.get().positionNameColor);
-
-        for (Position position : namedPositionsOnBoard) {
-            g2.setColor(UIval.get().positionNameColor);
-            g2.setFont(UIval.get().positionNameFont);
-            g2.drawString(position.getName(), positionHelper.positionToScreenX(position) + 10, positionHelper.positionToScreenY(position) + 5);   // Translated by (10, 5), to make text not overlap with lines
-        }
-    }
-
-    private void paintPieces(Graphics2D g2, GipfPiecePainter gipfPiecePainter, PositionHelper positionHelper) {
-        for (Map.Entry<Position, Game.Piece> entry : game.getGipfBoard().getPieceMap().entrySet()) {
-            Position position = entry.getKey();
-            Game.Piece piece = entry.getValue();
-
-            gipfPiecePainter.drawPiece(g2, position, piece);
-        }
-
-        gipfPiecePainter.paintSelectedPosition(g2, positionHelper);
-        gipfPiecePainter.paintHoverCircle(g2, positionHelper);
-    }
-
-    private class LineSet {
-        final Position start;
-        final Position end;
-        final Move.Direction nextStart;
-        final Move.Direction nextEnd;
-        final int nr;
-
-        public LineSet(Position start, Position end, Move.Direction nextStart, Move.Direction nextEnd, int nr) {
-            this.start = start;
-            this.end = end;
-            this.nextStart = nextStart;
-            this.nextEnd = nextEnd;
-            this.nr = nr;
-        }
+        drawableGipfBoard.draw();
+        filledCircles.draw();
+        selectedMoveToArrow.draw();
+        hoverCircle.draw();
+        gipfPieces.draw();
+        selectedPosition.draw();
+        positionNames.draw();
     }
 }

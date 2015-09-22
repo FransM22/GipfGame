@@ -5,14 +5,14 @@ import java.awt.*;
 /**
  * Created by frans on 22-9-2015.
  */
-class PrimitiveShapeHelper {
+public class PrimitiveShapeHelper {
     Graphics2D g2;
 
-    PrimitiveShapeHelper(Graphics2D g2) {
+    public PrimitiveShapeHelper(Graphics2D g2) {
         this.g2 = g2;
     }
 
-    void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
+    public void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
         g2.setColor(fillColor);
         g2.fillOval(
                 x - (size / 2),
@@ -31,7 +31,7 @@ class PrimitiveShapeHelper {
         );
     }
 
-    void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor) {
+    public void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor) {
         centerCircleOn(x, y, size, fillColor, borderColor, new BasicStroke(1));
     }
 }

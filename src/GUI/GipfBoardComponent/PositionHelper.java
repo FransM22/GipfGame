@@ -5,14 +5,14 @@ import GameLogic.Position;
 /**
  * Created by frans on 22-9-2015.
  */
-class PositionHelper {
+public class PositionHelper {
     private final int componentWidth;
     private final int componentHeight;
     private final int marginSize;
     private final int nrOfRowsOnGipfBoard;
     private final int nrOfColumnsOnGipfBoard;
 
-    PositionHelper(GipfBoardComponent gipfBoardComponent) {
+    public PositionHelper(GipfBoardComponent gipfBoardComponent) {
         componentWidth = gipfBoardComponent.getWidth();
         componentHeight = gipfBoardComponent.getHeight();
         marginSize = UIval.get().marginSize;
@@ -20,7 +20,7 @@ class PositionHelper {
         nrOfColumnsOnGipfBoard = UIval.get().nrOfColumnsOnGipfBoard;
     }
 
-    int positionToScreenY(Position p) {
+    public int positionToScreenY(Position p) {
         int height = componentHeight - (2 * marginSize);
         int colNumber = p.getColName() - 'a' + 1;               // Column number, starting at 1
         double rowHeight = height / (nrOfRowsOnGipfBoard - 1);  // The first and last piece are shown at the beginning and end, so we only need nrOfRows - 1 equally divided rows
@@ -32,7 +32,7 @@ class PositionHelper {
         }
     }
 
-    int positionToScreenX(Position p) {
+    public int positionToScreenX(Position p) {
         int width = componentWidth - (2 * marginSize);
         // nrOfColumns - 1, because n columns are  divided by n - 1 equal spaces
         return (p.getColName() - 'a') * (width / (nrOfColumnsOnGipfBoard - 1)) + marginSize;
