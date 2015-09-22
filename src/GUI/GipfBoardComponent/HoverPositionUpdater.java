@@ -37,15 +37,16 @@ public class HoverPositionUpdater implements Runnable {
 
             // Only update the position if the new position is different from the old position, and if the new
             // position is actually located on the board
-            Position newHoverPosition = gipfBoardComponent.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+            PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
+            Position newHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
             if (newHoverPosition != previousPosition) {
                 if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition)) {
                     if (gipfBoardComponent.selectablePositions.contains(newHoverPosition)) {
-                        gipfBoardComponent.currentHoverPosition = gipfBoardComponent.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                        gipfBoardComponent.currentHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                         previousPosition = gipfBoardComponent.currentHoverPosition;
                         gipfBoardComponent.selectedMoveToPosition = null;
                     } else if (gipfBoardComponent.selectedPosition != null && gipfBoardComponent.moveToPositions.contains(newHoverPosition)) {
-                        gipfBoardComponent.currentHoverPosition = gipfBoardComponent.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
+                        gipfBoardComponent.currentHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                         gipfBoardComponent.selectedMoveToPosition = gipfBoardComponent.currentHoverPosition;
                         previousPosition = gipfBoardComponent.currentHoverPosition;
                     } else {

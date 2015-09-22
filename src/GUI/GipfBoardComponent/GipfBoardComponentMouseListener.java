@@ -23,7 +23,8 @@ public class GipfBoardComponentMouseListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Position selectedPosition = gipfBoardComponent.screenCoordinateToPosition(e.getX(), e.getY());
+        PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
+        Position selectedPosition = positionHelper.screenCoordinateToPosition(e.getX(), e.getY());
 
         // Only allow to put pieces on selectable positions
         if (gipfBoardComponent.selectablePositions.contains(selectedPosition)) {
