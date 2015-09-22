@@ -2,15 +2,14 @@ package GUI.GipfBoardComponent;
 
 import GUI.GipfBoardComponent.DrawableObjects.*;
 import GameLogic.Game;
-import GameLogic.Move;
 import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * The GipfBoardComponent is a Swing component which can be embedded in a JPanel. This component only shows the board itself
@@ -20,14 +19,13 @@ import java.util.stream.Stream;
  */
 public class GipfBoardComponent extends JComponent {
     public final Game game;
+    public Position selectedPosition;                                                                                   // The position that is currently selected as start of a new move
+    public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
+    public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
 
-
-    // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMoueListener
-    Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));                    // Default; needs to be accessible from GipfBoardComponentMouseListener
-    public Position selectedPosition;                                                                                  // The position that is currently selected for a new move
+    // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
+    Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
     Set<Position> moveToPositions = new HashSet<>(Arrays.asList(new Position('h', 2), new Position('h', 3)));
-    public Position selectedMoveToPosition;
-    public Position currentHoverPosition = null;
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
@@ -79,29 +77,27 @@ public class GipfBoardComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        DrawableObject gipfPieces = new GipfPieces(g2, this);
-        DrawableObject selectedPosition = new SelectedPosition(g2, this);
-        DrawableObject hoverCircle = new HoverCircle(g2, this);
-        DrawableObject drawableGipfBoard = new DrawableGipfBoard(g2, this);
-        DrawableObject filledCircles = new FilledCircles(g2, this);
-        DrawableObject selectedMoveToArrow = new SelectedMoveToArrow(g2, this);
-        DrawableObject positionNames = new PositionNames(g2, this);
+        if (UIval.get().antiAliasingEnabled)
+            enableAntiAliasing(g2);
 
-        if (UIval.get().antiAliasingEnabled) {
-            // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        // The object (sets) that are drawn on the component. The order *does* matter.
+        List<DrawableObject> drawableObjects = Arrays.asList(
+                new DrawableGipfBoard(g2, this),
+                new FilledCircles(g2, this),
+                new SelectedMoveToArrow(g2, this),
+                new HoverCircle(g2, this),
+                new GipfPieces(g2, this),
+                new SelectedPosition(g2, this),
+                new PositionNames(g2, this)
+        );
 
-        // The order of the following methods determines the order in which the elements are drawn. A method on top indicates
-        // that the object is drawn at the bottom.
-        drawableGipfBoard.draw();
-        filledCircles.draw();
-        selectedMoveToArrow.draw();
-        hoverCircle.draw();
-        gipfPieces.draw();
-        selectedPosition.draw();
-        positionNames.draw();
+        drawableObjects.stream().forEach(DrawableObject::draw);
+    }
+
+    private void enableAntiAliasing(Graphics2D g2) {
+        // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
     }
 }
