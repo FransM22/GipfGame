@@ -5,12 +5,12 @@ import GameLogic.Position;
 /**
  * Created by frans on 22-9-2015.
  */
-public class PositionHelper {
-    int componentWidth;
-    int componentHeight;
-    int marginSize;
-    int nrOfRowsOnGipfBoard;
-    int nrOfColumnsOnGipfBoard;
+class PositionHelper {
+    private final int componentWidth;
+    private final int componentHeight;
+    private final int marginSize;
+    private final int nrOfRowsOnGipfBoard;
+    private final int nrOfColumnsOnGipfBoard;
 
     PositionHelper(GipfBoardComponent gipfBoardComponent) {
         componentWidth = gipfBoardComponent.getWidth();

@@ -1,13 +1,11 @@
 package GUI.GipfBoardComponent;
 
-import GameLogic.Position;
-
 import java.awt.*;
 
 /**
  * Created by frans on 22-9-2015.
  */
-public class PrimitiveShapeHelper {
+class PrimitiveShapeHelper {
     static void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
         g2.setColor(fillColor);
         g2.fillOval(

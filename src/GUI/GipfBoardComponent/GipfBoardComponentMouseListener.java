@@ -2,10 +2,8 @@ package GUI.GipfBoardComponent;
 
 import GameLogic.Position;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class acts as the MouseListener for GipfBoardComponent. If no instance of this class is added as a mouse listener
@@ -14,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by frans on 22-9-2015.
  */
 public class GipfBoardComponentMouseListener implements MouseListener {
-    GipfBoardComponent gipfBoardComponent;
+    private final GipfBoardComponent gipfBoardComponent;
     private Thread hoverThread;
 
     public GipfBoardComponentMouseListener(GipfBoardComponent gipfBoardComponent) {

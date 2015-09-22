@@ -14,12 +14,12 @@ import java.awt.*;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
-    public GipfBoardComponent gipfBoardComponent;
-    private Game game;
-    private JTextField newPieceCoordinateTextField;
-    private JButton newPieceCoordinateEnterButton;
-    private JTextArea debugTextArea;
-    private JComboBox<Game.Piece> pieceTypeComboBox;
+    private final GipfBoardComponent gipfBoardComponent;
+    private final Game game;
+    private final JTextField newPieceCoordinateTextField;
+    private final JButton newPieceCoordinateEnterButton;
+    private final JTextArea debugTextArea;
+    private final JComboBox<Game.Piece> pieceTypeComboBox;
 
     private GipfWindow() throws HeadlessException {
         super();
