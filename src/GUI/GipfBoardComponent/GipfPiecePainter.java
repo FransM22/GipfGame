@@ -44,18 +44,24 @@ class GipfPiecePainter {
         }
 
         PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
-        PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.pieceSize, fillColor, borderColor, strokeType);
+        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
+
+        primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.pieceSize, fillColor, borderColor, strokeType);
     }
 
     void paintSelectedPosition(Graphics2D g2, PositionHelper positionHelper) {
+        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
+
         if (gipfBoardComponent.selectedPosition != null) {
-            PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(gipfBoardComponent.selectedPosition), positionHelper.positionToScreenY(gipfBoardComponent.selectedPosition), GipfBoardDefinitions.pieceSize, GipfBoardColors.whiteSingleColor, GipfBoardColors.singlePieceBorderColor, GipfBoardDefinitions.hoverPositionStroke);
+            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(gipfBoardComponent.selectedPosition), positionHelper.positionToScreenY(gipfBoardComponent.selectedPosition), GipfBoardDefinitions.pieceSize, GipfBoardColors.whiteSingleColor, GipfBoardColors.singlePieceBorderColor, GipfBoardDefinitions.hoverPositionStroke);
         }
     }
 
     void paintHoverCircle(Graphics2D g2, PositionHelper positionHelper) {
+        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
+
         if (gipfBoardComponent.currentHoverPosition != null) {
-            PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(gipfBoardComponent.currentHoverPosition), positionHelper.positionToScreenY(gipfBoardComponent.currentHoverPosition), GipfBoardDefinitions.hoverCircleSize, GipfBoardColors.hoverFillColor, GipfBoardColors.hoverBorderColor, GipfBoardDefinitions.hoverPositionStroke);
+            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(gipfBoardComponent.currentHoverPosition), positionHelper.positionToScreenY(gipfBoardComponent.currentHoverPosition), GipfBoardDefinitions.hoverCircleSize, GipfBoardColors.hoverFillColor, GipfBoardColors.hoverBorderColor, GipfBoardDefinitions.hoverPositionStroke);
         }
     }
 }

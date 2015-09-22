@@ -6,7 +6,13 @@ import java.awt.*;
  * Created by frans on 22-9-2015.
  */
 class PrimitiveShapeHelper {
-    static void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
+    Graphics2D g2;
+
+    PrimitiveShapeHelper(Graphics2D g2) {
+        this.g2 = g2;
+    }
+
+    void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor, Stroke strokeStyle) {
         g2.setColor(fillColor);
         g2.fillOval(
                 x - (size / 2),
@@ -25,7 +31,7 @@ class PrimitiveShapeHelper {
         );
     }
 
-    static void centerCircleOn(Graphics2D g2, int x, int y, int size, Color fillColor, Color borderColor) {
-        centerCircleOn(g2, x, y, size, fillColor, borderColor, new BasicStroke(1));
+    void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor) {
+        centerCircleOn(x, y, size, fillColor, borderColor, new BasicStroke(1));
     }
 }

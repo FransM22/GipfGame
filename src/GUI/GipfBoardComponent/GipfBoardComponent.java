@@ -213,8 +213,9 @@ public class GipfBoardComponent extends JComponent {
     }
 
     private void paintFilledCircles(Graphics2D g2, PositionHelper positionHelper) {
+        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
         for (Position position : filledCirclePositions) {
-            PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.filledCircleSize, GipfBoardColors.filledCircleColor, GipfBoardColors.filledCircleBorderColor);
+            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.filledCircleSize, GipfBoardColors.filledCircleColor, GipfBoardColors.filledCircleBorderColor);
         }
     }
 
