@@ -1,7 +1,6 @@
 package GUI;
 
 import GameLogic.Game;
-import GameLogic.GipfBoard;
 import GameLogic.Move;
 import GameLogic.Position;
 
@@ -19,10 +18,10 @@ import java.util.stream.Stream;
 /**
  * The GipfBoardComponent is a Swing component which can be embedded in a JPanel. This component only shows the board itself
  * and everything that is positioned on it.
- *
+ * <p/>
  * Created by frans on 18-9-2015.
  */
-class GipfBoardComponent extends JComponent implements MouseListener{
+class GipfBoardComponent extends JComponent implements MouseListener {
     // Some basic flags to set
     private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions
     private final boolean drawFilledCircles = true;                 // Draw filled circles on the given positions (at the ends of the lines on the board)
@@ -43,8 +42,8 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     // Line types
     private final Stroke normalPieceStroke = new BasicStroke(4.0f);
     private final Stroke gipfPieceStroke = new BasicStroke(4.0f);
-    private final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[] {6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
-    private final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[] {6f, 6f}, 0.0f);
+    private final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
+    private final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
 
     private final Font positionNameFont = new Font("default", Font.BOLD, 14);
 
@@ -111,11 +110,6 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     private final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
-    private Set<Position> selectablePositions = new HashSet<>(Arrays.asList(filledCirclePositions));
-    private Position selectedPosition;                                                                  // The position that is currently selected for a new move
-    private Set<Position> moveToPositions = new HashSet<>(Arrays.asList(new Position('h', 2), new Position('h', 3)));
-    private Position selectedMoveToPosition;
-
     /*
      * line sets are used for easier drawing of the lines which indicate how the player is allowed to move.
      * Each line set contains a start and endpoint of a line on the board. In addition to each of these two points a direction
@@ -132,6 +126,10 @@ class GipfBoardComponent extends JComponent implements MouseListener{
             new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
     };
     private final Game game;
+    private Set<Position> selectablePositions = new HashSet<>(Arrays.asList(filledCirclePositions));
+    private Position selectedPosition;                                                                  // The position that is currently selected for a new move
+    private Set<Position> moveToPositions = new HashSet<>(Arrays.asList(new Position('h', 2), new Position('h', 3)));
+    private Position selectedMoveToPosition;
     private Position currentHoverPosition = null;
     private Thread hoverThread;
 
@@ -139,7 +137,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
      *
-     * @param gipfBoard the GipfBoard that is shown in the GipfBoardComponent
+     * @param game the game of which the state is shown in the GipfBoardComponent
      */
     public GipfBoardComponent(Game game) {
         this.game = game;
@@ -149,7 +147,6 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
     public static void main(String argv[]) {
         Game game = new Game();
-        GipfBoard gb = game.getGipfBoard();
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
         gipfBoardComponent.addMouseListener(gipfBoardComponent);
 
@@ -389,7 +386,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         // These numbers do not take into account that the rows are not horizontally. This means that the result is only
         // correct for the middle column
         double rowNumberStartFromBottom = (double) yOnBoard / rowHeight;
-        int horizontalDistanceFromCenter = Math.abs(screenX - (getWidth()/2));
+        int horizontalDistanceFromCenter = Math.abs(screenX - (getWidth() / 2));
 
         double columnsFromCenter = (double) horizontalDistanceFromCenter / columnWidth;
 
@@ -482,7 +479,7 @@ class GipfBoardComponent extends JComponent implements MouseListener{
 
                 Point mouseLocation = MouseInfo.getPointerInfo().getLocation();                             // Get the mouse position relative to the screen
                 Point componentPosition = getLocationOnScreen();                                            // Get the component position relative to the screen
-                mouseLocation.translate((int) -componentPosition.getX(), (int) - componentPosition.getY()); // Calculate the mouse position relative to the component
+                mouseLocation.translate((int) -componentPosition.getX(), (int) -componentPosition.getY()); // Calculate the mouse position relative to the component
 
                 // Only update the position if the new position is different from the old position, and if the new
                 // position is actually located on the board
@@ -493,17 +490,14 @@ class GipfBoardComponent extends JComponent implements MouseListener{
                             currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                             previousPosition = currentHoverPosition;
                             selectedMoveToPosition = null;
-                        }
-                        else if (selectedPosition != null && moveToPositions.contains(newHoverPosition)) {
+                        } else if (selectedPosition != null && moveToPositions.contains(newHoverPosition)) {
                             currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                             selectedMoveToPosition = currentHoverPosition;
                             previousPosition = currentHoverPosition;
-                        }
-                        else {
+                        } else {
                             currentHoverPosition = null;
                         }
-                    }
-                    else {
+                    } else {
                         currentHoverPosition = null;
                         selectedMoveToPosition = null;
                     }

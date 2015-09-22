@@ -1,7 +1,6 @@
 package GUI;
 
 import GameLogic.Game;
-import GameLogic.GipfBoard;
 import GameLogic.Position;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ class GipfWindow extends JFrame {
     private JTextField newPieceCoordinateTextField;
     private JButton newPieceCoordinateEnterButton;
     private JTextArea debugTextArea;
-    private JComboBox<Game.Piece> pieceTypeCombobox;
+    private JComboBox<Game.Piece> pieceTypeComboBox;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -30,7 +29,7 @@ class GipfWindow extends JFrame {
         game = new Game();
         gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new JTextArea("Debug information\n");
-        pieceTypeCombobox = new JComboBox<>(Game.Piece.values());
+        pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -47,7 +46,7 @@ class GipfWindow extends JFrame {
 
         contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
         contentPane.add(newPieceCoordinateTextField);
-        contentPane.add(pieceTypeCombobox);
+        contentPane.add(pieceTypeComboBox);
         contentPane.add(newPieceCoordinateEnterButton);
 
         // Add listeners
@@ -77,7 +76,7 @@ class GipfWindow extends JFrame {
             Position newPiecePosition = new Position(colName, rowNumber);
 
             if (game.isPositionOnBoard(newPiecePosition)) {
-                Game.Piece pieceType = (Game.Piece) pieceTypeCombobox.getModel().getSelectedItem();
+                Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
                 addDebugInfo("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
