@@ -1,7 +1,5 @@
 package GUI.GipfBoardComponent;
 
-import GUI.GipfBoardComponent.Definitions.GipfBoardColors;
-import GUI.GipfBoardComponent.Definitions.GipfBoardDefinitions;
 import GameLogic.Game;
 import GameLogic.Move;
 import GameLogic.Position;
@@ -139,7 +137,7 @@ public class GipfBoardComponent extends JComponent {
         PositionHelper positionHelper = new PositionHelper(this);
         GipfPiecePainter gipfPiecePainter = new GipfPiecePainter(this);
 
-        if (GipfBoardDefinitions.antiAliasingEnabled) {
+        if (UIval.get().antiAliasingEnabled) {
             // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
             g2.setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -166,10 +164,10 @@ public class GipfBoardComponent extends JComponent {
      */
     private void paintBoard(Graphics2D g2, PositionHelper positionHelper) {
         // Paint the background of the component
-        g2.setColor(GipfBoardColors.backgroundColor);
+        g2.setColor(UIval.get().backgroundColor);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
-        g2.setColor(GipfBoardColors.centerColor);
+        g2.setColor(UIval.get().centerColor);
         // Java8 stuff. Basically maps each of the positions in cornerPositions to a x and y value.
         g2.fillPolygon(
                 Arrays.stream(centerCornerPositions).mapToInt(positionHelper::positionToScreenX).toArray(),
@@ -178,7 +176,7 @@ public class GipfBoardComponent extends JComponent {
         );
 
         // Draw the lines
-        g2.setColor(GipfBoardColors.lineColor);
+        g2.setColor(UIval.get().lineColor);
 
         for (LineSet lineSet : lineSets) {
             int startDeltaPos = game.getDeltaPos(lineSet.nextStart);
@@ -201,8 +199,8 @@ public class GipfBoardComponent extends JComponent {
     private void paintSelectedMoveToArrow(Graphics2D g2, PositionHelper positionHelper) {
         if (selectedMoveToPosition != null) {
             // Get the allowed positions from here
-            g2.setColor(GipfBoardColors.moveToArrowColor);
-            g2.setStroke(GipfBoardDefinitions.moveToArrowStroke);
+            g2.setColor(UIval.get().moveToArrowColor);
+            g2.setStroke(UIval.get().moveToArrowStroke);
             g2.drawLine(
                     positionHelper.positionToScreenX(selectedPosition),
                     positionHelper.positionToScreenY(selectedPosition),
@@ -215,16 +213,16 @@ public class GipfBoardComponent extends JComponent {
     private void paintFilledCircles(Graphics2D g2, PositionHelper positionHelper) {
         PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
         for (Position position : filledCirclePositions) {
-            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.filledCircleSize, GipfBoardColors.filledCircleColor, GipfBoardColors.filledCircleBorderColor);
+            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), UIval.get().filledCircleSize, UIval.get().filledCircleColor, UIval.get().filledCircleBorderColor);
         }
     }
 
     private void drawPositionNames(Graphics2D g2, PositionHelper positionHelper) {
-        g2.setColor(GipfBoardColors.positionNameColor);
+        g2.setColor(UIval.get().positionNameColor);
 
         for (Position position : namedPositionsOnBoard) {
-            g2.setColor(GipfBoardColors.positionNameColor);
-            g2.setFont(GipfBoardDefinitions.positionNameFont);
+            g2.setColor(UIval.get().positionNameColor);
+            g2.setFont(UIval.get().positionNameFont);
             g2.drawString(position.getName(), positionHelper.positionToScreenX(position) + 10, positionHelper.positionToScreenY(position) + 5);   // Translated by (10, 5), to make text not overlap with lines
         }
     }
