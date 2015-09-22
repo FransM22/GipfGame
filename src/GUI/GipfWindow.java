@@ -1,5 +1,7 @@
 package GUI;
 
+import GUI.GipfBoardComponent.GipfBoardComponent;
+import GUI.GipfBoardComponent.GipfBoardComponentMouseListener;
 import GameLogic.Game;
 import GameLogic.Position;
 
@@ -12,8 +14,8 @@ import java.awt.*;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
+    public GipfBoardComponent gipfBoardComponent;
     private Game game;
-    private GipfBoardComponent gipfBoardComponent;
     private JTextField newPieceCoordinateTextField;
     private JButton newPieceCoordinateEnterButton;
     private JTextArea debugTextArea;

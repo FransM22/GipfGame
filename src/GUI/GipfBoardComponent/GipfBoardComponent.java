@@ -1,4 +1,4 @@
-package GUI;
+package GUI.GipfBoardComponent;
 
 import GameLogic.Game;
 import GameLogic.Move;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * <p/>
  * Created by frans on 18-9-2015.
  */
-class GipfBoardComponent extends JComponent {
+public class GipfBoardComponent extends JComponent {
     final Game game;
     // Some basic flags to set
     private final boolean displayPiecePosition = false;             // Displays the piece positions above the pieces. This only works for displaying the position of pieces, not of given positions

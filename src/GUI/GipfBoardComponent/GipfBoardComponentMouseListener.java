@@ -1,5 +1,6 @@
-package GUI;
+package GUI.GipfBoardComponent;
 
+import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Position;
 
 import java.awt.*;
@@ -18,7 +19,7 @@ public class GipfBoardComponentMouseListener implements MouseListener {
     GipfBoardComponent gipfBoardComponent;
     private Thread hoverThread;
 
-    GipfBoardComponentMouseListener(GipfBoardComponent gipfBoardComponent) {
+    public GipfBoardComponentMouseListener(GipfBoardComponent gipfBoardComponent) {
         this.gipfBoardComponent = gipfBoardComponent;
     }
 
