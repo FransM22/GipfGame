@@ -33,7 +33,7 @@ class GipfWindow extends JFrame {
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
-        gipfBoardComponent.addMouseListener(gipfBoardComponent);
+        gipfBoardComponent.addMouseListener(new GipfBoardComponentMouseListener(gipfBoardComponent));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("GIPF");
