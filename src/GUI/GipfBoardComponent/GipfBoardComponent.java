@@ -1,5 +1,7 @@
 package GUI.GipfBoardComponent;
 
+import GUI.GipfBoardComponent.Definitions.GipfBoardColors;
+import GUI.GipfBoardComponent.Definitions.GipfBoardDefinitions;
 import GameLogic.Game;
 import GameLogic.Move;
 import GameLogic.Position;
@@ -20,16 +22,6 @@ import java.util.stream.Stream;
  */
 public class GipfBoardComponent extends JComponent {
     final Game game;
-    // Variables which can be changed to change the look
-    final int nrOfColumnsOnGipfBoard = 9;                              // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
-    final int nrOfRowsOnGipfBoard = 9;                                 // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    final int marginSize = 25;                                         // The margin on the sides of the board
-    // Some basic flags to set
-    private final boolean antiAliasingEnabled = true;                  // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
-    private final int filledCircleSize = 15;                           // The size of the filled circles
-    // Line types
-    private final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
-    private final Font positionNameFont = new Font("default", Font.BOLD, 14);
     // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
             new Position('b', 2),
@@ -147,7 +139,7 @@ public class GipfBoardComponent extends JComponent {
         PositionHelper positionHelper = new PositionHelper(this);
         GipfPiecePainter gipfPiecePainter = new GipfPiecePainter(this);
 
-        if (antiAliasingEnabled) {
+        if (GipfBoardDefinitions.antiAliasingEnabled) {
             // Set anti aliasing. If enabled, it makes the drawing much slower, but look nicer
             g2.setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -210,7 +202,7 @@ public class GipfBoardComponent extends JComponent {
         if (selectedMoveToPosition != null) {
             // Get the allowed positions from here
             g2.setColor(GipfBoardColors.moveToArrowColor);
-            g2.setStroke(moveToArrowStroke);
+            g2.setStroke(GipfBoardDefinitions.moveToArrowStroke);
             g2.drawLine(
                     positionHelper.positionToScreenX(selectedPosition),
                     positionHelper.positionToScreenY(selectedPosition),
@@ -222,7 +214,7 @@ public class GipfBoardComponent extends JComponent {
 
     private void paintFilledCircles(Graphics2D g2, PositionHelper positionHelper) {
         for (Position position : filledCirclePositions) {
-            PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), filledCircleSize, GipfBoardColors.filledCircleColor, GipfBoardColors.filledCircleBorderColor);
+            PrimitiveShapeHelper.centerCircleOn(g2, positionHelper.positionToScreenX(position), positionHelper.positionToScreenY(position), GipfBoardDefinitions.filledCircleSize, GipfBoardColors.filledCircleColor, GipfBoardColors.filledCircleBorderColor);
         }
     }
 
@@ -231,7 +223,7 @@ public class GipfBoardComponent extends JComponent {
 
         for (Position position : namedPositionsOnBoard) {
             g2.setColor(GipfBoardColors.positionNameColor);
-            g2.setFont(positionNameFont);
+            g2.setFont(GipfBoardDefinitions.positionNameFont);
             g2.drawString(position.getName(), positionHelper.positionToScreenX(position) + 10, positionHelper.positionToScreenY(position) + 5);   // Translated by (10, 5), to make text not overlap with lines
         }
     }

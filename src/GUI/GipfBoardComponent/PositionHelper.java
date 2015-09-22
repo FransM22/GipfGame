@@ -1,5 +1,6 @@
 package GUI.GipfBoardComponent;
 
+import GUI.GipfBoardComponent.Definitions.GipfBoardDefinitions;
 import GameLogic.Position;
 
 /**
@@ -15,9 +16,9 @@ class PositionHelper {
     PositionHelper(GipfBoardComponent gipfBoardComponent) {
         componentWidth = gipfBoardComponent.getWidth();
         componentHeight = gipfBoardComponent.getHeight();
-        marginSize = gipfBoardComponent.marginSize;
-        nrOfRowsOnGipfBoard = gipfBoardComponent.nrOfRowsOnGipfBoard;
-        nrOfColumnsOnGipfBoard = gipfBoardComponent.nrOfColumnsOnGipfBoard;
+        marginSize = GipfBoardDefinitions.marginSize;
+        nrOfRowsOnGipfBoard = GipfBoardDefinitions.nrOfRowsOnGipfBoard;
+        nrOfColumnsOnGipfBoard = GipfBoardDefinitions.nrOfColumnsOnGipfBoard;
     }
 
     int positionToScreenY(Position p) {
