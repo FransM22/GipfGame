@@ -10,12 +10,12 @@ import java.awt.*;
  * Created by frans on 22-9-2015.
  */
 public abstract class DrawableObject {
-    protected GipfBoardComponent gipfBoardComponent;
-    protected PositionHelper positionHelper;
-    protected PrimitiveShapeHelper primitiveShapeHelper;
-    protected Graphics2D g2;
+    final GipfBoardComponent gipfBoardComponent;
+    final PositionHelper positionHelper;
+    final PrimitiveShapeHelper primitiveShapeHelper;
+    final Graphics2D g2;
 
-    public DrawableObject(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
+    DrawableObject(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         this.g2 = g2;
         this.gipfBoardComponent = gipfBoardComponent;
         this.positionHelper = new PositionHelper(gipfBoardComponent);

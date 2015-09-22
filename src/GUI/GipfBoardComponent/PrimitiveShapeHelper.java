@@ -6,7 +6,7 @@ import java.awt.*;
  * Created by frans on 22-9-2015.
  */
 public class PrimitiveShapeHelper {
-    Graphics2D g2;
+    private final Graphics2D g2;
 
     public PrimitiveShapeHelper(Graphics2D g2) {
         this.g2 = g2;

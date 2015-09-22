@@ -21,10 +21,6 @@ public class GipfPieces extends DrawableObject {
         pieceMap = gipfBoardComponent.game.getGipfBoard().getPieceMap();
     }
 
-    public void paintHoverCircle(Graphics2D g2, PositionHelper positionHelper) {
-        PrimitiveShapeHelper primitiveShapeHelper = new PrimitiveShapeHelper(g2);
-    }
-
     @Override
     public void draw() {
         Color fillColor = null;     // Needs an initial value

@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
  * Created by frans on 22-9-2015.
  */
 class HoverPositionUpdater implements Runnable {
-    private final int hoverUpdateIntervalMs = 100;                                  // The interval in ms of updating the position over which is being hovered
-
     private final GipfBoardComponent gipfBoardComponent;
     private Position previousPosition = null;
 
@@ -25,7 +23,7 @@ class HoverPositionUpdater implements Runnable {
     public void run() {
         while (true) {
             try {
-                TimeUnit.MILLISECONDS.sleep(hoverUpdateIntervalMs);
+                TimeUnit.MILLISECONDS.sleep(UIval.get().hoverUpdateIntervalMs);
             } catch (InterruptedException e) {
                 // Interrupt the thread
                 break;
