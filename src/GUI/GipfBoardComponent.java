@@ -58,12 +58,12 @@ class GipfBoardComponent extends JComponent implements MouseListener{
     private final Color blackGipfColor = blackSingleColor;              // Color of the black gipf piece
     private final Color singlePieceBorderColor = Color.black;           // Border color of normal single pieces
     private final Color gipfPieceBorderColor = new Color(0xDA0000);     // Border color of gipf pieces
-    private final Color positionNameColor = new Color(0x8D8473);        // Color of position names
-    private final Color filledCircleColor = new Color(0xD2FF9B);        // Color of the circles that are filled
+    private final Color positionNameColor = lineColor;                  // Color of position names
+    private final Color filledCircleColor = backgroundColor;            // Color of the circles that are filled (on the edges of the board)
     private final Color filledCircleBorderColor = new Color(0x7D8972);  // Border color of the filled circles
-    private final Color hoverBorderColor = new Color(0x8D8473);
-    private final Color hoverFillColor = new Color(0xD2FF9B);
-    private final Color moveToArrowColor = new Color(0x8D8473);
+    private final Color hoverBorderColor = lineColor;                   // The border color of positions that is hovered over
+    private final Color hoverFillColor = backgroundColor;               // The filling color of positions that is hovered over
+    private final Color moveToArrowColor = lineColor;                   // The line indicating where the player can move his piece
 
     // These mark the center hexagon on the board
     private final Position[] centerCornerPositions = {            // Contains the corners of the center hexagon. Distinguishes the part where pieces can end up from the background
@@ -458,6 +458,10 @@ class GipfBoardComponent extends JComponent implements MouseListener{
         }
     }
 
+    /**
+     * This class contains code that is run in a separate thread and controls the updating of hover positions. It is ran in
+     * a different thread to make sure that the UI is not locked when the player hovers over positions
+     */
     private class UpdateHoverPosition implements Runnable {
         GipfBoardComponent gipfBoardComponent;
         private Position previousPosition = null;
@@ -488,11 +492,15 @@ class GipfBoardComponent extends JComponent implements MouseListener{
                         if (selectablePositions.contains(newHoverPosition)) {
                             currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                             previousPosition = currentHoverPosition;
+                            selectedMoveToPosition = null;
                         }
                         else if (selectedPosition != null && moveToPositions.contains(newHoverPosition)) {
                             currentHoverPosition = screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
                             selectedMoveToPosition = currentHoverPosition;
                             previousPosition = currentHoverPosition;
+                        }
+                        else {
+                            currentHoverPosition = null;
                         }
                     }
                     else {
