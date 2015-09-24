@@ -3,6 +3,7 @@ package GUI.GipfBoardComponent;
 import GameLogic.Position;
 
 import java.awt.*;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,7 +14,6 @@ import java.util.concurrent.TimeUnit;
  */
 class HoverPositionUpdater implements Runnable {
     private final GipfBoardComponent gipfBoardComponent;
-    private Position previousPosition = null;
 
     HoverPositionUpdater(GipfBoardComponent gipfBoardComponent) {
         this.gipfBoardComponent = gipfBoardComponent;
@@ -37,25 +37,36 @@ class HoverPositionUpdater implements Runnable {
             // position is actually located on the board
             PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
             Position newHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
-            if (newHoverPosition != previousPosition) {
-                if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition)) {
-                    if (gipfBoardComponent.selectablePositions.contains(newHoverPosition)) {
-                        gipfBoardComponent.currentHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
-                        previousPosition = gipfBoardComponent.currentHoverPosition;
-                        gipfBoardComponent.selectedMoveToPosition = null;
-                    } else if (gipfBoardComponent.selectedPosition != null && gipfBoardComponent.moveToPositions.contains(newHoverPosition)) {
-                        gipfBoardComponent.currentHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
-                        gipfBoardComponent.selectedMoveToPosition = gipfBoardComponent.currentHoverPosition;
-                        previousPosition = gipfBoardComponent.currentHoverPosition;
-                    } else {
-                        gipfBoardComponent.currentHoverPosition = null;
-                    }
-                } else {
+
+            Set selectablePositions = gipfBoardComponent.selectablePositions;
+
+
+            if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition)) {
+                if (selectablePositions.contains(newHoverPosition)) {
+                    // If the mouse hovers over a position on the border of the board
+                    // select it
+                    gipfBoardComponent.selectedMoveToPosition = null;
+                    gipfBoardComponent.currentHoverPosition = newHoverPosition;
+                }
+                else if (gipfBoardComponent.selectedPosition != null && gipfBoardComponent.moveToPositions.contains(newHoverPosition)) {
+                    // If there is a position selected, and the mouse is hovering over a position where that piece can move to,
+                    // clear the hover circle, and update the arrow indicating where the player can move
+                    gipfBoardComponent.selectedMoveToPosition = newHoverPosition;
+                    gipfBoardComponent.currentHoverPosition = null;
+                }
+                else {
+                    // If the player is hovering over a position on the board, but it can't put a piece on it, or select it,
+                    // the hover circle and the arrow indicating where the player can move are cleared
                     gipfBoardComponent.currentHoverPosition = null;
                     gipfBoardComponent.selectedMoveToPosition = null;
                 }
-                gipfBoardComponent.repaint();
+            } else {
+                // If the mouse is not hovering over a position on the board, clear the arrow and hover circle
+                gipfBoardComponent.currentHoverPosition = null;
+                gipfBoardComponent.selectedMoveToPosition = null;
             }
+            gipfBoardComponent.repaint();
         }
     }
 }
+
