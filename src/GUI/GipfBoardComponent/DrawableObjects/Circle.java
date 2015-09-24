@@ -28,9 +28,7 @@ public class Circle extends DrawableObject {
 
     @Override
     public void draw() {
-        for (Position position : circlePositions) {
-            drawCircle(position);
-        }
+        circlePositions.stream().filter(position -> position != null).forEach(this::drawCircle);
     }
 
     private void drawCircle(Position position) {
