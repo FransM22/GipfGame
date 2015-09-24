@@ -5,8 +5,6 @@ import GUI.GipfBoardComponent.UIval;
 import GameLogic.Position;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
