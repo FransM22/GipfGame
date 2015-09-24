@@ -2,21 +2,17 @@ package GUI.GipfBoardComponent.DrawableObjects;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.GipfBoardComponent.UIval;
+import GameLogic.Position;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Created by frans on 22-9-2015.
  */
-public class SelectedPosition extends DrawableObject {
-    public SelectedPosition(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
-        super(g2, gipfBoardComponent);
-    }
-
-    @Override
-    public void draw() {
-        if (gipfBoardComponent.selectedPosition != null) {
-            primitiveShapeHelper.centerCircleOn(positionHelper.positionToScreenX(gipfBoardComponent.selectedPosition), positionHelper.positionToScreenY(gipfBoardComponent.selectedPosition), UIval.get().pieceSize, UIval.get().whiteSingleColor, UIval.get().singlePieceBorderColor, UIval.get().hoverPositionStroke);
-        }
+public class SelectedPosition extends Circle {
+    public SelectedPosition(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Position selectedPosition) {
+        super(g2, gipfBoardComponent, new HashSet<>(Arrays.asList(selectedPosition)), UIval.get().pieceSize, UIval.get().whiteSingleColor, UIval.get().singlePieceBorderColor, UIval.get().hoverPositionStroke);
     }
 }

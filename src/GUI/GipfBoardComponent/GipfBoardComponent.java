@@ -83,11 +83,11 @@ public class GipfBoardComponent extends JComponent {
         // The object (sets) that are drawn on the component. The order *does* matter.
         List<DrawableObject> drawableObjects = Arrays.asList(
                 new DrawableGipfBoard(g2, this),
-                new FilledCircles(g2, this),
+                new FilledCircles(g2, this, new HashSet<Position>(Arrays.asList(UIval.get().filledCirclePositions))),
                 new SelectedMoveToArrow(g2, this),
-                new HoverCircle(g2, this),
+                new HoverCircle(g2, this, currentHoverPosition),
                 new GipfPieces(g2, this),
-                new SelectedPosition(g2, this),
+                new SelectedPosition(g2, this, selectedPosition),
                 new PositionNames(g2, this)
         );
 

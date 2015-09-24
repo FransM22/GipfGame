@@ -3,6 +3,7 @@ package GUI.GipfBoardComponent;
 import java.awt.*;
 
 /**
+ * Class is to be removed. Needs to extend GipfPieces from Circle before that can be done.
  * Created by frans on 22-9-2015.
  */
 public class PrimitiveShapeHelper {
@@ -29,9 +30,5 @@ public class PrimitiveShapeHelper {
                 size,
                 size
         );
-    }
-
-    public void centerCircleOn(int x, int y, int size, Color fillColor, Color borderColor) {
-        centerCircleOn(x, y, size, fillColor, borderColor, new BasicStroke(1));
     }
 }
