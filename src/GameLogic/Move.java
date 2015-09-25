@@ -57,4 +57,7 @@ public class Move {
         SOUTH_EAST,
         SOUTH_WEST
     }
+
+    public Position getStartingPosition() { return startPos; }
+    public Direction getDirection() { return direction; }
 }

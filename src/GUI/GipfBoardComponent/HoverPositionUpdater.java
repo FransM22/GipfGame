@@ -1,10 +1,13 @@
 package GUI.GipfBoardComponent;
 
+import GameLogic.Game;
+import GameLogic.Move;
 import GameLogic.Position;
 
 import java.awt.*;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This class contains code that is run in a separate thread and controls the updating of hover positions. It is ran in
@@ -41,23 +44,21 @@ class HoverPositionUpdater implements Runnable {
             PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
             Position newHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
 
-            Set selectablePositions = gipfBoardComponent.selectablePositions;
+            Set<Position> selectablePositions = getMoveToPositionsForStartPosition(gipfBoardComponent.selectedPosition);
 
 
             if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition)) {
-                if (selectablePositions.contains(newHoverPosition)) {
+                if (getStartPositionsForMoves().contains(newHoverPosition)) {
                     // If the mouse hovers over a position on the border of the board
                     // select it
                     gipfBoardComponent.selectedMoveToPosition = null;
                     gipfBoardComponent.currentHoverPosition = newHoverPosition;
-                }
-                else if (gipfBoardComponent.selectedPosition != null && gipfBoardComponent.moveToPositions.contains(newHoverPosition)) {
+                } else if (selectablePositions.contains(newHoverPosition)) {
                     // If there is a position selected, and the mouse is hovering over a position where that piece can move to,
                     // clear the hover circle, and update the arrow indicating where the player can move
                     gipfBoardComponent.selectedMoveToPosition = newHoverPosition;
                     gipfBoardComponent.currentHoverPosition = newHoverPosition;
-                }
-                else {
+                } else {
                     // If the player is hovering over a position on the board, but it can't put a piece on it, or select it,
                     // the hover circle and the arrow indicating where the player can move are cleared
                     gipfBoardComponent.currentHoverPosition = null;
@@ -70,6 +71,23 @@ class HoverPositionUpdater implements Runnable {
             }
             gipfBoardComponent.repaint();
         }
+    }
+
+    private Set<Position> getStartPositionsForMoves() {
+        return gipfBoardComponent.game.getAllowedMoves()
+                .stream()
+                .map(Move::getStartingPosition)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Position> getMoveToPositionsForStartPosition(Position position) {
+        Game game = gipfBoardComponent.game;
+        return game.getAllowedMoves()
+                .stream()
+                .filter(m -> m.getStartingPosition().equals(position))
+                .map(move -> new Position(
+                        move.getStartingPosition().getPosId() + game.getDeltaPos(move.getDirection())))
+                .collect(Collectors.toSet());
     }
 }
 

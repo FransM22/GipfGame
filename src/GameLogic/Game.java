@@ -1,13 +1,21 @@
 package GameLogic;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Is still room for optimization, but should be done only if this code seems
  * to be a bottleneck.
- *
+ * <p/>
  * Created by frans on 21-9-2015.
  */
 public class Game {
     private GipfBoard gipfBoard;
+
+    public Game() {
+        gipfBoard = new GipfBoard();
+    }
 
     /**
      * Checks whether the position is located on the board
@@ -24,10 +32,6 @@ public class Game {
                 row >= 10 ||
                 row - col >= 5 ||
                 col <= 0);
-    }
-
-    public Game() {
-        gipfBoard = new GipfBoard();
     }
 
     private boolean isPositionEmpty(Position p) {
@@ -107,6 +111,27 @@ public class Game {
         gipfBoard.getPieceMap().put(pos, piece);
     }
 
+    public GipfBoard getGipfBoard() {
+        return gipfBoard;
+    }
+
+    /**
+     * This method is currently a placeholder. Should return all moves that are allowed in this game TODO
+     *
+     * @return
+     */
+    public Set<Move> getAllowedMoves() {
+        return new HashSet<>(Arrays.asList(
+                new Move(Piece.WHITE_GIPF, new Position('a', 1), Move.Direction.NORTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 2), Move.Direction.NORTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 2), Move.Direction.SOUTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 3), Move.Direction.NORTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 3), Move.Direction.SOUTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.NORTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.SOUTH_EAST),
+                new Move(Piece.WHITE_GIPF, new Position('a', 5), Move.Direction.SOUTH_EAST)
+        ));
+    }
 
     /**
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
@@ -132,10 +157,6 @@ public class Game {
                     return "[Piece type not known]";
             }
         }
-    }
-
-    public GipfBoard getGipfBoard() {
-        return gipfBoard;
     }
 
     /*

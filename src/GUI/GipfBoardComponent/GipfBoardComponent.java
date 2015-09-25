@@ -23,7 +23,6 @@ public class GipfBoardComponent extends JComponent {
 
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
     Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
-    Set<Position> moveToPositions = new HashSet<>(Arrays.asList(new Position('h', 2), new Position('h', 3)));
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
