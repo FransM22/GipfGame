@@ -1,5 +1,7 @@
 package GUI.GipfBoardComponent;
 
+import GameLogic.Game;
+import GameLogic.Move;
 import GameLogic.Position;
 
 import java.awt.event.MouseEvent;
@@ -29,6 +31,12 @@ public class GipfBoardComponentMouseListener implements MouseListener {
             gipfBoardComponent.selectedPosition = selectedPosition;
 
             gipfBoardComponent.repaint();
+        }
+        else if (gipfBoardComponent.selectedMoveToPosition != null) {
+            int deltaPos = gipfBoardComponent.selectedMoveToPosition.getPosId() - gipfBoardComponent.selectedPosition.getPosId();
+            gipfBoardComponent.game.applyMove(new Move(Game.Piece.WHITE_SINGLE, gipfBoardComponent.selectedPosition, gipfBoardComponent.game.getDirectionFromDeltaPos(deltaPos)));
+            gipfBoardComponent.selectedPosition = null;
+            gipfBoardComponent.selectedMoveToPosition = null;
         }
     }
 

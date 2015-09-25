@@ -3,7 +3,6 @@ package GUI.GipfBoardComponent.DrawableObjects;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Move;
 import GameLogic.Position;
-import com.sun.istack.internal.NotNull;
 
 import java.awt.*;
 
@@ -29,8 +28,8 @@ public class Lines extends DrawableObject {
 
     @Override
     public void draw() {
-        int startDeltaPos = gipfBoardComponent.game.getDeltaPos(nextStart);
-        int endDeltaPos = gipfBoardComponent.game.getDeltaPos(nextEnd);
+        int startDeltaPos = gipfBoardComponent.game.getDeltaPosFromDirection(nextStart);
+        int endDeltaPos = gipfBoardComponent.game.getDeltaPosFromDirection(nextEnd);
 
         for (int lineNr = 0; lineNr < nr; lineNr++) {
             Position start = new Position(this.start.getPosId() + (lineNr * startDeltaPos));

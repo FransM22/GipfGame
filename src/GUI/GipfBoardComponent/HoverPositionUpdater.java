@@ -88,7 +88,7 @@ class HoverPositionUpdater implements Runnable {
                 .stream()
                 .filter(m -> m.getStartingPosition().equals(position))
                 .map(move -> new Position(
-                        move.getStartingPosition().getPosId() + game.getDeltaPos(move.getDirection())))
+                        move.getStartingPosition().getPosId() + game.getDeltaPosFromDirection(move.getDirection())))
                 .collect(Collectors.toSet());
     }
 }

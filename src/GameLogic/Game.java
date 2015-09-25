@@ -57,7 +57,7 @@ public class Game {
     }
 
     private void movePiecesTowards(Position startPos, Move.Direction direction) {
-        int deltaPos = getDeltaPos(direction);
+        int deltaPos = getDeltaPosFromDirection(direction);
 
         Position currentPosition = new Position(startPos);
 
@@ -68,7 +68,7 @@ public class Game {
         }
     }
 
-    public int getDeltaPos(Move.Direction direction) {
+    public int getDeltaPosFromDirection(Move.Direction direction) {
         // Determine the deltaPos value based on the direction
         switch (direction) {
             case NORTH:
@@ -86,6 +86,27 @@ public class Game {
         }
 
         return -1;
+    }
+
+    public Move.Direction getDirectionFromDeltaPos(int deltaPos) {
+        switch (deltaPos) {
+            case 1:
+                return Move.Direction.NORTH;
+            case 11:
+                return Move.Direction.NORTH_EAST;
+            case 10:
+                return Move.Direction.SOUTH_EAST;
+            case -1:
+                return Move.Direction.SOUTH;
+            case -11:
+                return Move.Direction.SOUTH_WEST;
+            case -10:
+                return Move.Direction.NORTH_WEST;
+
+            default:
+                System.out.println("invalid deltaPos '" + deltaPos + "'");
+                return null;
+        }
     }
 
     /**

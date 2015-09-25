@@ -81,9 +81,9 @@ public class GipfBoardComponent extends JComponent {
         List<DrawableObject> drawableObjects = Arrays.asList(
                 new DrawableGipfBoard(g2, this),
                 new FilledCircles(g2, this, new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions))),
+                new GipfPieces(g2, this),
                 new SelectedMoveToArrow(g2, this),
                 new HoverCircle(g2, this, Collections.singleton(currentHoverPosition)),
-                new GipfPieces(g2, this),
                 new SelectedPosition(g2, this, Collections.singleton(selectedPosition)),
                 new PositionNames(g2, this)
         );
