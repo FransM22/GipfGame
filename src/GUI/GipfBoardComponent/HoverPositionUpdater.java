@@ -52,7 +52,7 @@ class HoverPositionUpdater implements Runnable {
                     // If there is a position selected, and the mouse is hovering over a position where that piece can move to,
                     // clear the hover circle, and update the arrow indicating where the player can move
                     gipfBoardComponent.selectedMoveToPosition = newHoverPosition;
-                    gipfBoardComponent.currentHoverPosition = null;
+                    gipfBoardComponent.currentHoverPosition = newHoverPosition;
                 }
                 else {
                     // If the player is hovering over a position on the board, but it can't put a piece on it, or select it,
