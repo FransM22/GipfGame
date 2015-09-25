@@ -51,8 +51,5 @@ public class GipfBoardComponentMouseListener implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         hoverThread.interrupt();
-
-        gipfBoardComponent.currentHoverPosition = null;
-        gipfBoardComponent.repaint();
     }
 }

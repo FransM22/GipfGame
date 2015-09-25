@@ -19,13 +19,13 @@ public class DrawableGipfBoard extends DrawableObject {
      * line can be drawn.
      * Each set of parallel lines is divided into two, because the direction in which the points move changes halfway
      */
-    private final LineSet[] lineSets = {
-            new LineSet(new Position('a', 2), new Position('f', 1), Move.Direction.NORTH, Move.Direction.NORTH_EAST, 4),
-            new LineSet(new Position('b', 6), new Position('i', 2), Move.Direction.NORTH_EAST, Move.Direction.NORTH, 3),
-            new LineSet(new Position('d', 1), new Position('i', 2), Move.Direction.NORTH_WEST, Move.Direction.NORTH, 4),
-            new LineSet(new Position('a', 2), new Position('h', 6), Move.Direction.NORTH, Move.Direction.NORTH_WEST, 3),
-            new LineSet(new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
-            new LineSet(new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
+    private final Lines[] lineSets = {
+            new Lines(g2, gipfBoardComponent, new Position('a', 2), new Position('f', 1), Move.Direction.NORTH, Move.Direction.NORTH_EAST, 4),
+            new Lines(g2, gipfBoardComponent, new Position('b', 6), new Position('i', 2), Move.Direction.NORTH_EAST, Move.Direction.NORTH, 3),
+            new Lines(g2, gipfBoardComponent, new Position('d', 1), new Position('i', 2), Move.Direction.NORTH_WEST, Move.Direction.NORTH, 4),
+            new Lines(g2, gipfBoardComponent, new Position('a', 2), new Position('h', 6), Move.Direction.NORTH, Move.Direction.NORTH_WEST, 3),
+            new Lines(g2, gipfBoardComponent, new Position('b', 1), new Position('b', 6), Move.Direction.SOUTH_EAST, Move.Direction.NORTH_EAST, 4),
+            new Lines(g2, gipfBoardComponent, new Position('f', 1), new Position('f', 8), Move.Direction.NORTH_EAST, Move.Direction.SOUTH_EAST, 3)
     };
 
     public DrawableGipfBoard(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
@@ -49,37 +49,8 @@ public class DrawableGipfBoard extends DrawableObject {
         // Draw the lines
         g2.setColor(UIval.get().lineColor);
 
-        for (LineSet lineSet : lineSets) {
-            int startDeltaPos = gipfBoardComponent.game.getDeltaPos(lineSet.nextStart);
-            int endDeltaPos = gipfBoardComponent.game.getDeltaPos(lineSet.nextEnd);
-
-            for (int lineNr = 0; lineNr < lineSet.nr; lineNr++) {
-                Position start = new Position(lineSet.start.getPosId() + lineNr * startDeltaPos);
-                Position end = new Position(lineSet.end.getPosId() + lineNr * endDeltaPos);
-
-                g2.drawLine(
-                        positionHelper.positionToScreenX(start),
-                        positionHelper.positionToScreenY(start),
-                        positionHelper.positionToScreenX(end),
-                        positionHelper.positionToScreenY(end)
-                );
-            }
-        }
-    }
-
-    private class LineSet {
-        final Position start;
-        final Position end;
-        final Move.Direction nextStart;
-        final Move.Direction nextEnd;
-        final int nr;
-
-        public LineSet(Position start, Position end, Move.Direction nextStart, Move.Direction nextEnd, int nr) {
-            this.start = start;
-            this.end = end;
-            this.nextStart = nextStart;
-            this.nextEnd = nextEnd;
-            this.nr = nr;
+        for (Lines lineSet : lineSets) {
+            lineSet.draw();
         }
     }
 }

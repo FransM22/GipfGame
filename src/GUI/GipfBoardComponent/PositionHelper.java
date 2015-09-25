@@ -3,6 +3,8 @@ package GUI.GipfBoardComponent;
 import GameLogic.Position;
 
 /**
+ * Is used to convert a position on the board to a position on the GipfBoardComponent and the other way around.
+ *
  * Created by frans on 22-9-2015.
  */
 public class PositionHelper {

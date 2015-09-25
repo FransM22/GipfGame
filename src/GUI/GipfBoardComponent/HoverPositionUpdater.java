@@ -25,6 +25,9 @@ class HoverPositionUpdater implements Runnable {
             try {
                 TimeUnit.MILLISECONDS.sleep(UIval.get().hoverUpdateIntervalMs);
             } catch (InterruptedException e) {
+                gipfBoardComponent.currentHoverPosition = null;
+                gipfBoardComponent.repaint();
+
                 // Interrupt the thread
                 break;
             }
