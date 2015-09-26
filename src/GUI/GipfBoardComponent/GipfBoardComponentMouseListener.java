@@ -34,7 +34,7 @@ public class GipfBoardComponentMouseListener implements MouseListener {
         }
         else if (gipfBoardComponent.selectedMoveToPosition != null) {
             int deltaPos = gipfBoardComponent.selectedMoveToPosition.getPosId() - gipfBoardComponent.selectedPosition.getPosId();
-            gipfBoardComponent.game.applyMove(new Move(Game.Piece.WHITE_SINGLE, gipfBoardComponent.selectedPosition, gipfBoardComponent.game.getDirectionFromDeltaPos(deltaPos)));
+            gipfBoardComponent.game.applyMove(new Move(gipfBoardComponent.game.getCurrentPiece(), gipfBoardComponent.selectedPosition, gipfBoardComponent.game.getDirectionFromDeltaPos(deltaPos)));
             gipfBoardComponent.selectedPosition = null;
             gipfBoardComponent.selectedMoveToPosition = null;
         }

@@ -97,4 +97,13 @@ public class GipfBoardComponent extends JComponent {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
     }
+
+    public Color getColorOfPlayer(Game.Player player) {
+        if (player == Game.Player.BLACK)
+            return UIval.get().blackSingleColor;
+        if (player == Game.Player.WHITE)
+            return UIval.get().whiteSingleColor;
+
+        return Color.red;
+    }
 }

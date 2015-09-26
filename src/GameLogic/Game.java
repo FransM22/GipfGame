@@ -12,9 +12,11 @@ import java.util.Set;
  */
 public class Game {
     private GipfBoard gipfBoard;
+    Player currentPlayer;
 
     public Game() {
         gipfBoard = new GipfBoard();
+        currentPlayer = Player.WHITE;
     }
 
     /**
@@ -126,6 +128,8 @@ public class Game {
         // Remove the pieces that need to be removed
         // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
         m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+
+        updateCurrentPlayer();
     }
 
     public void setPiece(Position pos, Game.Piece piece) {
@@ -150,8 +154,26 @@ public class Game {
                 new Move(Piece.WHITE_GIPF, new Position('a', 3), Move.Direction.SOUTH_EAST),
                 new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.NORTH_EAST),
                 new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.SOUTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 5), Move.Direction.SOUTH_EAST)
+                new Move(Piece.WHITE_GIPF, new Position('a', 5), Move.Direction.SOUTH_EAST),
+
+                // for testing moves from the other side
+                new Move(Piece.WHITE_GIPF, new Position('i', 5), Move.Direction.SOUTH_WEST)
         ));
+    }
+
+    private void updateCurrentPlayer() {
+        currentPlayer = (currentPlayer == Player.WHITE ? Player.BLACK : Player.WHITE);
+    }
+
+    public Piece getCurrentPiece() {
+        if (currentPlayer == Player.WHITE) return Piece.WHITE_SINGLE;
+        if (currentPlayer == Player.BLACK) return Piece.BLACK_SINGLE;
+
+        return null;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 
     /**
@@ -180,9 +202,11 @@ public class Game {
         }
     }
 
-    /*
-     * TODO: Methods that still need to be implemented:
-     *  - isValidMove(Move m)
-     *  * method to get all the allowed moves from a specific board
-     */
+    public enum Player {
+        WHITE,
+        BLACK;
+
+        boolean isPlacingGipfPieces = true;
+        int piecesLeft = 18;    // Each player starts with 18 pieces
+    }
 }
