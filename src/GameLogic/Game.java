@@ -120,16 +120,23 @@ public class Game {
      * @param m the move that is applied
      */
     public void applyMove(Move m) {
-        // Add the piece to the new pieces
-        setPiece(m.startPos, m.addedPiece);
+        if (currentPlayer.piecesLeft >= 1) {
+            // Add the piece to the new pieces
+            setPiece(m.startPos, m.addedPiece);
 
-        movePiecesTowards(m.startPos, m.direction);
+            movePiecesTowards(m.startPos, m.direction);
 
-        // Remove the pieces that need to be removed
-        // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
-        m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+            // Remove the pieces that need to be removed
+            // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
+            m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
 
-        updateCurrentPlayer();
+            currentPlayer.piecesLeft--;
+
+            updateCurrentPlayer();
+        }
+        else {
+            System.out.println("No pieces left");
+        }
     }
 
     public void setPiece(Position pos, Game.Piece piece) {
@@ -141,24 +148,56 @@ public class Game {
     }
 
     /**
-     * This method is currently a placeholder. Should return all moves that are allowed in this game TODO
+     * This method is currently a placeholder. Currently statically returns all potential candidates for allowed moves,
+     * but it should be checked which ones are actually allowed.
      *
      * @return
      */
     public Set<Move> getAllowedMoves() {
         return new HashSet<>(Arrays.asList(
-                new Move(Piece.WHITE_GIPF, new Position('a', 1), Move.Direction.NORTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 2), Move.Direction.NORTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 2), Move.Direction.SOUTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 3), Move.Direction.NORTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 3), Move.Direction.SOUTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.NORTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 4), Move.Direction.SOUTH_EAST),
-                new Move(Piece.WHITE_GIPF, new Position('a', 5), Move.Direction.SOUTH_EAST),
-
-                // for testing moves from the other side
-                new Move(Piece.WHITE_GIPF, new Position('i', 5), Move.Direction.SOUTH_WEST)
-        ));
+                new Move(getCurrentPiece(), new Position('a', 1), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 2), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 2), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 3), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 3), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 4), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 4), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 5), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('b', 6), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('b', 6), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('c', 7), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('c', 7), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('d', 8), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('d', 8), Move.Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('e', 9), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('f', 8), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('f', 8), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('g', 7), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('g', 7), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('h', 6), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('h', 6), Move.Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('i', 5), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 4), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 4), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 3), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 3), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 2), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 2), Move.Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 1), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('h', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('h', 1), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('g', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('g', 1), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('f', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('f', 1), Move.Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('e', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('d', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('d', 1), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('c', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('c', 1), Move.Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH_EAST)
+                ));
     }
 
     private void updateCurrentPlayer() {

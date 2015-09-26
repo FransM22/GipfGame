@@ -20,7 +20,7 @@ public class SelectedMoveToArrow extends DrawableObject {
         Position selectedMoveToPosition = gipfBoardComponent.selectedMoveToPosition;
         Position selectedPosition = gipfBoardComponent.selectedPosition;
 
-        if (selectedMoveToPosition != null) {
+        if (selectedMoveToPosition != null && selectedPosition != null) {
             // Get the allowed positions from here
             g2.setColor(UIval.get().moveToArrowColor);
             g2.setStroke(UIval.get().moveToArrowStroke);

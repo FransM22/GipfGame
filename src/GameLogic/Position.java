@@ -105,6 +105,10 @@ public final class Position {
 
     }
 
+    public static int getDeltaPos(Position from, Position to) {
+        return to.getPosId() - from.getPosId();
+    }
+
     @Override
     public int hashCode() {
         return posId;

@@ -4,8 +4,8 @@ import GameLogic.Game;
 import GameLogic.Move;
 import GameLogic.Position;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 /**
  * This class acts as the MouseListener for GipfBoardComponent. If no instance of this class is added as a mouse listener
@@ -13,7 +13,7 @@ import java.awt.event.MouseListener;
  * <p/>
  * Created by frans on 22-9-2015.
  */
-public class GipfBoardComponentMouseListener implements MouseListener {
+public class GipfBoardComponentMouseListener extends MouseAdapter {
     private final GipfBoardComponent gipfBoardComponent;
     private Thread hoverThread;
 
@@ -23,31 +23,25 @@ public class GipfBoardComponentMouseListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
         PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
-        Position selectedPosition = positionHelper.screenCoordinateToPosition(e.getX(), e.getY());
+        Position selectedPosition = positionHelper.screenCoordinateToPosition(mouseX, mouseY);
+        Game game = gipfBoardComponent.game;
 
         // Only allow to put pieces on selectable positions
         if (gipfBoardComponent.selectablePositions.contains(selectedPosition)) {
             gipfBoardComponent.selectedPosition = selectedPosition;
 
             gipfBoardComponent.repaint();
-        }
-        else if (gipfBoardComponent.selectedMoveToPosition != null) {
+        } else if (gipfBoardComponent.selectedMoveToPosition != null) {
             int deltaPos = gipfBoardComponent.selectedMoveToPosition.getPosId() - gipfBoardComponent.selectedPosition.getPosId();
-            gipfBoardComponent.game.applyMove(new Move(gipfBoardComponent.game.getCurrentPiece(), gipfBoardComponent.selectedPosition, gipfBoardComponent.game.getDirectionFromDeltaPos(deltaPos)));
+            Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedPosition, game.getDirectionFromDeltaPos(deltaPos));
+            game.applyMove(currentMove);
             gipfBoardComponent.selectedPosition = null;
             gipfBoardComponent.selectedMoveToPosition = null;
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
     }
 
     @Override
