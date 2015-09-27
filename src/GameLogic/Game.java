@@ -11,8 +11,8 @@ import java.util.Set;
  * Created by frans on 21-9-2015.
  */
 public class Game {
-    private GipfBoard gipfBoard;
     Player currentPlayer;
+    private GipfBoard gipfBoard;
 
     public Game() {
         gipfBoard = new GipfBoard();
@@ -44,17 +44,18 @@ public class Game {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
         if (!isPositionOnBoard(nextPosition)) {
-            throw new InvalidPositionException();
-        }
+            throw new InvalidMoveException();
+        } else {
+            try {
+                if (!isPositionEmpty(nextPosition)) {
+                    movePiece(nextPosition, deltaPos);
+                }
 
-        try {
-            if (!isPositionEmpty(nextPosition)) {
-                movePiece(nextPosition, deltaPos);
+                gipfBoard.getPieceMap().put(nextPosition, gipfBoard.getPieceMap().remove(currentPosition));
+            } catch (InvalidMoveException e) {
+                System.out.println("Moving to " + nextPosition + " is not allowed");
+                throw new InvalidMoveException();
             }
-
-            gipfBoard.getPieceMap().put(nextPosition, gipfBoard.getPieceMap().remove(currentPosition));
-        } catch (InvalidPositionException e) {
-            System.out.println("Position " + nextPosition + " is invalid");
         }
     }
 
@@ -133,8 +134,7 @@ public class Game {
             currentPlayer.piecesLeft--;
 
             updateCurrentPlayer();
-        }
-        else {
+        } else {
             System.out.println("No pieces left");
         }
     }
@@ -197,7 +197,7 @@ public class Game {
                 new Move(getCurrentPiece(), new Position('c', 1), Move.Direction.NORTH_EAST),
                 new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH),
                 new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH_EAST)
-                ));
+        ));
     }
 
     private void updateCurrentPlayer() {
@@ -239,6 +239,11 @@ public class Game {
                     return "[Piece type not known]";
             }
         }
+    }
+
+    public Set<Position> getBorderPositions() {
+        // TODO
+        return null;
     }
 
     public enum Player {

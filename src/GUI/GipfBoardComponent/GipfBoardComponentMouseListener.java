@@ -22,7 +22,8 @@ public class GipfBoardComponentMouseListener extends MouseAdapter {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
+        // Act on mouse press, not on a click (press and release)
         int mouseX = e.getX();
         int mouseY = e.getY();
 
