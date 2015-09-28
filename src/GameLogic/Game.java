@@ -1,5 +1,7 @@
 package GameLogic;
 
+import GameLogic.Move.Direction;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,7 +61,7 @@ public class Game {
         }
     }
 
-    private void movePiecesTowards(Position startPos, Move.Direction direction) {
+    private void movePiecesTowards(Position startPos, Move.Direction direction) throws InvalidMoveException {
         int deltaPos = getDeltaPosFromDirection(direction);
 
         Position currentPosition = new Position(startPos);
@@ -67,7 +69,7 @@ public class Game {
         try {
             movePiece(currentPosition, deltaPos);
         } catch (Exception e) {
-            System.out.println("Piece is not moved");
+            throw new InvalidMoveException();
         }
     }
 
@@ -91,20 +93,20 @@ public class Game {
         return -1;
     }
 
-    public Move.Direction getDirectionFromDeltaPos(int deltaPos) {
+    public Direction getDirectionFromDeltaPos(int deltaPos) {
         switch (deltaPos) {
             case 1:
-                return Move.Direction.NORTH;
+                return Direction.NORTH;
             case 11:
-                return Move.Direction.NORTH_EAST;
+                return Direction.NORTH_EAST;
             case 10:
-                return Move.Direction.SOUTH_EAST;
+                return Direction.SOUTH_EAST;
             case -1:
-                return Move.Direction.SOUTH;
+                return Direction.SOUTH;
             case -11:
-                return Move.Direction.SOUTH_WEST;
+                return Direction.SOUTH_WEST;
             case -10:
-                return Move.Direction.NORTH_WEST;
+                return Direction.NORTH_WEST;
 
             default:
                 System.out.println("invalid deltaPos '" + deltaPos + "'");
@@ -125,15 +127,19 @@ public class Game {
             // Add the piece to the new pieces
             setPiece(m.startPos, m.addedPiece);
 
-            movePiecesTowards(m.startPos, m.direction);
+            try {
+                movePiecesTowards(m.startPos, m.direction);
 
-            // Remove the pieces that need to be removed
-            // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
-            m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+                // Remove the pieces that need to be removed
+                // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
+                m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
 
-            currentPlayer.piecesLeft--;
+                currentPlayer.piecesLeft--;
 
-            updateCurrentPlayer();
+                updateCurrentPlayer();
+            } catch (Exception e) {
+                System.out.println("Move not applied");
+            }
         } else {
             System.out.println("No pieces left");
         }
@@ -215,6 +221,11 @@ public class Game {
         return currentPlayer;
     }
 
+    public Set<Position> getBorderPositions() {
+        // TODO
+        return null;
+    }
+
     /**
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
      */
@@ -239,11 +250,6 @@ public class Game {
                     return "[Piece type not known]";
             }
         }
-    }
-
-    public Set<Position> getBorderPositions() {
-        // TODO
-        return null;
     }
 
     public enum Player {
