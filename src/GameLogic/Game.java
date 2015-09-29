@@ -1,7 +1,5 @@
 package GameLogic;
 
-import GameLogic.Move.Direction;
-
 import java.util.*;
 
 /**
@@ -66,8 +64,8 @@ public class Game {
         }
     }
 
-    private void movePiecesTowards(Position startPos, Move.Direction direction) throws InvalidMoveException {
-        int deltaPos = getDeltaPosFromDirection(direction);
+    private void movePiecesTowards(Position startPos, Direction direction) throws InvalidMoveException {
+        int deltaPos = direction.getDeltaPos();
 
         Position currentPosition = new Position(startPos);
 
@@ -75,47 +73,6 @@ public class Game {
             movePiece(currentPosition, deltaPos);
         } catch (Exception e) {
             throw new InvalidMoveException();
-        }
-    }
-
-    public int getDeltaPosFromDirection(Move.Direction direction) {
-        // Determine the deltaPos value based on the direction
-        switch (direction) {
-            case NORTH:
-                return 1;
-            case NORTH_EAST:
-                return 11;
-            case SOUTH_EAST:
-                return 10;
-            case SOUTH:
-                return -1;
-            case SOUTH_WEST:
-                return -11;
-            case NORTH_WEST:
-                return -10;
-        }
-
-        return -1;
-    }
-
-    public Direction getDirectionFromDeltaPos(int deltaPos) {
-        switch (deltaPos) {
-            case 1:
-                return Direction.NORTH;
-            case 11:
-                return Direction.NORTH_EAST;
-            case 10:
-                return Direction.SOUTH_EAST;
-            case -1:
-                return Direction.SOUTH;
-            case -11:
-                return Direction.SOUTH_WEST;
-            case -10:
-                return Direction.NORTH_WEST;
-
-            default:
-                debugOutput("invalid deltaPos '" + deltaPos + "'");
-                return null;
         }
     }
 
@@ -173,48 +130,48 @@ public class Game {
      */
     public Set<Move> getAllowedMoves() {
         return new HashSet<>(Arrays.asList(
-                new Move(getCurrentPiece(), new Position('a', 1), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 2), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 2), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 3), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 3), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 4), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 4), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 5), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('b', 6), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('b', 6), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('c', 7), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('c', 7), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('d', 8), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('d', 8), Move.Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('e', 9), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('f', 8), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('f', 8), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('g', 7), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('g', 7), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('h', 6), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('h', 6), Move.Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('i', 5), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 4), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 4), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 3), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 3), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 2), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 2), Move.Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 1), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('h', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('h', 1), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('g', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('g', 1), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('f', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('f', 1), Move.Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('e', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('d', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('d', 1), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('c', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('c', 1), Move.Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('b', 1), Move.Direction.NORTH_EAST)
+                new Move(getCurrentPiece(), new Position('a', 1), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 2), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 2), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 3), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 3), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 4), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 4), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('a', 5), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('b', 6), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('b', 6), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('c', 7), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('c', 7), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('d', 8), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('d', 8), Direction.SOUTH_EAST),
+                new Move(getCurrentPiece(), new Position('e', 9), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('f', 8), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('f', 8), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('g', 7), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('g', 7), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('h', 6), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('h', 6), Direction.SOUTH),
+                new Move(getCurrentPiece(), new Position('i', 5), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 4), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 4), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 3), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 3), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 2), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 2), Direction.SOUTH_WEST),
+                new Move(getCurrentPiece(), new Position('i', 1), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('h', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('h', 1), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('g', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('g', 1), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('f', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('f', 1), Direction.NORTH_WEST),
+                new Move(getCurrentPiece(), new Position('e', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('d', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('d', 1), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('c', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('c', 1), Direction.NORTH_EAST),
+                new Move(getCurrentPiece(), new Position('b', 1), Direction.NORTH),
+                new Move(getCurrentPiece(), new Position('b', 1), Direction.NORTH_EAST)
         ));
     }
 
@@ -381,10 +338,12 @@ public class Game {
         WHITE,
         BLACK
     }
+
     public class Player {
         Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;
         }
+
         public PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;

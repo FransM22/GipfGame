@@ -1,6 +1,5 @@
 package GUI;
 
-import GUI.GipfBoardComponent.DebugTextArea;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.GipfBoardComponent.GipfBoardComponentMouseListener;
 import GameLogic.Game;

@@ -1,4 +1,4 @@
-package GUI.GipfBoardComponent;
+package GUI;
 
 import GameLogic.Position;
 

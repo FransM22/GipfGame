@@ -49,15 +49,6 @@ public class Move {
         this.removedPiecePositions = new HashSet<>();   // An empty set
     }
 
-    public enum Direction {
-        NORTH,
-        NORTH_EAST,
-        NORTH_WEST,
-        SOUTH,
-        SOUTH_EAST,
-        SOUTH_WEST
-    }
-
     public Position getStartingPosition() { return startPos; }
     public Direction getDirection() { return direction; }
 }

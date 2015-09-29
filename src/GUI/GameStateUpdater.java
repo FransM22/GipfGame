@@ -1,6 +1,5 @@
 package GUI;
 
-import GUI.GipfBoardComponent.UIval;
 import GameLogic.Game;
 
 import java.util.concurrent.TimeUnit;

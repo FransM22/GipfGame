@@ -1,6 +1,7 @@
 package GUI.GipfBoardComponent;
 
 import GUI.GipfBoardComponent.DrawableObjects.*;
+import GUI.UIval;
 import GameLogic.Game;
 import GameLogic.Position;
 
