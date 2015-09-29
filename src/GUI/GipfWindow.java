@@ -20,6 +20,8 @@ class GipfWindow extends JFrame {
     private final JButton newPieceCoordinateEnterButton;
     private final JTextArea debugTextArea;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
+    private final JLabel piecesLeftMessage;
+    private GameStateUpdater gameStateUpdater;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -32,6 +34,8 @@ class GipfWindow extends JFrame {
         gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new JTextArea("Debug information\n");
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
+        piecesLeftMessage = new JLabel();
+        gameStateUpdater = new GameStateUpdater(gipfBoardComponent, this);
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -60,6 +64,7 @@ class GipfWindow extends JFrame {
 
         pack();
         setVisible(true);
+        new Thread(gameStateUpdater).run();
     }
 
     public static void main(String argv[]) {
@@ -92,7 +97,7 @@ class GipfWindow extends JFrame {
         }
     }
 
-    private void addDebugInfo(String s) {
+    void addDebugInfo(String s) {
         debugTextArea.append(s + "\n");
     }
 }
