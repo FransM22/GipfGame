@@ -13,11 +13,16 @@ import java.util.*;
 public class Game {
     public LinkedList<String> debugMessages;
     Player currentPlayer;
+    public Player whitePlayer;
+    public Player blackPlayer;
     private GipfBoard gipfBoard;
 
     public Game() {
         gipfBoard = new GipfBoard();
-        currentPlayer = Player.WHITE;
+        whitePlayer = new Player(PieceColor.WHITE);
+        blackPlayer = new Player(PieceColor.BLACK);
+
+        currentPlayer = whitePlayer;
         debugMessages = new LinkedList<>();
     }
 
@@ -214,12 +219,12 @@ public class Game {
     }
 
     private void updateCurrentPlayer() {
-        currentPlayer = ((currentPlayer == Player.WHITE) ? Player.BLACK : Player.WHITE);
+        currentPlayer = ((currentPlayer == whitePlayer) ? blackPlayer : whitePlayer);
     }
 
     public Piece getCurrentPiece() {
-        if (currentPlayer == Player.WHITE) return Piece.WHITE_SINGLE;
-        if (currentPlayer == Player.BLACK) return Piece.BLACK_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.WHITE) return Piece.WHITE_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.BLACK) return Piece.BLACK_SINGLE;
 
         return null;
     }
@@ -347,7 +352,7 @@ public class Game {
     }
 
     /**
-     * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same color.
+     * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same pieceColor.
      */
     public enum Piece {
         WHITE_SINGLE,
@@ -372,10 +377,15 @@ public class Game {
         }
     }
 
-    public enum Player {
+    public enum PieceColor {
         WHITE,
-        BLACK;
-
+        BLACK
+    }
+    public class Player {
+        Player(PieceColor pieceColor) {
+            this.pieceColor = pieceColor;
+        }
+        public PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
     }

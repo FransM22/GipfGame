@@ -1,10 +1,8 @@
 package GUI;
 
-import GUI.GipfBoardComponent.GipfBoardComponent;
+import GUI.GipfBoardComponent.UIval;
 import GameLogic.Game;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,13 +21,14 @@ public class GameStateUpdater implements Runnable {
     public void run() {
         while (true) {
             try {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(UIval.get().gameStateUpdateIntervalMs);
 
                 while (!game.debugMessages.isEmpty()) {
                     gipfWindow.appendDebugMessage(game.debugMessages.pop());
                 }
 
-                gipfWindow.setPiecesLeftMessage("Current player: " + game.getCurrentPlayer() + " | " + "Pieces left: " + game.getCurrentPlayer().piecesLeft);
+                gipfWindow.setCurrentPlayerLabel("Current player: " + game.getCurrentPlayer().pieceColor);
+                gipfWindow.setPiecesLeftLabel("White pieces left: " + game.whitePlayer.piecesLeft + " | Black pieces left: " + game.blackPlayer.piecesLeft);
             } catch (InterruptedException e) {
                 break;  // Break out of the loop
             }

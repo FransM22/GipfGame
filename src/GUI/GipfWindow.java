@@ -22,7 +22,8 @@ class GipfWindow extends JFrame {
     private final JButton newPieceCoordinateEnterButton;
     private final JTextArea debugTextArea;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
-    private final JLabel piecesLeftMessage;
+    private final JLabel piecesLeftLabel;
+    private final JLabel currentPlayerLabel;
     private GameStateUpdater gameStateUpdater;
 
     private GipfWindow() throws HeadlessException {
@@ -36,7 +37,8 @@ class GipfWindow extends JFrame {
         gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new JTextArea("Debug information\n");
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
-        piecesLeftMessage = new JLabel();
+        piecesLeftLabel = new JLabel(" ");
+        currentPlayerLabel = new JLabel(" ");
         gameStateUpdater = new GameStateUpdater(this, game);
 
         // Set the properties of the elements
@@ -50,7 +52,8 @@ class GipfWindow extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));    // Put everything in a column
 
         contentPane.add(new JLabel("The GIPF game"));
-        contentPane.add(piecesLeftMessage);
+        contentPane.add(currentPlayerLabel);
+        contentPane.add(piecesLeftLabel);
         contentPane.add(gipfBoardComponent);
 
         contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
@@ -105,7 +108,11 @@ class GipfWindow extends JFrame {
         debugTextArea.append(timeString + ": " + message + "\n");
     }
 
-    public void setPiecesLeftMessage(String message) {
-        piecesLeftMessage.setText(message);
+    public void setPiecesLeftLabel(String message) {
+        piecesLeftLabel.setText(message);
+    }
+
+    public void setCurrentPlayerLabel(String message) {
+        currentPlayerLabel.setText(message);
     }
 }

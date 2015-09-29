@@ -28,20 +28,20 @@ public class UIval {
     public final int filledCircleSize = 15;                           // The size of the filled circles
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
-    public final int hoverUpdateIntervalMs = 100;                                  // The interval in ms of updating the position over which is being hovered
+    public final long hoverUpdateIntervalMs = 100;                                  // The interval in ms of updating the position over which is being hovered
 
     // Colors
     public final Color backgroundColor = new Color(0xD2FF9B);            // The background of the component
     public final Color lineColor = new Color(0x8D8473);                  // The lines showing how pieces are allowed to move
-    public final Color positionNameColor = lineColor;                    // Color of position names
+    public final Color positionNameColor = lineColor;                    // PieceColor of position names
     public final Color centerColor = new Color(0xE5FFCE);                // The hexagon in the center
-    public final Color filledCircleColor = backgroundColor;              // Color of the circles that are filled (on the edges of the board)
+    public final Color filledCircleColor = backgroundColor;              // PieceColor of the circles that are filled (on the edges of the board)
     public final Color filledCircleBorderColor = new Color(0x7D8972);    // Border color of the filled circles
     public final Color moveToArrowColor = new Color(0x80808080);                     // The line indicating where the player can move his piece
-    public final Color whiteSingleColor = new Color(0xF9F9F9);           // Color of the normal white piece
-    public final Color whiteGipfColor = whiteSingleColor;                // Color of the white gipf piece
-    public final Color blackSingleColor = new Color(0x525252);           // Color of the normal black piece
-    public final Color blackGipfColor = blackSingleColor;                // Color of the black gipf piece
+    public final Color whiteSingleColor = new Color(0xF9F9F9);           // PieceColor of the normal white piece
+    public final Color whiteGipfColor = whiteSingleColor;                // PieceColor of the white gipf piece
+    public final Color blackSingleColor = new Color(0x525252);           // PieceColor of the normal black piece
+    public final Color blackGipfColor = blackSingleColor;                // PieceColor of the black gipf piece
     public final Color singlePieceBorderColor = Color.black;             // Border color of normal single pieces
     public final Color gipfPieceBorderColor = new Color(0xDA0000);       // Border color of gipf pieces
     public final Color hoverBorderColor = new Color(0x0, true);           // The border color of positions that is hovered over
@@ -89,6 +89,7 @@ public class UIval {
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
+    public long gameStateUpdateIntervalMs = 100;
 
     private UIval() {
         // Exists only to prohibit instantiation
