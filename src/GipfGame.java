@@ -1,7 +1,4 @@
-import GameLogic.Game;
-import GameLogic.GipfBoard;
-import GameLogic.Move;
-import GameLogic.Position;
+import GameLogic.*;
 
 /**
  * The GipfGame class keeps track of the running game.
@@ -19,13 +16,13 @@ class GipfGame {
         Move m = new Move(
                 Game.Piece.WHITE_GIPF,
                 new Position('a', 5),
-                Move.Direction.SOUTH_EAST
+                Direction.SOUTH_EAST
         );
 
         Move m2 = new Move(
                 Game.Piece.BLACK_GIPF,
                 new Position('a', 5),
-                Move.Direction.SOUTH_EAST
+                Direction.SOUTH_EAST
         );
 
         game.setPiece(new Position('e', 5), Game.Piece.WHITE_SINGLE);

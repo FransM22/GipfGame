@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 public class UIval {
     private static UIval instance = null;    // Needed for singleton behaviour
     public final Stroke normalPieceStroke = new BasicStroke(4.0f);
-    public final Stroke gipfPieceStroke = new BasicStroke(4.0f);
     public final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     public final int hoverCircleSize = 15;
     public final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.

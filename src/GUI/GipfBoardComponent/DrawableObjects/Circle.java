@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toSet;
  * Created by frans on 24-9-2015.
  */
 public class Circle extends DrawableObject {
-    private Set<DrawableCircle> circles;
+    private Set<CircleProperties> circles;
     private int size;
     private Stroke strokeStyle;
 
@@ -26,11 +26,11 @@ public class Circle extends DrawableObject {
     /**
      * In java it's not possible to execute code before the call to the super constructor. This would mean that this class
      * would need to take care of creating the correct color game piece for the GipfPieces class. Because I want to keep
-     * the method more general I created a method to set the DrawableCircle field, allowing the GipfPieces class to take
+     * the method more general I created a method to set the CircleProperties field, allowing the GipfPieces class to take
      * care of it.
      * @param circles
      */
-    void setDrawableCircles(Set<DrawableCircle> circles) {
+    void setDrawableCircles(Set<CircleProperties> circles) {
         this.circles = circles;
     }
 
@@ -39,7 +39,7 @@ public class Circle extends DrawableObject {
         this.circles = circlePositions
                 .stream()
                 .filter(position -> position != null)
-                .map(position -> new DrawableCircle(position, fillColor, borderColor))
+                .map(position -> new CircleProperties(position, fillColor, borderColor))
                 .collect(toSet());
         this.size = size;
         this.strokeStyle = strokeStyle;
@@ -76,12 +76,12 @@ public class Circle extends DrawableObject {
         );
     }
 
-    class DrawableCircle {
+    class CircleProperties {
         Color fillColor;
         Color borderColor;
         Position position;
 
-        public DrawableCircle(Position position, Color fillColor, Color borderColor) {
+        public CircleProperties(Position position, Color fillColor, Color borderColor) {
             this.position = position;
             this.fillColor = fillColor;
             this.borderColor = borderColor;

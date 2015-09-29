@@ -1,7 +1,7 @@
 package GUI.GipfBoardComponent.DrawableObjects;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
-import GameLogic.Move;
+import GameLogic.Direction;
 import GameLogic.Position;
 
 import java.awt.*;
@@ -12,11 +12,11 @@ import java.awt.*;
 public class Lines extends DrawableObject {
     final Position start;
     final Position end;
-    final Move.Direction nextStart;
-    final Move.Direction nextEnd;
+    final Direction nextStart;
+    final Direction nextEnd;
     final int nr;
 
-    Lines(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Position start, Position end, Move.Direction nextStart, Move.Direction nextEnd, int nr) {
+    Lines(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Position start, Position end, Direction nextStart, Direction nextEnd, int nr) {
         super(g2, gipfBoardComponent);
 
         this.start = start;
@@ -28,8 +28,8 @@ public class Lines extends DrawableObject {
 
     @Override
     public void draw() {
-        int startDeltaPos = gipfBoardComponent.game.getDeltaPosFromDirection(nextStart);
-        int endDeltaPos = gipfBoardComponent.game.getDeltaPosFromDirection(nextEnd);
+        int startDeltaPos = nextStart.getDeltaPos();
+        int endDeltaPos = nextEnd.getDeltaPos();
 
         for (int lineNr = 0; lineNr < nr; lineNr++) {
             Position start = new Position(this.start.getPosId() + (lineNr * startDeltaPos));

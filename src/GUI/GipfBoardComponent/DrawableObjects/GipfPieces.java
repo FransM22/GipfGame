@@ -24,7 +24,7 @@ public class GipfPieces extends Circle {
                 pieceMap
                         .entrySet()
                         .stream()
-                        .map(entry -> new DrawableCircle(
+                        .map(entry -> new CircleProperties(
                                 (Position) entry.getKey(),
                                 getFillColorFor(entry.getValue()),
                                 getBorderColorFor(entry.getValue())))
