@@ -142,7 +142,7 @@ public class Game {
                 try {
                     detectFourPieces();
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    debugOutput("Caught an ArrayIndexOutOfBoundsException");     // TODO Fix this
+                    debugOutput("Caught an ArrayIndexOutOfBoundsException");
                     e.printStackTrace();
                 }
 
@@ -150,7 +150,7 @@ public class Game {
 
                 updateCurrentPlayer();
             } catch (InvalidMoveException e) {
-                debugOutput("Move not applied");
+                System.out.println("Move not applied");
             }
         } else {
             debugOutput("No pieces left");
@@ -256,7 +256,7 @@ public class Game {
             for (int j = startBoardj; j < endBoardj; j++) //End = top current column
             {
                 Position p = new Position(i + j);
-                debugOutput("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
+                System.out.println("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
 
                 if (!isPositionOnBoard(p)) {
                     //Empty intentionally

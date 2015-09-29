@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.GipfBoardComponent.DebugTextArea;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.GipfBoardComponent.GipfBoardComponentMouseListener;
 import GameLogic.Game;
@@ -7,8 +8,6 @@ import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * The GipfWindow uses a GipfBoardComponent to show the board. More information about the game can be added to the window
@@ -16,11 +15,11 @@ import java.time.format.DateTimeFormatter;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
+    final JTextArea debugTextArea;
     private final GipfBoardComponent gipfBoardComponent;
     private final Game game;
     private final JTextField newPieceCoordinateTextField;
     private final JButton newPieceCoordinateEnterButton;
-    private final JTextArea debugTextArea;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
@@ -35,7 +34,7 @@ class GipfWindow extends JFrame {
         newPieceCoordinateEnterButton = new JButton("Enter");
         game = new Game();
         gipfBoardComponent = new GipfBoardComponent(game);
-        debugTextArea = new JTextArea("Debug information\n");
+        debugTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
         piecesLeftLabel = new JLabel(" ");
         currentPlayerLabel = new JLabel(" ");
@@ -91,21 +90,16 @@ class GipfWindow extends JFrame {
             if (game.isPositionOnBoard(newPiecePosition)) {
                 Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
-                appendDebugMessage("Placing new " + pieceType + " at " + newPiecePosition.getName());
+                debugTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
                 game.getGipfBoard().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
-                appendDebugMessage("Position " + newPiecePosition.getName() + " is invalid");
+                debugTextArea.append("Position " + newPiecePosition.getName() + " is invalid");
             }
         } catch (Exception e) {
-            appendDebugMessage("Can't parse '" + newCoordinateText + "'");
+            debugTextArea.append("Can't parse '" + newCoordinateText + "'");
         }
-    }
-
-    void appendDebugMessage(String message) {
-        String timeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm.ss"));
-        debugTextArea.append(timeString + ": " + message + "\n");
     }
 
     public void setPiecesLeftLabel(String message) {
