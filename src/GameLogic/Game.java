@@ -31,11 +31,11 @@ public class Game {
         int row = p.getRowNumber();
 
         // See google doc for explanation of the formula
-        return !(row <= 0 ||
-                col >= 10 ||
+        return !(row <= 1 ||
+                col >=9 ||
                 row >= 10 ||
-                row - col >= 5 ||
-                col <= 0);
+                row - col >= 4 ||
+                col <= 1);
     }
 
     private boolean isPositionEmpty(Position p) {
