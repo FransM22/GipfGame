@@ -48,6 +48,7 @@ class GipfWindow extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));    // Put everything in a column
 
         contentPane.add(new JLabel("The GIPF game"));
+        contentPane.add(piecesLeftMessage);
         contentPane.add(gipfBoardComponent);
 
         contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
@@ -99,5 +100,9 @@ class GipfWindow extends JFrame {
 
     void addDebugInfo(String s) {
         debugTextArea.append(s + "\n");
+    }
+
+    public void setPiecesLeftMessage(String message) {
+        piecesLeftMessage.setText(message);
     }
 }

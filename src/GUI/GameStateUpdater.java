@@ -4,6 +4,7 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.GipfBoard;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +25,7 @@ public class GameStateUpdater implements Runnable {
             try {
                 TimeUnit.SECONDS.sleep(1);
 
-                gipfWindow.addDebugInfo("New debug info at " + LocalDateTime.now());
+                gipfWindow.addDebugInfo("New debug info at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm")));
             } catch (InterruptedException e) {
                 break;  // Break out of the loop
             }
