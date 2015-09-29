@@ -1,7 +1,7 @@
 package GUI;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
-import GameLogic.GipfBoard;
+import GameLogic.Game;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,12 +11,12 @@ import java.util.concurrent.TimeUnit;
  * Created by frans on 29-9-2015.
  */
 public class GameStateUpdater implements Runnable {
-    GipfBoardComponent gipfBoardComponent;
+    Game game;
     GipfWindow gipfWindow;
 
-    public GameStateUpdater(GipfBoardComponent gipfBoardComponent, GipfWindow gipfWindow) {
-        this.gipfBoardComponent = gipfBoardComponent;
+    public GameStateUpdater(GipfWindow gipfWindow, Game game) {
         this.gipfWindow = gipfWindow;
+        this.game = game;
     }
 
     @Override
@@ -25,9 +25,11 @@ public class GameStateUpdater implements Runnable {
             try {
                 TimeUnit.SECONDS.sleep(1);
 
-                gipfWindow.addDebugInfo("New debug info at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm.ss")));
+                while (!game.debugMessages.isEmpty()) {
+                    gipfWindow.appendDebugMessage(game.debugMessages.pop());
+                }
 
-                gipfWindow.setPiecesLeftMessage("Current player: " + gipfBoardComponent.game.getCurrentPlayer() + " | " + "Pieces left: " + gipfBoardComponent.game.getCurrentPlayer().piecesLeft);
+                gipfWindow.setPiecesLeftMessage("Current player: " + game.getCurrentPlayer() + " | " + "Pieces left: " + game.getCurrentPlayer().piecesLeft);
             } catch (InterruptedException e) {
                 break;  // Break out of the loop
             }

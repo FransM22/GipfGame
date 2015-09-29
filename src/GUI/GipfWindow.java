@@ -7,6 +7,8 @@ import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * The GipfWindow uses a GipfBoardComponent to show the board. More information about the game can be added to the window
@@ -35,7 +37,7 @@ class GipfWindow extends JFrame {
         debugTextArea = new JTextArea("Debug information\n");
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
         piecesLeftMessage = new JLabel();
-        gameStateUpdater = new GameStateUpdater(gipfBoardComponent, this);
+        gameStateUpdater = new GameStateUpdater(this, game);
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -86,20 +88,21 @@ class GipfWindow extends JFrame {
             if (game.isPositionOnBoard(newPiecePosition)) {
                 Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
-                addDebugInfo("Placing new " + pieceType + " at " + newPiecePosition.getName());
+                appendDebugMessage("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
                 game.getGipfBoard().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
-                addDebugInfo("Position " + newPiecePosition.getName() + " is invalid");
+                appendDebugMessage("Position " + newPiecePosition.getName() + " is invalid");
             }
         } catch (Exception e) {
-            addDebugInfo("Can't parse '" + newCoordinateText + "'");
+            appendDebugMessage("Can't parse '" + newCoordinateText + "'");
         }
     }
 
-    void addDebugInfo(String s) {
-        debugTextArea.append(s + "\n");
+    void appendDebugMessage(String message) {
+        String timeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm.ss"));
+        debugTextArea.append(timeString + ": " + message + "\n");
     }
 
     public void setPiecesLeftMessage(String message) {

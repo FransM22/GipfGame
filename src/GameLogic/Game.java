@@ -2,10 +2,7 @@ package GameLogic;
 
 import GameLogic.Move.Direction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Is still room for optimization, but should be done only if this code seems
@@ -14,12 +11,14 @@ import java.util.Set;
  * Created by frans on 21-9-2015.
  */
 public class Game {
+    public LinkedList<String> debugMessages;
     Player currentPlayer;
     private GipfBoard gipfBoard;
 
     public Game() {
         gipfBoard = new GipfBoard();
         currentPlayer = Player.WHITE;
+        debugMessages = new LinkedList<>();
     }
 
     /**
@@ -56,7 +55,7 @@ public class Game {
 
                 gipfBoard.getPieceMap().put(nextPosition, gipfBoard.getPieceMap().remove(currentPosition));
             } catch (InvalidMoveException e) {
-                System.out.println("Moving to " + nextPosition + " is not allowed");
+                debugOutput("Moving to " + nextPosition + " is not allowed");
                 throw new InvalidMoveException();
             }
         }
@@ -110,7 +109,7 @@ public class Game {
                 return Direction.NORTH_WEST;
 
             default:
-                System.out.println("invalid deltaPos '" + deltaPos + "'");
+                debugOutput("invalid deltaPos '" + deltaPos + "'");
                 return null;
         }
     }
@@ -138,7 +137,7 @@ public class Game {
                 try {
                     detectFourPieces();
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("Caught an ArrayIndexOutOfBoundsException");     // TODO Fix this
+                    debugOutput("Caught an ArrayIndexOutOfBoundsException");     // TODO Fix this
                     e.printStackTrace();
                 }
 
@@ -146,10 +145,10 @@ public class Game {
 
                 updateCurrentPlayer();
             } catch (InvalidMoveException e) {
-                System.out.println("Move not applied");
+                debugOutput("Move not applied");
             }
         } else {
-            System.out.println("No pieces left");
+            debugOutput("No pieces left");
         }
     }
 
@@ -215,7 +214,7 @@ public class Game {
     }
 
     private void updateCurrentPlayer() {
-        currentPlayer = (currentPlayer == Player.WHITE ? Player.BLACK : Player.WHITE);
+        currentPlayer = ((currentPlayer == Player.WHITE) ? Player.BLACK : Player.WHITE);
     }
 
     public Piece getCurrentPiece() {
@@ -252,7 +251,7 @@ public class Game {
             for (int j = startBoardj; j < endBoardj; j++) //End = top current column
             {
                 Position p = new Position(i + j);
-                System.out.println("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
+                debugOutput("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
 
                 if (!isPositionOnBoard(p)) {
                     //Empty intentionally
@@ -329,6 +328,7 @@ public class Game {
 
     /**
      * By Dingding
+     *
      * @param piece
      * @return
      */
@@ -340,6 +340,10 @@ public class Game {
             colour = 1;
         }
         return colour;
+    }
+
+    public void debugOutput(String debug) {
+        debugMessages.add(debug);
     }
 
     /**
