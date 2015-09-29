@@ -257,6 +257,6 @@ public class Game {
         BLACK;
 
         boolean isPlacingGipfPieces = true;
-        int piecesLeft = 18;    // Each player starts with 18 pieces
+        public int piecesLeft = 18;    // Each player starts with 18 pieces
     }
 }
