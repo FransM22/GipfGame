@@ -26,6 +26,8 @@ public class GameStateUpdater implements Runnable {
                 TimeUnit.SECONDS.sleep(1);
 
                 gipfWindow.addDebugInfo("New debug info at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm.ss")));
+
+                gipfWindow.setPiecesLeftMessage("Current player: " + gipfBoardComponent.game.getCurrentPlayer() + " | " + "Pieces left: " + gipfBoardComponent.game.getCurrentPlayer().piecesLeft);
             } catch (InterruptedException e) {
                 break;  // Break out of the loop
             }
