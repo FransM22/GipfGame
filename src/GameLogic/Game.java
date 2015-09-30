@@ -212,6 +212,7 @@ public class Game {
         for (int i = startBoardi; i < endBoardi; i += 10) {
             for (int j = startBoardj; j < endBoardj; j++) //End = top current column
             {
+                count = 0;
                 Position p = new Position(i + j);
                 System.out.println("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
 
@@ -235,7 +236,7 @@ public class Game {
                         if (count == 4) {
                             //Found a row of 4, change [4] to 1 to indicate part of row
                             for (int a = j; a > j - 4; a--) {
-                                fourPieces.get(j)[4] = 1;
+                                fourPieces.get(a)[4] = 1;
                             }
 
                             int[] temp = {i + j, getColour(piece), count, 1};
@@ -255,7 +256,7 @@ public class Game {
                         //Have to empty ArrayList, but keep rows found so far looking at rowID (fourPieces[4])
                         count = 1;
                         ArrayList<int[]> tempList = new ArrayList();
-                        for (int k = 0; k < fourPieces.size(); k++) {
+                        for (int k = 0; k < fourPieces.size() - 1; k++) {
                             if (fourPieces.get(k)[4] == 1) //Copy all pieces that were part of a row
                             {
                                 int[] temp = {fourPieces.get(k)[0], fourPieces.get(k)[1], fourPieces.get(k)[2], fourPieces.get(k)[3], fourPieces.get(k)[4]};
