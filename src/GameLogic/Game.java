@@ -235,7 +235,7 @@ public class Game {
 
                         if (count == 4) {
                             //Found a row of 4, change [4] to 1 to indicate part of row
-                            for (int a = j; a > j - 4; a--) {
+                            for(int a = fourPieces.size()-1; a > fourPieces.size()-5; a--) {
                                 fourPieces.get(a)[4] = 1;
                             }
 
