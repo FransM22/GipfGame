@@ -31,13 +31,29 @@ public class Game {
         int row = p.getRowNumber();
 
         // See google doc for explanation of the formula
-        return !(row <= 1 ||
+        return !(row <= 0 ||
                 col >=9 ||
-                row >= 10 ||
-                row - col >= 4 ||
-                col <= 1);
+                row >= 11 ||
+                row - col >=5 ||
+                col <=0);
     }
+    
+    public boolean isValidPosition(Position p){
+    	int col = p.getColName() - 'a' + 1;
+        int row = p.getRowNumber();
 
+        // See google doc for explanation of the formula
+        return !(row <= 1 ||
+        		row-col <= -4 ||		//This fixes the upper edge, but breaks the lower-right corner
+                col >=9 ||
+                row >= 9 ||
+                row - col >=4 ||
+                col <=1);
+    }
+    
+    
+    
+       
     private boolean isPositionEmpty(Position p) {
         return !gipfBoard.getPieceMap().containsKey(p);
     }
@@ -45,7 +61,7 @@ public class Game {
     private void movePiece(Position currentPosition, int deltaPos) throws Exception {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
-        if (!isPositionOnBoard(nextPosition)) {
+        if (!isValidPosition(nextPosition)) {
             throw new InvalidMoveException();
         } else {
             try {
@@ -135,9 +151,8 @@ public class Game {
                 m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
 
                 currentPlayer.piecesLeft--;
-
                 updateCurrentPlayer();
-            } catch (Exception e) {
+                } catch (Exception e) {
                 System.out.println("Move not applied");
             }
         } else {

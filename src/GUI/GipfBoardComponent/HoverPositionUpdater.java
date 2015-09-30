@@ -74,6 +74,8 @@ class HoverPositionUpdater implements Runnable {
             gipfBoardComponent.repaint();
         }
     }
+    
+    
 
     private Set<Position> getStartPositionsForMoves() {
         return gipfBoardComponent.game.getAllowedMoves()
