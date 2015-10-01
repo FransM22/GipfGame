@@ -3,6 +3,10 @@ package GameLogic;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Is still room for optimization, but should be done only if this code seems
  * to be a bottleneck.
@@ -41,7 +45,23 @@ public class Game {
                 row - col >= 5 ||
                 col <= 0);
     }
+    //This method check valid Position
+    public boolean isValidPosition(Position p){
+    	int col = p.getColName() - 'a' + 1;
+        int row = p.getRowNumber();
 
+        // See google doc for explanation of the formula
+        return !(row <= 1 ||
+        		row-col <= -4 ||		//This fixes the upper edge, but breaks the lower-right corner
+                col >=9 ||
+                row >= 9 ||
+                row - col >=4 ||
+                col <=1);
+    }
+    
+    
+    
+       
     private boolean isPositionEmpty(Position p) {
         return !gipfBoard.getPieceMap().containsKey(p);
     }
@@ -49,7 +69,7 @@ public class Game {
     private void movePiece(Position currentPosition, int deltaPos) throws Exception {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
-        if (!isPositionOnBoard(nextPosition)) {
+        if (!isValidPosition(nextPosition)) {
             throw new InvalidMoveException();
         } else {
             try {
