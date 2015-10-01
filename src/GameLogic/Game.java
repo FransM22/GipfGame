@@ -371,7 +371,7 @@ public class Game {
         }
 
         public PieceColor pieceColor;
-        public int piecesLeft = 180;    // Each player starts with 18 pieces
+        public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
     }
 
