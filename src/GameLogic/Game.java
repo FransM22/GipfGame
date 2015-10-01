@@ -37,7 +37,7 @@ public class Game {
                 row - col >=5 ||
                 col <=0);
     }
-    
+    //This method check valid Position
     public boolean isValidPosition(Position p){
     	int col = p.getColName() - 'a' + 1;
         int row = p.getRowNumber();
