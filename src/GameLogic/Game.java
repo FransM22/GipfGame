@@ -1,6 +1,7 @@
 package GameLogic;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Is still room for optimization, but should be done only if this code seems
@@ -348,5 +349,21 @@ public class Game {
         public PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
+    }
+
+    public Set<Position> getStartPositionsForMoves() {
+        return getAllowedMoves()
+                .stream()
+                .map(Move::getStartingPosition)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Position> getMoveToPositionsForStartPosition(Position position) {
+        return getAllowedMoves()
+                .stream()
+                .filter(m -> m.getStartingPosition().equals(position))
+                .map(move -> new Position(
+                        move.getStartingPosition().getPosId() + move.getDirection().getDeltaPos()))
+                .collect(Collectors.toSet());
     }
 }

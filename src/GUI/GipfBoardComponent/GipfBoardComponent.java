@@ -32,6 +32,7 @@ public class GipfBoardComponent extends JComponent {
      */
     public GipfBoardComponent(Game game) {
         this.game = game;
+        addMouseListener(new GipfBoardComponentMouseListener(this));
 
         setPreferredSize(new Dimension(600, 600));
     }
@@ -39,7 +40,6 @@ public class GipfBoardComponent extends JComponent {
     public static void main(String argv[]) {
         Game game = new Game();
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
-        gipfBoardComponent.addMouseListener(new GipfBoardComponentMouseListener(gipfBoardComponent));
 
         // These are only for checking whether the component works
         game.setPiece(new Position('b', 2), Game.Piece.WHITE_SINGLE);

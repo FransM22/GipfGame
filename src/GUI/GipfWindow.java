@@ -1,7 +1,6 @@
 package GUI;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
-import GUI.GipfBoardComponent.GipfBoardComponentMouseListener;
 import GameLogic.Game;
 import GameLogic.Position;
 
@@ -41,7 +40,6 @@ class GipfWindow extends JFrame {
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
-        gipfBoardComponent.addMouseListener(new GipfBoardComponentMouseListener(gipfBoardComponent));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("GIPF");
