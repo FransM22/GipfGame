@@ -106,19 +106,19 @@ public class Game {
      * Then the pieces are moved in the direction of the move,
      * and finally pieces that need to be removed are removed from the board
      *
-     * @param m the move that is applied
+     * @param move the move that is applied
      */
-    public void applyMove(Move m) {
+    public void applyMove(Move move) {
         if (currentPlayer.piecesLeft >= 1) {
             // Add the piece to the new pieces
-            setPiece(m.startPos, m.addedPiece);
+            setPiece(move.startPos, move.addedPiece);
 
             try {
-                movePiecesTowards(m.startPos, m.direction);
+                movePiecesTowards(move.startPos, move.direction);
 
                 // Remove the pieces that need to be removed
                 // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
-                m.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+                move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
 
                 try {
                     detectFourPieces();
@@ -127,11 +127,12 @@ public class Game {
                     e.printStackTrace();
                 }
 
+                debugOutput(move.toString());
                 currentPlayer.piecesLeft--;
 
                 updateCurrentPlayer();
             } catch (InvalidMoveException e) {
-                gipfBoard.getPieceMap().remove(m.startPos);
+                gipfBoard.getPieceMap().remove(move.startPos);
                 System.out.println("Move not applied");
             }
         } else {

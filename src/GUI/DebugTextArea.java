@@ -14,7 +14,7 @@ public class DebugTextArea extends JTextArea {
     }
 
     public void append(String message) {
-        String timeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss.S"));
+        String timeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM HH:mm:ss.S"));
         super.append(timeString + ": " + message + "\n");
         setCaretPosition(getDocument().getLength());
     }

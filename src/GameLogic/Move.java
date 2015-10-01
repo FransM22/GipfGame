@@ -49,6 +49,16 @@ public class Move {
         this.removedPiecePositions = new HashSet<>();   // An empty set
     }
 
+    @Override
+    public String toString() {
+        Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
+
+        return "" + startPos.getColName() + startPos.getRowNumber() +
+                " -> " + toPos.getColName() + toPos.getRowNumber() +
+                ", removed=" + removedPiecePositions +
+                '}';
+    }
+
     public Position getStartingPosition() { return startPos; }
     public Direction getDirection() { return direction; }
 }
