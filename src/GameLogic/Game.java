@@ -3,10 +3,6 @@ package GameLogic;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Is still room for optimization, but should be done only if this code seems
  * to be a bottleneck.
@@ -41,10 +37,17 @@ public class Game {
         // See google doc for explanation of the formula
         return !(row <= 0 ||
                 col >= 10 ||
-                row >= 10 ||
-                row - col >= 5 ||
-                col <= 0);
+                row + col >= 15 ||
+                col - row <= -5 ||
+                col <= 0
+        );
     }
+
+    /**
+     * By Leroy
+     * @param p
+     * @return
+     */
     //This method check valid Position
     public boolean isValidPosition(Position p){
     	int col = p.getColName() - 'a' + 1;
@@ -52,11 +55,11 @@ public class Game {
 
         // See google doc for explanation of the formula
         return !(row <= 1 ||
-        		row-col <= -4 ||		//This fixes the upper edge, but breaks the lower-right corner
-                col >=9 ||
-                row >= 9 ||
-                row - col >=4 ||
-                col <=1);
+                col >= 9 ||
+                row + col >= 14 ||
+                col - row <= -4 ||
+                col <= 1
+        );
     }
     
     
@@ -128,6 +131,7 @@ public class Game {
 
                 updateCurrentPlayer();
             } catch (InvalidMoveException e) {
+                gipfBoard.getPieceMap().remove(m.startPos);
                 System.out.println("Move not applied");
             }
         } else {
@@ -367,7 +371,7 @@ public class Game {
         }
 
         public PieceColor pieceColor;
-        public int piecesLeft = 18;    // Each player starts with 18 pieces
+        public int piecesLeft = 180;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
     }
 
