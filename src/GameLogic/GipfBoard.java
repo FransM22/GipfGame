@@ -31,4 +31,5 @@ public class GipfBoard {
     public Map<Position, Game.Piece> getPieceMap() {
         return pieceMap;
     }
+
 }

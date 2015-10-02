@@ -13,9 +13,9 @@ public class Game {
     public LinkedList<String> debugMessages;
     public Player whitePlayer;
     public Player blackPlayer;
+    public boolean isGameOver = false;
     Player currentPlayer;
     Player winningPlayer;
-    public boolean isGameOver = false;
     private GipfBoard gipfBoard;
 
     public Game() {
@@ -28,6 +28,10 @@ public class Game {
     }
 
     public static PieceColor getPieceColor(Piece piece) {
+        if (piece == null) {
+            return null;
+        }
+
         switch (piece) {
             case WHITE_SINGLE:
             case WHITE_GIPF:
@@ -136,16 +140,16 @@ public class Game {
 
                 // Remove the pieces that need to be removed
                 // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
-                move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+
 
                 // TODO Add pieces retrieved by removing pieces here
 
-                try {
-                    detectFourPieces();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    debugOutput("Caught an ArrayIndexOutOfBoundsException");
-                    e.printStackTrace();
-                }
+
+
+                move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
+                Map removablePieces = detectFourPieces(); // Applied in normal game
+                removablePieces.keySet().stream().forEach(gipfBoard.getPieceMap()::remove);
+
 
                 debugOutput(move.toString());
                 currentPlayer.piecesLeft--;
@@ -156,9 +160,7 @@ public class Game {
                     winningPlayer = currentPlayer;
 
                     debugOutput("Game over! " + winningPlayer.pieceColor + " won!");
-                }
-
-                else {
+                } else {
                     updateCurrentPlayer();
                 }
 
@@ -255,113 +257,66 @@ public class Game {
     /**
      * By Dingding
      */
-    public void detectFourPieces() {
-        //position i, j, colour, count, row
-        ArrayList<int[]> fourPieces = new ArrayList<int[]>(); //Arraylist to contain all rows of at least 4 pieces
-
-        int count = 0;
-        int colour = 0;
-        int startBoardj = 2;
-        int endBoardj = 9; //Testing purposes
-        int startBoardi = 2 * 10; //Testing purposes
-        int endBoardi = 90;
+    public Map<Position, Piece> detectFourPieces() {
         //Direction: South to North
-        for (int i = startBoardi; i < endBoardi; i += 10) {
-            for (int j = startBoardj; j < endBoardj; j++) //End = top current column
-            {
-                count = 0;
-                Position p = new Position(i + j);
-                System.out.println("i: " + i + "j: " + j + "on board: " + isPositionOnBoard(p));
+        Map<Position, Piece> removablePieces = new HashMap<>();
 
-                if (!isPositionOnBoard(p)) {
-                    //Empty intentionally
+        Map<Position, Direction> lines = new HashMap<>();
+        lines.put(new Position('a', 1), Direction.NORTH_EAST);
+        lines.put(new Position('a', 2), Direction.NORTH_EAST);
+        lines.put(new Position('a', 2), Direction.SOUTH_EAST);
+        lines.put(new Position('a', 3), Direction.NORTH_EAST);
+        lines.put(new Position('a', 3), Direction.SOUTH_EAST);
+        lines.put(new Position('a', 4), Direction.NORTH_EAST);
+        lines.put(new Position('a', 4), Direction.SOUTH_EAST);
+        lines.put(new Position('a', 5), Direction.SOUTH_EAST);
+        lines.put(new Position('b', 6), Direction.SOUTH);
+        lines.put(new Position('b', 6), Direction.SOUTH_EAST);
+        lines.put(new Position('c', 7), Direction.SOUTH);
+        lines.put(new Position('c', 7), Direction.SOUTH_EAST);
+        lines.put(new Position('d', 8), Direction.SOUTH);
+        lines.put(new Position('d', 8), Direction.SOUTH_EAST);
+        lines.put(new Position('e', 9), Direction.SOUTH);
+        lines.put(new Position('f', 8), Direction.SOUTH_WEST);
+        lines.put(new Position('f', 8), Direction.SOUTH);
+        lines.put(new Position('g', 7), Direction.SOUTH_WEST);
+        lines.put(new Position('g', 7), Direction.SOUTH);
+        lines.put(new Position('h', 6), Direction.SOUTH_WEST);
+        lines.put(new Position('h', 6), Direction.SOUTH);
+
+        for (Map.Entry<Position, Direction> entry : lines.entrySet()) {
+            Position currentPosition = entry.getKey();
+            Direction direction = entry.getValue();
+
+            int consecutivePieces = 0;
+            PieceColor consecutivePiecesColor = null;
+
+            do {
+                currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos());
+                PieceColor currentPieceColor = getPieceColor(getGipfBoard().getPieceMap().get(currentPosition));
+
+                if (consecutivePiecesColor == null && currentPieceColor != null) {
+                    consecutivePiecesColor = currentPieceColor;
+                    consecutivePieces = 1;
+                } else if (currentPieceColor == consecutivePiecesColor) {
+                    consecutivePieces++;
                 } else {
-                    //i = column of piece
-                    Piece piece = gipfBoard.getPieceMap().get(p);
-                    //First piece encountered
-                    if ((piece != null) && count == 0) {
-                        //System.out.println("Detected first piece");
-                        count++;
-                        int[] temp = {i, j, getColour(piece), count, 0};
-                        fourPieces.add(temp);
-                    }
-                    //Pieces encountered after first piece consecutive
-                    else if ((piece != null) && fourPieces.get(fourPieces.size() - 1)[2] == getColour(piece) && j == fourPieces.get(fourPieces.size() - 1)[1] + 1) {
-                        //System.out.println("Detected other piece");
-                        count++;
-
-                        if (count == 4) {
-                            //Found a row of 4, change [4] to 1 to indicate part of row
-                            for (int a = fourPieces.size() - 1; a > fourPieces.size() - 5; a--) {
-                                fourPieces.get(a)[4] = 1;
-                            }
-
-                            int[] temp = {i + j, getColour(piece), count, 1};
-                            fourPieces.add(temp);
-                        } else if (count > 4) //Add new piece as part of row hence ID = 1
-                        {
-                            int[] temp = {i + j, getColour(piece), count, 1};
-                            fourPieces.add(temp);
-                        } else //Not yet part of row -> ID = 0
-                        {
-                            int[] temp = {i + j, getColour(piece), count, 0};
-                            fourPieces.add(temp);
+                    if (consecutivePieces >= 4) {
+                        for (int i = 1; i <= consecutivePieces; i++) {
+                            Position previousPosition = new Position(currentPosition.getPosId() - (i * direction.getDeltaPos()));
+                            removablePieces.put(previousPosition, getGipfBoard().getPieceMap().get(previousPosition));
                         }
                     }
-                    //Found a piece not consecutive
-                    else if ((piece != null)) {
-                        //Have to empty ArrayList, but keep rows found so far looking at rowID (fourPieces[4])
-                        count = 1;
-                        ArrayList<int[]> tempList = new ArrayList();
-                        for (int k = 0; k < fourPieces.size() - 1; k++) {
-                            if (fourPieces.get(k)[4] == 1) //Copy all pieces that were part of a row
-                            {
-                                int[] temp = {fourPieces.get(k)[0], fourPieces.get(k)[1], fourPieces.get(k)[2], fourPieces.get(k)[3], fourPieces.get(k)[4]};
-                                tempList.add(temp);
-                            } else {
-                                //Go to next part
-                            }
-                        }
-                        int[] temp = {i, j, getColour(piece), count};
-                        tempList.add(temp);
-                        fourPieces = tempList;
-                    }
+
+                    consecutivePiecesColor = currentPieceColor;
+                    consecutivePieces = 0;
                 }
             }
+            while (isPositionOnBoard(currentPosition));
 
-            System.out.println("Checked for four pieces");
-        }
-        //Have to reset count per direction
-        count = 0;
-        //Direction: SW -> NE
-        for (int i = startBoardi; i < endBoardi; i += 10) {
-            for (int j = startBoardj; j < endBoardj; j++) {
-
-            }
-        }
-        //Reset count per direction
-        count = 0;
-        //Direction: NW -> SE
-        for (int i = startBoardi; i < endBoardi; i++) {
-            int j; //Same as j starting position until e
         }
 
-    }
-
-    /**
-     * By Dingding
-     *
-     * @param piece
-     * @return
-     */
-    public int getColour(Piece piece) {
-        int colour = 0;
-        if (piece.equals("BLACK_SINGLE")) {
-            colour = 0;
-        } else if (piece.equals("WHITE_SINGLE")) {
-            colour = 1;
-        }
-        return colour;
+        return removablePieces;
     }
 
     public void debugOutput(String debug) {
@@ -422,7 +377,7 @@ public class Game {
 
     public class Player {
         public PieceColor pieceColor;
-        public int piecesLeft = 2;    // Each player starts with 18 pieces
+        public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
 
         Player(PieceColor pieceColor) {
