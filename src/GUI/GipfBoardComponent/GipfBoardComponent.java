@@ -86,7 +86,8 @@ public class GipfBoardComponent extends JComponent {
                 new SelectedMoveToArrow(g2, this),
                 new HoverCircle(g2, this, Collections.singleton(currentHoverPosition)),
                 new SelectedPosition(g2, this, Collections.singleton(selectedPosition)),
-                new PositionNames(g2, this)
+                new PositionNames(g2, this),
+                new GameOverMessage(g2, this)
         );
 
         drawableObjects.stream().forEach(DrawableObject::draw);

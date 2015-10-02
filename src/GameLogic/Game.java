@@ -14,6 +14,7 @@ public class Game {
     public Player whitePlayer;
     public Player blackPlayer;
     Player currentPlayer;
+    public boolean isGameOver = false;
     private GipfBoard gipfBoard;
 
     public Game() {
@@ -145,6 +146,11 @@ public class Game {
 
                 debugOutput(move.toString());
                 currentPlayer.piecesLeft--;
+
+                if (currentPlayer.piecesLeft == 0) {
+                    isGameOver = true;
+                    debugOutput("Game over!");
+                }
 
                 updateCurrentPlayer();
             } catch (InvalidMoveException e) {
@@ -313,6 +319,8 @@ public class Game {
                     }
                 }
             }
+
+            System.out.println("Checked for four pieces");
         }
         //Have to reset count per direction
         count = 0;

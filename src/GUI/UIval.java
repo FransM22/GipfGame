@@ -28,6 +28,7 @@ public class UIval {
     public final int filledCircleSize = 15;                           // The size of the filled circles
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
+    public final Font gameOverFont = new Font("default", Font.BOLD, 40);
 
     // Interval times
     public final long hoverUpdateIntervalMs = 100;                    // The interval in ms of updating the position over which is being hovered
@@ -90,6 +91,7 @@ public class UIval {
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
+    public Color gameOverTextColor = new Color(0xFF0000);
 
     private UIval() {
         // Exists only to prohibit instantiation
