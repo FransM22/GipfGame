@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
  */
 public class Game {
     public LinkedList<String> debugMessages;
-    Player currentPlayer;
     public Player whitePlayer;
     public Player blackPlayer;
+    Player currentPlayer;
     private GipfBoard gipfBoard;
 
     public Game() {
@@ -23,6 +23,24 @@ public class Game {
 
         currentPlayer = whitePlayer;
         debugMessages = new LinkedList<>();
+    }
+
+    public static PieceColor getPieceColor(Piece piece) {
+        switch (piece) {
+            case WHITE_SINGLE:
+            case WHITE_GIPF:
+                return PieceColor.WHITE;
+        }
+        return PieceColor.BLACK;
+    }
+
+    public static PieceType getPieceType(Piece piece) {
+        switch (piece) {
+            case WHITE_SINGLE:
+            case BLACK_SINGLE:
+                return PieceType.NORMAL;
+        }
+        return PieceType.GIPF;
     }
 
     /**
@@ -45,12 +63,13 @@ public class Game {
 
     /**
      * By Leroy
+     *
      * @param p
      * @return
      */
     //This method check valid Position
-    public boolean isValidPosition(Position p){
-    	int col = p.getColName() - 'a' + 1;
+    public boolean isValidPosition(Position p) {
+        int col = p.getColName() - 'a' + 1;
         int row = p.getRowNumber();
 
         // See google doc for explanation of the formula
@@ -61,10 +80,7 @@ public class Game {
                 col <= 1
         );
     }
-    
-    
-    
-       
+
     private boolean isPositionEmpty(Position p) {
         return !gipfBoard.getPieceMap().containsKey(p);
     }
@@ -261,7 +277,7 @@ public class Game {
 
                         if (count == 4) {
                             //Found a row of 4, change [4] to 1 to indicate part of row
-                            for(int a = fourPieces.size()-1; a > fourPieces.size()-5; a--) {
+                            for (int a = fourPieces.size() - 1; a > fourPieces.size() - 5; a--) {
                                 fourPieces.get(a)[4] = 1;
                             }
 
@@ -335,6 +351,27 @@ public class Game {
         debugMessages.add(debug);
     }
 
+    public Set<Position> getStartPositionsForMoves() {
+        return getAllowedMoves()
+                .stream()
+                .map(Move::getStartingPosition)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Position> getMoveToPositionsForStartPosition(Position position) {
+        return getAllowedMoves()
+                .stream()
+                .filter(m -> m.getStartingPosition().equals(position))
+                .map(move -> new Position(
+                        move.getStartingPosition().getPosId() + move.getDirection().getDeltaPos()))
+                .collect(Collectors.toSet());
+    }
+
+    public enum PieceType {
+        GIPF,
+        NORMAL,
+    }
+
     /**
      * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same pieceColor.
      */
@@ -367,28 +404,12 @@ public class Game {
     }
 
     public class Player {
-        Player(PieceColor pieceColor) {
-            this.pieceColor = pieceColor;
-        }
-
         public PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
-    }
 
-    public Set<Position> getStartPositionsForMoves() {
-        return getAllowedMoves()
-                .stream()
-                .map(Move::getStartingPosition)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<Position> getMoveToPositionsForStartPosition(Position position) {
-        return getAllowedMoves()
-                .stream()
-                .filter(m -> m.getStartingPosition().equals(position))
-                .map(move -> new Position(
-                        move.getStartingPosition().getPosId() + move.getDirection().getDeltaPos()))
-                .collect(Collectors.toSet());
+        Player(PieceColor pieceColor) {
+            this.pieceColor = pieceColor;
+        }
     }
 }

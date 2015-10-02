@@ -3,6 +3,8 @@ package GameLogic;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * Stores all information related to a move operation. Can be used to track back to a previous state on the board, or to
  * determine which possible moves there are from a given board state.
@@ -53,9 +55,11 @@ public class Move {
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
-        return "" + startPos.getName() +
-                " -> " + toPos.getName() +
-                ", removed=" + removedPiecePositions +
+        return "" + Game.getPieceColor(addedPiece) + ": "
+                + (Game.getPieceType(addedPiece) == Game.PieceType.GIPF ? "G" : "")
+                + startPos.getName() +
+                "-" + toPos.getName() +
+                ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()) +
                 '}';
     }
 
