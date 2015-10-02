@@ -138,6 +138,8 @@ public class Game {
                 // Java 8 solution (performs the remove operation on each of the pieces that should be removed)
                 move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
 
+                // TODO Add pieces retrieved by removing pieces here
+
                 try {
                     detectFourPieces();
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -420,7 +422,7 @@ public class Game {
 
     public class Player {
         public PieceColor pieceColor;
-        public int piecesLeft = 18;    // Each player starts with 18 pieces
+        public int piecesLeft = 2;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
 
         Player(PieceColor pieceColor) {
