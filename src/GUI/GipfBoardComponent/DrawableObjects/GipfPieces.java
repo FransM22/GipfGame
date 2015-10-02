@@ -33,18 +33,14 @@ public class GipfPieces extends Circle {
     }
 
     private Color getFillColorFor(Game.Piece piece) {
-        switch (piece) {
-            case WHITE_SINGLE:
-                return UIval.get().whiteSingleColor;
-            case WHITE_GIPF:
-                return UIval.get().whiteGipfColor;
-            case BLACK_SINGLE:
-                return UIval.get().blackSingleColor;
-            case BLACK_GIPF:
-                return UIval.get().blackGipfColor;
+        switch (Game.getPieceColor(piece)) {
+            case WHITE:
+                return UIval.get().whitePieceColor;
+            case BLACK:
+                return UIval.get().blackPieceColor;
         }
 
-        return Color.BLACK;
+        return null;
     }
 
     private Color getBorderColorFor(Game.Piece piece) {

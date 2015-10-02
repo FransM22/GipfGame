@@ -101,9 +101,9 @@ public class GipfBoardComponent extends JComponent {
 
     public Color getColorOfPlayer(Game.Player player) {
         if (player.pieceColor == Game.PieceColor.BLACK)
-            return UIval.get().blackSingleColor;
+            return UIval.get().blackPieceColor;
         if (player.pieceColor == Game.PieceColor.WHITE)
-            return UIval.get().whiteSingleColor;
+            return UIval.get().whitePieceColor;
 
         return Color.red;
     }

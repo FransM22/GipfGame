@@ -15,19 +15,23 @@ import java.util.stream.Stream;
  */
 public class UIval {
     private static UIval instance = null;    // Needed for singleton behaviour
+
+    // Constants which can be changed to change the look
     public final Stroke normalPieceStroke = new BasicStroke(4.0f);
     public final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     public final int hoverCircleSize = 15;
     public final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
-    // Constants which can be changed to change the look
-    public final int nrOfColumnsOnGipfBoard = 9;                              // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
-    public final int nrOfRowsOnGipfBoard = 9;                                 // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
-    public final int marginSize = 25;                                         // The margin on the sides of the board
+    public final int nrOfColumnsOnGipfBoard = 9;                      // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
+    public final int nrOfRowsOnGipfBoard = 9;                         // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
+    public final int marginSize = 25;                                 // The margin on the sides of the board
     public final boolean antiAliasingEnabled = true;                  // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
     public final int filledCircleSize = 15;                           // The size of the filled circles
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
-    public final long hoverUpdateIntervalMs = 100;                                  // The interval in ms of updating the position over which is being hovered
+
+    // Interval times
+    public final long hoverUpdateIntervalMs = 100;                    // The interval in ms of updating the position over which is being hovered
+    public final long gameStateUpdateIntervalMs = 100;
 
     // Colors
     public final Color backgroundColor = new Color(0xD2FF9B);            // The background of the component
@@ -37,10 +41,8 @@ public class UIval {
     public final Color filledCircleColor = backgroundColor;              // PieceColor of the circles that are filled (on the edges of the board)
     public final Color filledCircleBorderColor = new Color(0x7D8972);    // Border color of the filled circles
     public final Color moveToArrowColor = new Color(0x80808080);                     // The line indicating where the player can move his piece
-    public final Color whiteSingleColor = new Color(0xF9F9F9);           // PieceColor of the normal white piece
-    public final Color whiteGipfColor = whiteSingleColor;                // PieceColor of the white gipf piece
-    public final Color blackSingleColor = new Color(0x525252);           // PieceColor of the normal black piece
-    public final Color blackGipfColor = blackSingleColor;                // PieceColor of the black gipf piece
+    public final Color whitePieceColor = new Color(0xF9F9F9);           // PieceColor of the normal white piece
+    public final Color blackPieceColor = new Color(0x525252);           // PieceColor of the normal black piece
     public final Color singlePieceBorderColor = Color.black;             // Border color of normal single pieces
     public final Color gipfPieceBorderColor = new Color(0xDA0000);       // Border color of gipf pieces
     public final Color hoverBorderColor = new Color(0x0, true);           // The border color of positions that is hovered over
@@ -88,7 +90,6 @@ public class UIval {
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
-    public long gameStateUpdateIntervalMs = 100;
 
     private UIval() {
         // Exists only to prohibit instantiation
