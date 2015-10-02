@@ -53,8 +53,8 @@ public class Move {
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
-        return "" + startPos.getColName() + startPos.getRowNumber() +
-                " -> " + toPos.getColName() + toPos.getRowNumber() +
+        return "" + startPos.getName() +
+                " -> " + toPos.getName() +
                 ", removed=" + removedPiecePositions +
                 '}';
     }

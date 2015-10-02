@@ -82,7 +82,7 @@ public class Game {
 
                 gipfBoard.getPieceMap().put(nextPosition, gipfBoard.getPieceMap().remove(currentPosition));
             } catch (InvalidMoveException e) {
-                debugOutput("Moving to " + nextPosition + " is not allowed");
+                debugOutput("Moving to " + nextPosition.getName() + " is not allowed");
                 throw new InvalidMoveException();
             }
         }
