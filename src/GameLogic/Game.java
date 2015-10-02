@@ -14,6 +14,7 @@ public class Game {
     public Player whitePlayer;
     public Player blackPlayer;
     Player currentPlayer;
+    Player winningPlayer;
     public boolean isGameOver = false;
     private GipfBoard gipfBoard;
 
@@ -148,11 +149,17 @@ public class Game {
                 currentPlayer.piecesLeft--;
 
                 if (currentPlayer.piecesLeft == 0) {
+                    updateCurrentPlayer();
                     isGameOver = true;
-                    debugOutput("Game over!");
+                    winningPlayer = currentPlayer;
+
+                    debugOutput("Game over! " + winningPlayer.pieceColor + " won!");
                 }
 
-                updateCurrentPlayer();
+                else {
+                    updateCurrentPlayer();
+                }
+
             } catch (InvalidMoveException e) {
                 gipfBoard.getPieceMap().remove(move.startPos);
                 System.out.println("Move not applied");
