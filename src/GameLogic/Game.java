@@ -1,5 +1,7 @@
 package GameLogic;
 
+import javafx.util.Pair;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -144,8 +146,6 @@ public class Game {
 
                 // TODO Add pieces retrieved by removing pieces here
 
-
-
                 move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
                 Map removablePieces = detectFourPieces(); // Applied in normal game
                 removablePieces.keySet().stream().forEach(gipfBoard.getPieceMap()::remove);
@@ -261,59 +261,54 @@ public class Game {
         //Direction: South to North
         Map<Position, Piece> removablePieces = new HashMap<>();
 
-        Map<Position, Direction> lines = new HashMap<>();
-        lines.put(new Position('a', 1), Direction.NORTH_EAST);
-        lines.put(new Position('a', 2), Direction.NORTH_EAST);
-        lines.put(new Position('a', 2), Direction.SOUTH_EAST);
-        lines.put(new Position('a', 3), Direction.NORTH_EAST);
-        lines.put(new Position('a', 3), Direction.SOUTH_EAST);
-        lines.put(new Position('a', 4), Direction.NORTH_EAST);
-        lines.put(new Position('a', 4), Direction.SOUTH_EAST);
-        lines.put(new Position('a', 5), Direction.SOUTH_EAST);
-        lines.put(new Position('b', 6), Direction.SOUTH);
-        lines.put(new Position('b', 6), Direction.SOUTH_EAST);
-        lines.put(new Position('c', 7), Direction.SOUTH);
-        lines.put(new Position('c', 7), Direction.SOUTH_EAST);
-        lines.put(new Position('d', 8), Direction.SOUTH);
-        lines.put(new Position('d', 8), Direction.SOUTH_EAST);
-        lines.put(new Position('e', 9), Direction.SOUTH);
-        lines.put(new Position('f', 8), Direction.SOUTH_WEST);
-        lines.put(new Position('f', 8), Direction.SOUTH);
-        lines.put(new Position('g', 7), Direction.SOUTH_WEST);
-        lines.put(new Position('g', 7), Direction.SOUTH);
-        lines.put(new Position('h', 6), Direction.SOUTH_WEST);
-        lines.put(new Position('h', 6), Direction.SOUTH);
+        Set<Pair<Position, Direction>> lines = new HashSet<>();
+        lines.add(new Pair<>(new Position('a', 1), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('a', 2), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('a', 3), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('a', 4), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('i', 4), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('i', 3), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('i', 2), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('i', 1), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('h', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('h', 1), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('g', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('g', 1), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('f', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('f', 1), Direction.NORTH_WEST));
+        lines.add(new Pair<>(new Position('e', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('d', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('d', 1), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('c', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('c', 1), Direction.NORTH_EAST));
+        lines.add(new Pair<>(new Position('b', 1), Direction.NORTH));
+        lines.add(new Pair<>(new Position('b', 1), Direction.NORTH_EAST));
 
-        for (Map.Entry<Position, Direction> entry : lines.entrySet()) {
+        for (Pair<Position, Direction> entry : lines) {
             Position currentPosition = entry.getKey();
             Direction direction = entry.getValue();
 
             int consecutivePieces = 0;
             PieceColor consecutivePiecesColor = null;
 
-            do {
-                currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos());
+            for ( ; isPositionOnBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
                 PieceColor currentPieceColor = getPieceColor(getGipfBoard().getPieceMap().get(currentPosition));
 
-                if (consecutivePiecesColor == null && currentPieceColor != null) {
-                    consecutivePiecesColor = currentPieceColor;
-                    consecutivePieces = 1;
-                } else if (currentPieceColor == consecutivePiecesColor) {
-                    consecutivePieces++;
-                } else {
-                    if (consecutivePieces >= 4) {
+                if (currentPieceColor != consecutivePiecesColor) {
+                    if (consecutivePiecesColor != null && consecutivePieces >= 4) {
                         for (int i = 1; i <= consecutivePieces; i++) {
-                            Position previousPosition = new Position(currentPosition.getPosId() - (i * direction.getDeltaPos()));
-                            removablePieces.put(previousPosition, getGipfBoard().getPieceMap().get(previousPosition));
+                            Position removablePosition = new Position(currentPosition.getPosId() - (i * direction.getDeltaPos()));
+                            removablePieces.put(removablePosition, getGipfBoard().getPieceMap().get(removablePosition));
                         }
                     }
 
                     consecutivePiecesColor = currentPieceColor;
-                    consecutivePieces = 0;
+                    consecutivePieces = 1;
+                }
+                else {
+                    consecutivePieces++;
                 }
             }
-            while (isPositionOnBoard(currentPosition));
-
         }
 
         return removablePieces;
