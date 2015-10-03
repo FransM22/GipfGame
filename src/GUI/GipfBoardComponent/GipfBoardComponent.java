@@ -23,7 +23,7 @@ public class GipfBoardComponent extends JComponent {
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
 
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
-    Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
+    final Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards

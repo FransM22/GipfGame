@@ -9,7 +9,7 @@ import java.util.Map;
  *
  */
 public class GipfBoard {
-    private Map<Position, Game.Piece> pieceMap;
+    private final Map<Position, Game.Piece> pieceMap;
 
     /**
      * Initialize an empty Gipf board

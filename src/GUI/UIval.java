@@ -91,7 +91,7 @@ public class UIval {
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
-    public Color gameOverTextColor = new Color(0xFF0000);
+    public final Color gameOverTextColor = new Color(0xFF0000);
 
     private UIval() {
         // Exists only to prohibit instantiation

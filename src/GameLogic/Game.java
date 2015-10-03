@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
  * Created by frans on 21-9-2015.
  */
 public class Game {
-    public LinkedList<String> debugMessages;
-    public Player whitePlayer;
-    public Player blackPlayer;
+    public final LinkedList<String> debugMessages;
+    public final Player whitePlayer;
+    public final Player blackPlayer;
     public boolean isGameOver = false;
-    Player currentPlayer;
-    Player winningPlayer;
-    private GipfBoard gipfBoard;
+    private Player currentPlayer;
+    private Player winningPlayer;
+    private final GipfBoard gipfBoard;
 
     public Game() {
         gipfBoard = new GipfBoard();
@@ -258,11 +258,6 @@ public class Game {
         return currentPlayer;
     }
 
-    public Set<Position> getBorderPositions() {
-        // TODO
-        return null;
-    }
-
     /**
      * By Dingding
      */
@@ -385,7 +380,7 @@ public class Game {
     }
 
     public class Player {
-        public PieceColor pieceColor;
+        public final PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
         boolean isPlacingGipfPieces = true;
 

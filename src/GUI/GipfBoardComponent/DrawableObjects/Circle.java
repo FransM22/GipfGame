@@ -13,12 +13,11 @@ import static java.util.stream.Collectors.toSet;
  */
 public class Circle extends DrawableObject {
     private Set<CircleProperties> circles;
-    private int size;
-    private Stroke strokeStyle;
+    private final int size;
+    private final Stroke strokeStyle;
 
     Circle(Graphics2D g2, GipfBoardComponent gipfBoardComponent, int size, Stroke strokeStyle) {
         super(g2, gipfBoardComponent);
-        this.circles = circles;
         this.size = size;
         this.strokeStyle = strokeStyle;
     }
@@ -77,9 +76,9 @@ public class Circle extends DrawableObject {
     }
 
     class CircleProperties {
-        Color fillColor;
-        Color borderColor;
-        Position position;
+        final Color fillColor;
+        final Color borderColor;
+        final Position position;
 
         public CircleProperties(Position position, Color fillColor, Color borderColor) {
             this.position = position;

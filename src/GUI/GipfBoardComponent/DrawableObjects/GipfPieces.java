@@ -14,11 +14,10 @@ import static java.util.stream.Collectors.toSet;
  * Created by frans on 22-9-2015.
  */
 public class GipfPieces extends Circle {
-    private Map<Position, Game.Piece> pieceMap;
 
     public GipfPieces(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent, UIval.get().pieceSize, UIval.get().normalPieceStroke);
-        pieceMap = gipfBoardComponent.game.getGipfBoard().getPieceMap();
+        Map<Position, Game.Piece> pieceMap = gipfBoardComponent.game.getGipfBoard().getPieceMap();
 
         super.setDrawableCircles(
                 pieceMap

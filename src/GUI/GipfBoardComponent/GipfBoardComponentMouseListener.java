@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  * Created by frans on 22-9-2015.
  */
-public class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
+class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
     private final GipfBoardComponent gipfBoardComponent;
     private Thread hoverThread;
 
@@ -42,7 +42,7 @@ public class GipfBoardComponentMouseListener extends MouseAdapter implements Run
 
             gipfBoardComponent.repaint();
         } else if (gipfBoardComponent.selectedMoveToPosition != null) {
-            int deltaPos = gipfBoardComponent.selectedMoveToPosition.getPosId() - gipfBoardComponent.selectedPosition.getPosId();
+            int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedPosition, gipfBoardComponent.selectedMoveToPosition);
             Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedPosition, Direction.getDirectionFromDeltaPos(deltaPos));
             game.applyMove(currentMove);
             gipfBoardComponent.selectedPosition = null;

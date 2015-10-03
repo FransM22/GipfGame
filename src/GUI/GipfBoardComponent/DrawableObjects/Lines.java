@@ -10,11 +10,11 @@ import java.awt.*;
  * Created by frans on 25-9-2015.
  */
 public class Lines extends DrawableObject {
-    final Position start;
-    final Position end;
-    final Direction nextStart;
-    final Direction nextEnd;
-    final int nr;
+    private final Position start;
+    private final Position end;
+    private final Direction nextStart;
+    private final Direction nextEnd;
+    private final int nr;
 
     Lines(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Position start, Position end, Direction nextStart, Direction nextEnd, int nr) {
         super(g2, gipfBoardComponent);

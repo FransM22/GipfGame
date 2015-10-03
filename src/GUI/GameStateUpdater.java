@@ -7,9 +7,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by frans on 29-9-2015.
  */
-public class GameStateUpdater implements Runnable {
-    Game game;
-    GipfWindow gipfWindow;
+class GameStateUpdater implements Runnable {
+    private final Game game;
+    private final GipfWindow gipfWindow;
 
     public GameStateUpdater(GipfWindow gipfWindow, Game game) {
         this.gipfWindow = gipfWindow;

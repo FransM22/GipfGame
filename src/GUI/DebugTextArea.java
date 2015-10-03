@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by frans on 29-9-2015.
  */
-public class DebugTextArea extends JTextArea {
+class DebugTextArea extends JTextArea {
     public DebugTextArea() {
         setFont(Font.decode("Monospaced-11"));
     }

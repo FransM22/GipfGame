@@ -17,11 +17,9 @@ class GipfWindow extends JFrame {
     private final GipfBoardComponent gipfBoardComponent;
     private final Game game;
     private final JTextField newPieceCoordinateTextField;
-    private final JButton newPieceCoordinateEnterButton;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
-    private GameStateUpdater gameStateUpdater;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -29,14 +27,14 @@ class GipfWindow extends JFrame {
         // Initialize the fields
         final JPanel contentPane = new JPanel();
         newPieceCoordinateTextField = new JTextField();
-        newPieceCoordinateEnterButton = new JButton("Enter");
+        JButton newPieceCoordinateEnterButton = new JButton("Enter");
         game = new Game();
         gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
         piecesLeftLabel = new JLabel(" ");
         currentPlayerLabel = new JLabel(" ");
-        gameStateUpdater = new GameStateUpdater(this, game);
+        GameStateUpdater gameStateUpdater = new GameStateUpdater(this, game);
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
