@@ -147,9 +147,18 @@ public class Game {
                 // TODO Add pieces retrieved by removing pieces here
 
                 move.removedPiecePositions.forEach(gipfBoard.getPieceMap()::remove);
-                Map removablePieces = detectFourPieces(); // Applied in normal game
-                removablePieces.keySet().stream().forEach(gipfBoard.getPieceMap()::remove);
+                Map<Position, Piece> removablePieces = detectFourPieces(); // Applied in normal game
 
+                // Count how many pieces that can be removed are of the current player
+                int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
+                        piece ->
+                                (Game.getPieceColor(piece) == currentPlayer.pieceColor ? 1 : 0)
+                                        * (Game.getPieceType(piece) == PieceType.GIPF ? 2 : 1))
+                        .sum();
+
+                // Remove the pieces
+                removablePieces.keySet().stream().forEach(gipfBoard.getPieceMap()::remove);
+                currentPlayer.piecesLeft += nrOfPiecesBackToPlayer;
 
                 debugOutput(move.toString());
                 currentPlayer.piecesLeft--;
@@ -285,27 +294,32 @@ public class Game {
         lines.add(new Pair<>(new Position('b', 1), Direction.NORTH_EAST));
 
         for (Pair<Position, Direction> entry : lines) {
-            Position currentPosition = entry.getKey();
+            Position startPosition = entry.getKey();
+            Position currentPosition = startPosition;
             Direction direction = entry.getValue();
+
 
             int consecutivePieces = 0;
             PieceColor consecutivePiecesColor = null;
 
-            for ( ; isPositionOnBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
+            for (; isPositionOnBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
                 PieceColor currentPieceColor = getPieceColor(getGipfBoard().getPieceMap().get(currentPosition));
 
                 if (currentPieceColor != consecutivePiecesColor) {
                     if (consecutivePiecesColor != null && consecutivePieces >= 4) {
-                        for (int i = 1; i <= consecutivePieces; i++) {
-                            Position removablePosition = new Position(currentPosition.getPosId() - (i * direction.getDeltaPos()));
-                            removablePieces.put(removablePosition, getGipfBoard().getPieceMap().get(removablePosition));
+
+                        // Remove the pieces on the same line
+                        for (Position pieceToBeRemoved = startPosition; isPositionOnBoard(pieceToBeRemoved); pieceToBeRemoved = new Position(pieceToBeRemoved.getPosId() + direction.getDeltaPos())) {
+                            // Add all the pieces on the line to the removablePieces list
+                            if (getGipfBoard().getPieceMap().containsKey(pieceToBeRemoved))
+                                removablePieces.put(pieceToBeRemoved, getGipfBoard().getPieceMap().get(pieceToBeRemoved));
                         }
+                        break;
                     }
 
                     consecutivePiecesColor = currentPieceColor;
                     consecutivePieces = 1;
-                }
-                else {
+                } else {
                     consecutivePieces++;
                 }
             }
