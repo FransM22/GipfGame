@@ -59,8 +59,7 @@ public class Move {
                 + (Game.getPieceType(addedPiece) == Game.PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
                 "-" + toPos.getName() +
-                ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()) +
-                '}';
+                (removedPiecePositions.isEmpty() ? "" : ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()));
     }
 
     public Position getStartingPosition() { return startPos; }
