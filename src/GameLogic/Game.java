@@ -144,6 +144,8 @@ public class Game {
      * @param move the move that is applied
      */
     public void applyMove(Move move) {
+        if (isGameOver) return;
+
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);
 
         if (currentPlayer.piecesLeft >= 1) {
