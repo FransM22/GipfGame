@@ -217,6 +217,9 @@ public class Game {
      * @return
      */
     public Set<Move> getAllowedMoves() {
+        if (isGameOver) {
+            return new HashSet<Move>();
+        }
         return new HashSet<>(Arrays.asList(
                 new Move(getCurrentPiece(), new Position('a', 1), Direction.NORTH_EAST),
                 new Move(getCurrentPiece(), new Position('a', 2), Direction.NORTH_EAST),
@@ -272,8 +275,10 @@ public class Game {
     }
 
     public Piece getCurrentPiece() {
-        if (currentPlayer.pieceColor == PieceColor.WHITE) return Piece.WHITE_SINGLE;
-        if (currentPlayer.pieceColor == PieceColor.BLACK) return Piece.BLACK_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == false) return Piece.WHITE_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == true) return Piece.WHITE_GIPF;
+        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == false) return Piece.BLACK_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == true) return Piece.BLACK_GIPF;
 
         return null;
     }
@@ -419,7 +424,7 @@ public class Game {
     public class Player {
         public final PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
-        boolean isPlacingGipfPieces = true;
+        public boolean isPlacingGipfPieces = true;
 
         Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;

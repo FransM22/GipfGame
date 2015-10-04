@@ -38,8 +38,13 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
 
         // Only allow to put pieces on selectable positions
         if (gipfBoardComponent.selectablePositions.contains(selectedPosition)) {
-            gipfBoardComponent.selectedPosition = selectedPosition;
-
+            if (selectedPosition.equals(gipfBoardComponent.selectedPosition)) {
+                // Toggle gipf pieces
+                this.gipfBoardComponent.game.getCurrentPlayer().isPlacingGipfPieces = !this.gipfBoardComponent.game.getCurrentPlayer().isPlacingGipfPieces;
+            }
+            else {
+                gipfBoardComponent.selectedPosition = selectedPosition;
+            }
             gipfBoardComponent.repaint();
         } else if (gipfBoardComponent.selectedMoveToPosition != null) {
             int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedPosition, gipfBoardComponent.selectedMoveToPosition);

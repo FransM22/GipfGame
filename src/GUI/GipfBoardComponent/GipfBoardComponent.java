@@ -18,12 +18,11 @@ import java.util.List;
  */
 public class GipfBoardComponent extends JComponent {
     public final Game game;
+    // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
+    final Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
     public Position selectedPosition;                                                                                   // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
-
-    // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
-    final Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
@@ -107,5 +106,13 @@ public class GipfBoardComponent extends JComponent {
             return UIval.get().whitePieceColor;
 
         return Color.red;
+    }
+
+    public Color getBorderColorOfPlayer(Game.Player player) {
+        if (player.isPlacingGipfPieces) {
+            return UIval.get().gipfPieceBorderColor;
+        } else {
+            return UIval.get().singlePieceBorderColor;
+        }
     }
 }

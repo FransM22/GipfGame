@@ -12,6 +12,12 @@ import java.util.Set;
  */
 public class SelectedPosition extends Circle {
     public SelectedPosition(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Set<Position> selectedPositions) {
-        super(g2, gipfBoardComponent, selectedPositions, UIval.get().pieceSize, gipfBoardComponent.getColorOfPlayer(gipfBoardComponent.game.getCurrentPlayer()), UIval.get().singlePieceBorderColor, UIval.get().hoverPositionStroke);
+        super(g2,
+                gipfBoardComponent,
+                selectedPositions,
+                UIval.get().pieceSize,
+                gipfBoardComponent.getColorOfPlayer(gipfBoardComponent.game.getCurrentPlayer()),
+                gipfBoardComponent.getBorderColorOfPlayer(gipfBoardComponent.game.getCurrentPlayer()),
+                UIval.get().hoverPositionStroke);
     }
 }
