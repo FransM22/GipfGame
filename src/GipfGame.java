@@ -25,7 +25,7 @@ class GipfGame {
                 Direction.SOUTH_EAST
         );
 
-        game.setPiece(new Position('e', 5), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('e', 5), Game.Piece.WHITE_SINGLE);
 
         game.applyMove(m);
         printBoard(gipfBoard);

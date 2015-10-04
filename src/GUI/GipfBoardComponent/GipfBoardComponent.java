@@ -42,20 +42,20 @@ public class GipfBoardComponent extends JComponent {
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
 
         // These are only for checking whether the component works
-        game.setPiece(new Position('b', 2), Game.Piece.WHITE_SINGLE);
-        game.setPiece(new Position('b', 3), Game.Piece.WHITE_SINGLE);
-        game.setPiece(new Position('b', 4), Game.Piece.WHITE_SINGLE);
-        game.setPiece(new Position('b', 5), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('b', 2), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('b', 3), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('b', 4), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('b', 5), Game.Piece.WHITE_SINGLE);
 
-        game.setPiece(new Position('c', 6), Game.Piece.BLACK_SINGLE);
-        game.setPiece(new Position('d', 7), Game.Piece.BLACK_SINGLE);
-        game.setPiece(new Position('e', 8), Game.Piece.BLACK_SINGLE);
-        game.setPiece(new Position('f', 7), Game.Piece.BLACK_SINGLE);
-        game.setPiece(new Position('g', 6), Game.Piece.BLACK_SINGLE);
-        game.setPiece(new Position('h', 5), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('c', 6), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('d', 7), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('e', 8), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('f', 7), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('g', 6), Game.Piece.BLACK_SINGLE);
+        game.setPiece(game.getGipfBoard(), new Position('h', 5), Game.Piece.BLACK_SINGLE);
 
-        game.setPiece(new Position('e', 4), Game.Piece.BLACK_GIPF);
-        game.setPiece(new Position('f', 6), Game.Piece.WHITE_GIPF);
+        game.setPiece(game.getGipfBoard(), new Position('e', 4), Game.Piece.BLACK_GIPF);
+        game.setPiece(game.getGipfBoard(), new Position('f', 6), Game.Piece.WHITE_GIPF);
 
         JFrame frame = new JFrame();
 

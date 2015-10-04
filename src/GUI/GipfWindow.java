@@ -28,6 +28,7 @@ class GipfWindow extends JFrame {
         final JPanel contentPane = new JPanel();
         newPieceCoordinateTextField = new JTextField();
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
+        JButton previousStateButton = new JButton("Undo");
         game = new Game();
         gipfBoardComponent = new GipfBoardComponent(game);
         debugTextArea = new DebugTextArea();
@@ -49,6 +50,7 @@ class GipfWindow extends JFrame {
         contentPane.add(currentPlayerLabel);
         contentPane.add(piecesLeftLabel);
         contentPane.add(gipfBoardComponent);
+        contentPane.add(previousStateButton);
 
         contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
         contentPane.add(newPieceCoordinateTextField);
@@ -58,6 +60,7 @@ class GipfWindow extends JFrame {
         // Add listeners
         newPieceCoordinateTextField.addActionListener(e -> listenerAddNewPiece());
         newPieceCoordinateEnterButton.addActionListener(e -> listenerAddNewPiece());
+        previousStateButton.addActionListener(e -> returnToPreviousState());
 
 
         contentPane.add(new JScrollPane(debugTextArea));
@@ -95,6 +98,11 @@ class GipfWindow extends JFrame {
         } catch (Exception e) {
             debugTextArea.append("Can't parse '" + newCoordinateText + "'");
         }
+    }
+
+    private void returnToPreviousState() {
+        game.returnToPreviousBoard();
+        gipfBoardComponent.repaint();
     }
 
     public void setPiecesLeftLabel(String message) {
