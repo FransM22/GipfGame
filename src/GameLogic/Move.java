@@ -15,7 +15,7 @@ public class Move {
     final Game.Piece addedPiece;             // The piece that is added to the board
     final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     final Direction direction;                    // The direction in which the piece moves
-    final Set<Position> removedPiecePositions;    // Pieces that are removed during this move
+    Set<Position> removedPiecePositions;    // Pieces that are removed during this move
 
     /**
      * Constructor, creates a Move with the following properties

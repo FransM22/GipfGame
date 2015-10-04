@@ -88,7 +88,7 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
             Set<Position> selectablePositions = gipfBoardComponent.game.getMoveToPositionsForStartPosition(gipfBoardComponent.selectedPosition);
 
 
-            if (gipfBoardComponent.game.isPositionOnBoard(newHoverPosition)) {
+            if (gipfBoardComponent.game.isPositionOnBigBoard(newHoverPosition)) {
                 if (gipfBoardComponent.game.getStartPositionsForMoves().contains(newHoverPosition)) {
                     // If the mouse hovers over a position on the border of the board
                     // select it

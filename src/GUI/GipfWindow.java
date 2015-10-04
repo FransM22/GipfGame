@@ -82,7 +82,7 @@ class GipfWindow extends JFrame {
             int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
             Position newPiecePosition = new Position(colName, rowNumber);
 
-            if (game.isPositionOnBoard(newPiecePosition)) {
+            if (game.isPositionOnBigBoard(newPiecePosition)) {
                 Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
                 debugTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());

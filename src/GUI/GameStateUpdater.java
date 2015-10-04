@@ -22,8 +22,8 @@ class GameStateUpdater implements Runnable {
             try {
                 TimeUnit.MILLISECONDS.sleep(UIval.get().gameStateUpdateIntervalMs);
 
-                while (!game.debugMessages.isEmpty()) {
-                    gipfWindow.debugTextArea.append(game.debugMessages.pop());
+                while (!game.logMessages.isEmpty()) {
+                    gipfWindow.debugTextArea.append(game.logMessages.pop());
                 }
 
                 gipfWindow.setCurrentPlayerLabel("Current player: " + game.getCurrentPlayer().pieceColor);
