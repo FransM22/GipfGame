@@ -17,7 +17,7 @@ public class GipfPieces extends Circle {
 
     public GipfPieces(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent, UIval.get().pieceSize, UIval.get().normalPieceStroke);
-        Map<Position, Game.Piece> pieceMap = gipfBoardComponent.game.getGipfBoard().getPieceMap();
+        Map<Position, Game.Piece> pieceMap = gipfBoardComponent.game.getGipfBoardState().getPieceMap();
 
         super.setDrawableCircles(
                 pieceMap

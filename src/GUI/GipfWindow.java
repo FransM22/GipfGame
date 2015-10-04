@@ -90,7 +90,7 @@ class GipfWindow extends JFrame {
 
                 debugTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
-                game.getGipfBoard().getPieceMap().put(newPiecePosition, pieceType);
+                game.getGipfBoardState().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
                 debugTextArea.append("Position " + newPiecePosition.getName() + " is invalid");

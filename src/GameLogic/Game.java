@@ -17,15 +17,15 @@ public class Game {
     public boolean isGameOver = false;              // Is only true if the game is finished
     private Player currentPlayer;                   // Acts as a pointer to the current player
     private Player winningPlayer;                   // Acts as a pointer to the winning player
-    private GipfBoard gipfBoard;              // The board where the pieces are stored.
-    private final List<GipfBoard> boardHistory;     // Stores the history of the boards
+    private GipfBoardState gipfBoardState;              // The board where the pieces are stored.
+    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
 
     public Game() {
-        gipfBoard = new GipfBoard();
+        gipfBoardState = new GipfBoardState();
         whitePlayer = new Player(PieceColor.WHITE);
         blackPlayer = new Player(PieceColor.BLACK);
         boardHistory = new ArrayList<>();
-        boardHistory.add(gipfBoard);
+        boardHistory.add(gipfBoardState);
 
         currentPlayer = whitePlayer;
         logMessages = new LinkedList<>();
@@ -100,22 +100,22 @@ public class Game {
     }
 
 
-    private boolean isPositionEmpty(GipfBoard gipfBoard, Position p) {
-        return !gipfBoard.getPieceMap().containsKey(p);
+    private boolean isPositionEmpty(GipfBoardState gipfBoardState, Position p) {
+        return !gipfBoardState.getPieceMap().containsKey(p);
     }
 
-    private void movePiece(GipfBoard gipfBoard, Position currentPosition, int deltaPos) throws Exception {
+    private void movePiece(GipfBoardState gipfBoardState, Position currentPosition, int deltaPos) throws Exception {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
         if (!isOnInnerBoard(nextPosition)) {
             throw new InvalidMoveException();
         } else {
             try {
-                if (!isPositionEmpty(gipfBoard, nextPosition)) {
-                    movePiece(gipfBoard, nextPosition, deltaPos);
+                if (!isPositionEmpty(gipfBoardState, nextPosition)) {
+                    movePiece(gipfBoardState, nextPosition, deltaPos);
                 }
 
-                gipfBoard.getPieceMap().put(nextPosition, gipfBoard.getPieceMap().remove(currentPosition));
+                gipfBoardState.getPieceMap().put(nextPosition, gipfBoardState.getPieceMap().remove(currentPosition));
             } catch (InvalidMoveException e) {
                 logOutput("Moving to " + nextPosition.getName() + " is not allowed");
                 throw new InvalidMoveException();
@@ -123,13 +123,13 @@ public class Game {
         }
     }
 
-    private void movePiecesTowards(GipfBoard gipfBoard, Position startPos, Direction direction) throws InvalidMoveException {
+    private void movePiecesTowards(GipfBoardState gipfBoardState, Position startPos, Direction direction) throws InvalidMoveException {
         int deltaPos = direction.getDeltaPos();
 
         Position currentPosition = new Position(startPos);
 
         try {
-            movePiece(gipfBoard, currentPosition, deltaPos);
+            movePiece(gipfBoardState, currentPosition, deltaPos);
         } catch (Exception e) {
             throw new InvalidMoveException();
         }
@@ -144,15 +144,15 @@ public class Game {
      * @param move the move that is applied
      */
     public void applyMove(Move move) {
-        GipfBoard newGipfBoard = new GipfBoard(gipfBoard);
+        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);
 
         if (currentPlayer.piecesLeft >= 1) {
-            setPiece(newGipfBoard, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
+            setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
-                movePiecesTowards(newGipfBoard, move.startPos, move.direction);
+                movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
-                Map<Position, Piece> removablePieces = detectFourPieces(newGipfBoard); // Applied in normal game
+                Map<Position, Piece> removablePieces = detectFourPieces(newGipfBoardState); // Applied in normal game
 
                 // Count how many pieces that can be removed are of the current player
                 int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
@@ -163,7 +163,12 @@ public class Game {
 
                 // Remove the pieces
                 move.removedPiecePositions = removablePieces.keySet();
-                move.removedPiecePositions.stream().forEach(newGipfBoard.getPieceMap()::remove);
+                move.removedPiecePositions.stream().forEach(newGipfBoardState.getPieceMap()::remove);
+
+                gipfBoardState.whiteIsOnTurn = currentPlayer == whitePlayer;
+                gipfBoardState.whitePiecesLeft = whitePlayer.piecesLeft;
+                gipfBoardState.blackPiecesLeft = blackPlayer.piecesLeft;
+
                 currentPlayer.piecesLeft += nrOfPiecesBackToPlayer;
 
                 logOutput(move.toString());
@@ -184,8 +189,8 @@ public class Game {
                     updateCurrentPlayer();
                 }
 
-                boardHistory.add(gipfBoard);
-                gipfBoard = newGipfBoard;
+                boardHistory.add(gipfBoardState);
+                gipfBoardState = newGipfBoardState;
 
             } catch (InvalidMoveException e) {
                 System.out.println("Move not applied");
@@ -195,12 +200,12 @@ public class Game {
         }
     }
 
-    public void setPiece(GipfBoard gipfBoard, Position pos, Game.Piece piece) {
-        gipfBoard.getPieceMap().put(pos, piece);
+    public void setPiece(GipfBoardState gipfBoardState, Position pos, Game.Piece piece) {
+        gipfBoardState.getPieceMap().put(pos, piece);
     }
 
-    public GipfBoard getGipfBoard() {
-        return gipfBoard;
+    public GipfBoardState getGipfBoardState() {
+        return gipfBoardState;
     }
 
     /**
@@ -278,7 +283,7 @@ public class Game {
     /**
      * By Dingding
      */
-    public Map<Position, Piece> detectFourPieces(GipfBoard gipfBoard) {
+    public Map<Position, Piece> detectFourPieces(GipfBoardState gipfBoardState) {
         //Direction: South to North
         Map<Position, Piece> removablePieces = new HashMap<>();
 
@@ -315,7 +320,7 @@ public class Game {
             PieceColor consecutivePiecesColor = null;
 
             for (; isPositionOnBigBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
-                PieceColor currentPieceColor = getPieceColor(gipfBoard.getPieceMap().get(currentPosition));
+                PieceColor currentPieceColor = getPieceColor(gipfBoardState.getPieceMap().get(currentPosition));
 
                 if (currentPieceColor != consecutivePiecesColor) {
                     if (consecutivePiecesColor != null && consecutivePieces >= 4) {
@@ -323,8 +328,8 @@ public class Game {
                         // Remove the pieces on the same line
                         for (Position pieceToBeRemoved = startPosition; isPositionOnBigBoard(pieceToBeRemoved); pieceToBeRemoved = new Position(pieceToBeRemoved.getPosId() + direction.getDeltaPos())) {
                             // Add all the pieces on the line to the removablePieces list
-                            if (gipfBoard.getPieceMap().containsKey(pieceToBeRemoved))
-                                removablePieces.put(pieceToBeRemoved, gipfBoard.getPieceMap().get(pieceToBeRemoved));
+                            if (gipfBoardState.getPieceMap().containsKey(pieceToBeRemoved))
+                                removablePieces.put(pieceToBeRemoved, gipfBoardState.getPieceMap().get(pieceToBeRemoved));
                         }
                         break;
                     }
@@ -398,8 +403,14 @@ public class Game {
 
     public void returnToPreviousBoard() {
         if (boardHistory.size() > 1) {
-            gipfBoard = boardHistory.get(boardHistory.size() - 1);
+            gipfBoardState = boardHistory.get(boardHistory.size() - 1);
+            currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
+            whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
+            blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
+
             boardHistory.remove(boardHistory.size() - 1);
+
+            logOutput("Returned to previous game state");
         }
     }
 

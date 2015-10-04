@@ -8,13 +8,16 @@ import java.util.Map;
  * This class represents the board that is used in the game.
  *
  */
-public class GipfBoard {
+public class GipfBoardState {
     private final Map<Position, Game.Piece> pieceMap;
+    int whitePiecesLeft;
+    int blackPiecesLeft;
+    boolean whiteIsOnTurn;
 
     /**
      * Initialize an empty Gipf board
      */
-    public GipfBoard() {
+    public GipfBoardState() {
         // Initialize the lists
         pieceMap = new HashMap<>();
     }
@@ -24,7 +27,7 @@ public class GipfBoard {
      *
      * @param old board with pieces that should be copied
      */
-    public GipfBoard(GipfBoard old) {
+    public GipfBoardState(GipfBoardState old) {
         pieceMap = new HashMap<>(old.pieceMap);
     }
 

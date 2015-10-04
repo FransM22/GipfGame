@@ -8,9 +8,9 @@ import GameLogic.*;
 class GipfGame {
     public static void main(String argv[]) {
         Game game = new Game();
-        GipfBoard gipfBoard = game.getGipfBoard();
+        GipfBoardState gipfBoardState = game.getGipfBoardState();
 
-        printBoard(gipfBoard);
+        printBoard(gipfBoardState);
 
         System.out.println("Adding piece");
         Move m = new Move(
@@ -25,19 +25,19 @@ class GipfGame {
                 Direction.SOUTH_EAST
         );
 
-        game.setPiece(game.getGipfBoard(), new Position('e', 5), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoardState(), new Position('e', 5), Game.Piece.WHITE_SINGLE);
 
         game.applyMove(m);
-        printBoard(gipfBoard);
+        printBoard(gipfBoardState);
         game.applyMove(m2);
-        printBoard(gipfBoard);
+        printBoard(gipfBoardState);
         game.applyMove(m2);
-        printBoard(gipfBoard);
+        printBoard(gipfBoardState);
 
         System.out.println("Gipf game started");
     }
 
-    private static void printBoard(GipfBoard gb) {
+    private static void printBoard(GipfBoardState gb) {
         System.out.println(gb.getPieceMap());
     }
 }

@@ -21,8 +21,8 @@ public class UIval {
     public final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     public final int hoverCircleSize = 15;
     public final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
-    public final int nrOfColumnsOnGipfBoard = 9;                      // The number of columns on a gipf board. Only edit if the GipfBoard class can handle it
-    public final int nrOfRowsOnGipfBoard = 9;                         // The number of rows on a gipf board. Only edit if the GipfBoard class can handle it
+    public final int nrOfColumnsOnGipfBoard = 9;                      // The number of columns on a gipf board. Only edit if the GipfBoardState class can handle it
+    public final int nrOfRowsOnGipfBoard = 9;                         // The number of rows on a gipf board. Only edit if the GipfBoardState class can handle it
     public final int marginSize = 25;                                 // The margin on the sides of the board
     public final boolean antiAliasingEnabled = true;                  // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
     public final int filledCircleSize = 15;                           // The size of the filled circles
