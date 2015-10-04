@@ -148,7 +148,7 @@ public class Game {
 
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);
 
-        if (currentPlayer.piecesLeft >= 1) {
+        if (currentPlayer.piecesLeft >= getPieceValue(move.addedPiece)) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
@@ -160,7 +160,7 @@ public class Game {
                 int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
                         piece ->
                                 (Game.getPieceColor(piece) == currentPlayer.pieceColor ? 1 : 0)
-                                        * (Game.getPieceType(piece) == PieceType.GIPF ? 2 : 1))
+                                        * (getPieceValue(piece)))
                         .sum();
 
                 // Remove the pieces
@@ -179,7 +179,7 @@ public class Game {
                     logOutput(currentPlayer.pieceColor + " regained " + nrOfPiecesBackToPlayer + " pieces");
                 }
 
-                currentPlayer.piecesLeft--;
+                currentPlayer.piecesLeft -= getPieceValue(move.addedPiece);
 
                 if (currentPlayer.piecesLeft == 0) {
                     updateCurrentPlayer();
@@ -208,6 +208,14 @@ public class Game {
 
     public GipfBoardState getGipfBoardState() {
         return gipfBoardState;
+    }
+
+    public int getPieceValue(Piece piece) {
+        if (Game.getPieceType(piece) == PieceType.GIPF) {
+            return 2;
+        }
+        else
+            return 1;
     }
 
     /**
