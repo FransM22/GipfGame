@@ -402,7 +402,7 @@ public class Game {
     }
 
     public void returnToPreviousBoard() {
-        if (boardHistory.size() > 1) {
+        if (boardHistory.size() > 1 && !isGameOver) {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
             currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
             whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
