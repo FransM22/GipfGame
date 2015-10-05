@@ -19,15 +19,14 @@ class GameStateUpdater implements Runnable {
     public void setGame(Game game) {
         this.game = game;
     }
-
     @Override
     public void run() {
         while (true) {
             try {
                 TimeUnit.MILLISECONDS.sleep(UIval.get().gameStateUpdateIntervalMs);
 
-                while (!game.logMessages.isEmpty()) {
-                    gipfWindow.gameLogTextArea.append(game.logMessages.pop());
+                while (!game.getGameLogger().isEmpty()) {
+                    gipfWindow.gameLogTextArea.append(game.getGameLogger().logMessages.pop());
                 }
 
                 gipfWindow.setCurrentPlayerLabel("Current player: " + game.getCurrentPlayer().pieceColor);

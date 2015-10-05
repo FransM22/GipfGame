@@ -3,10 +3,6 @@ package GameLogic.Game;
 import GameLogic.*;
 import javafx.util.Pair;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,8 +12,7 @@ import java.util.stream.Collectors;
  * Created by frans on 21-9-2015.
  */
 public abstract class Game {
-    public final LinkedList<String> logMessages;                // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
-    private final Instant gameStartedTime;                      // The Instant that stores the moment that the game starts
+    private final GameLogger gameLogger;
     private final List<GipfBoardState> boardHistory;            // Stores the history of the boards
     public Player whitePlayer = null;                           // The black and white player
     public Player blackPlayer = null;
@@ -28,17 +23,17 @@ public abstract class Game {
     private Player winningPlayer;                               // Acts as a pointer to the winning player
 
     public Game(GameType gameType) {
+        this.gameType = gameType;
+
         initializePlayers();
         initializeBoard();
 
         boardHistory = new ArrayList<>();
         boardHistory.add(gipfBoardState);
-        this.gameType = gameType;
 
         currentPlayer = whitePlayer;
-        gameStartedTime = Instant.now();
-        logMessages = new LinkedList<>();
-        logOutput("Started a new " + gameType + " GIPF game.");
+
+        gameLogger = new GameLogger(gameType);
     }
 
     abstract void initializePlayers();
@@ -106,7 +101,7 @@ public abstract class Game {
 
                 gipfBoardState.getPieceMap().put(nextPosition, gipfBoardState.getPieceMap().remove(currentPosition));
             } catch (InvalidMoveException e) {
-                logOutput("Moving to " + nextPosition.getName() + " is not allowed");
+                gameLogger.log("Moving to " + nextPosition.getName() + " is not allowed");
                 throw new InvalidMoveException();
             }
         }
@@ -164,10 +159,10 @@ public abstract class Game {
 
                 currentPlayer.piecesLeft += nrOfPiecesBackToPlayer;
 
-                logOutput(move.toString());
+                gameLogger.log(move.toString());
 
                 if (nrOfPiecesBackToPlayer > 0) {
-                    logOutput(currentPlayer.pieceColor + " retrieved " + nrOfPiecesBackToPlayer + " pieces");
+                    gameLogger.log(currentPlayer.pieceColor + " retrieved " + nrOfPiecesBackToPlayer + " pieces");
                 }
 
                 currentPlayer.piecesLeft -= move.addedPiece.getPieceValue();
@@ -177,7 +172,7 @@ public abstract class Game {
                     isGameOver = true;
                     winningPlayer = currentPlayer;
 
-                    logOutput("Game over! " + winningPlayer.pieceColor + " won!");
+                    gameLogger.log("Game over! " + winningPlayer.pieceColor + " won!");
                 } else {
                     updateCurrentPlayer();
                 }
@@ -193,7 +188,7 @@ public abstract class Game {
                 System.out.println("Move not applied");
             }
         } else {
-            logOutput("No pieces left");
+            gameLogger.log("No pieces left");
         }
     }
 
@@ -355,13 +350,6 @@ public abstract class Game {
         return removablePieces;
     }
 
-    public void logOutput(String debug) {
-        Duration durationOfGame = Duration.between(gameStartedTime, Instant.now());
-        LocalTime time = LocalTime.ofNanoOfDay(durationOfGame.toNanos());
-        String timeString = time.format(DateTimeFormatter.ofPattern("[HH:mm:ss.SSS]"));
-        logMessages.add(timeString + ": " + debug);
-    }
-
     public Set<Position> getStartPositionsForMoves() {
         return getAllowedMoves()
                 .stream()
@@ -381,7 +369,7 @@ public abstract class Game {
     public void returnToPreviousBoard() {
         if (boardHistory.size() > 1 && !isGameOver) {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
-            currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
+            currentPlayer = gipfBoardState.whiteIsOnTurn ? whitePlayer : blackPlayer;
             whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
             whitePlayer.hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
             blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
@@ -389,9 +377,11 @@ public abstract class Game {
 
             boardHistory.remove(boardHistory.size() - 1);
 
-            logOutput("Returned to previous game state");
+            gameLogger.log("Returned to previous game state");
         }
     }
+
+    public GameLogger getGameLogger() { return gameLogger; }
 
     public GameType getGameType() {
         return gameType;
