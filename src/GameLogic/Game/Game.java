@@ -4,6 +4,7 @@ import GameLogic.*;
 import javafx.util.Pair;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static GameLogic.Piece.*;
 import static java.util.stream.Collectors.toSet;
@@ -145,39 +146,24 @@ public abstract class Game {
                 Set<Position> piecesRemoved = new HashSet<>();
 
                 for (Map.Entry<Line, PieceColor> entry : removableLines.entrySet()) {
-                    if (entry.getValue() == PieceColor.WHITE) {
-                        Line line = entry.getKey();
-                        line.getPositions()
-                                .stream()
-                                .filter(position -> newGipfBoardState.getPieceMap().containsKey(position))
-                                .forEach(position -> {
-                                    if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.WHITE) {
-                                        piecesBackToWhite.add(position);
-                                    } else {
-                                        piecesRemoved.add(position);
-                                    }
-                                });
-                    } else if (entry.getValue() == PieceColor.BLACK) {
-                        Line line = entry.getKey();
-                        line.getPositions()
-                                .stream()
-                                .filter(position -> newGipfBoardState.getPieceMap().containsKey(position))
-                                .forEach(position -> {
-                                    if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.BLACK) {
-                                        piecesBackToBlack.add(position);
-                                    } else {
-                                        piecesRemoved.add(position);
-                                    }
-                                });
+                    Line line = entry.getKey();
+                    PieceColor rowColor = entry.getValue();
+                    for (Position position : line) {
+                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
+                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == rowColor) {
+                                if (rowColor == PieceColor.WHITE)
+                                    piecesBackToWhite.add(position);
+                                else if (rowColor == PieceColor.BLACK)
+                                    piecesBackToBlack.add(position);
+                            } else {
+                                piecesRemoved.add(position);
+                            }
+                        }
                     }
                 }
 
                 // Remove the pieces
-                move.removedPiecePositions = new HashSet<>();
-                move.removedPiecePositions.addAll(piecesBackToWhite);
-                move.removedPiecePositions.addAll(piecesBackToBlack);
-                move.removedPiecePositions.addAll(piecesRemoved);
-
+                move.removedPiecePositions = Stream.concat(Stream.concat(piecesBackToWhite.stream(), piecesBackToBlack.stream()), piecesRemoved.stream()).collect(toSet());
                 move.removedPiecePositions.stream().forEach(newGipfBoardState.getPieceMap()::remove);
 
                 gipfBoardState.whiteIsOnTurn = currentPlayer == whitePlayer;

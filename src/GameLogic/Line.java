@@ -3,6 +3,7 @@ package GameLogic;
 import GameLogic.Game.Game;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Set;
  * <p/>
  * Created by frans on 5-10-2015.
  */
-public class Line {
+public class Line implements Iterable<Position> {
     Game game;
     Position startPosition;
     Direction direction;
@@ -87,5 +88,10 @@ public class Line {
         int result = startPosition.hashCode();
         result = 31 * result + direction.hashCode();
         return result;
+    }
+
+    @Override
+    public Iterator<Position> iterator() {
+        return getPositions().iterator();
     }
 }
