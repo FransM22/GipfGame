@@ -1,5 +1,8 @@
 package GameLogic.Game;
 
+import GameLogic.PieceColor;
+import GameLogic.Player;
+
 /**
  * Created by frans on 5-10-2015.
  */

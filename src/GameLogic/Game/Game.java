@@ -458,35 +458,4 @@ public abstract class Game {
             }
         }
     }
-
-    public enum PieceColor {
-        WHITE,
-        BLACK
-    }
-
-    public class Player {
-        public final PieceColor pieceColor;
-        public int piecesLeft = 18;         // Default for standard and tournament games
-        public boolean hasPlacedNormalPieces = false;
-        private boolean isPlacingGipfPieces = true;
-
-        Player(PieceColor pieceColor, int nrOfPieces, boolean isAllowedToPlaceGipfPieces) {
-            this.pieceColor = pieceColor;
-            this.piecesLeft = nrOfPieces;
-            this.isPlacingGipfPieces = isAllowedToPlaceGipfPieces;
-            this.hasPlacedNormalPieces = !isAllowedToPlaceGipfPieces;
-        }
-
-        public void toggleIsPlacingGipfPieces() {
-            if (hasPlacedNormalPieces) {
-                isPlacingGipfPieces = false;
-            } else {
-                isPlacingGipfPieces = !isPlacingGipfPieces;
-            }
-        }
-
-        public boolean getIsPlacingGipfPieces() {
-            return isPlacingGipfPieces;
-        }
-    }
 }

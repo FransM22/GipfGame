@@ -3,6 +3,8 @@ package GUI.GipfBoardComponent;
 import GUI.GipfBoardComponent.DrawableObjects.*;
 import GUI.UIval;
 import GameLogic.Game.*;
+import GameLogic.PieceColor;
+import GameLogic.Player;
 import GameLogic.Position;
 
 import javax.swing.*;
@@ -102,16 +104,16 @@ public class GipfBoardComponent extends JComponent {
                 RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
-    public Color getColorOfPlayer(Game.Player player) {
-        if (player.pieceColor == Game.PieceColor.BLACK)
+    public Color getColorOfPlayer(Player player) {
+        if (player.pieceColor == PieceColor.BLACK)
             return UIval.get().blackPieceColor;
-        if (player.pieceColor == Game.PieceColor.WHITE)
+        if (player.pieceColor == PieceColor.WHITE)
             return UIval.get().whitePieceColor;
 
         return Color.red;
     }
 
-    public Color getBorderColorOfPlayer(Game.Player player) {
+    public Color getBorderColorOfPlayer(Player player) {
         if (player.getIsPlacingGipfPieces()) {
             return UIval.get().gipfPieceBorderColor;
         } else {
