@@ -13,18 +13,18 @@ public enum Direction {
 
     public int getDeltaPos() {
         // Determine the deltaPos value based on the direction
-        switch (super.name()) {
-            case "NORTH":
+        switch (this) {
+            case NORTH:
                 return 1;
-            case "NORTH_EAST":
+            case NORTH_EAST:
                 return 11;
-            case "SOUTH_EAST":
+            case SOUTH_EAST:
                 return 10;
-            case "SOUTH":
+            case SOUTH:
                 return -1;
-            case "SOUTH_WEST":
+            case SOUTH_WEST:
                 return -11;
-            case "NORTH_WEST":
+            case NORTH_WEST:
                 return -10;
         }
 

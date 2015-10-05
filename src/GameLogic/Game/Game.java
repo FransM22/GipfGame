@@ -41,22 +41,6 @@ public abstract class Game {
         logOutput("Started a new " + gameType + " GIPF game.");
     }
 
-    /**
-     * Returns the color of the piece (either black or white)
-     *
-     * @param piece Piece of which the color is to be determined
-     * @return the color of the piece
-     */
-    public static PieceColor getPieceColor(Piece piece) {
-        if (piece == null) {
-            return null;
-        }
-
-        if (piece == Piece.WHITE_GIPF || piece == Piece.WHITE_SINGLE)
-            return PieceColor.WHITE;
-        return PieceColor.BLACK;
-    }
-
     abstract void initializePlayers();
 
     void initializeBoard() {
@@ -164,7 +148,7 @@ public abstract class Game {
                 // Count how many pieces that can be removed are of the current player
                 int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
                         piece ->
-                                (Game.getPieceColor(piece) == currentPlayer.pieceColor ? 1 : 0)
+                                (piece.getPieceColor() == currentPlayer.pieceColor ? 1 : 0)
                                         * (piece.getPieceValue()))
                         .sum();
 
@@ -342,7 +326,11 @@ public abstract class Game {
             PieceColor consecutivePiecesColor = null;
 
             for (; isPositionOnBigBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
-                PieceColor currentPieceColor = getPieceColor(gipfBoardState.getPieceMap().get(currentPosition));
+                PieceColor currentPieceColor = null;
+
+                if (gipfBoardState.getPieceMap().containsKey(currentPosition)) {
+                    currentPieceColor = gipfBoardState.getPieceMap().get(currentPosition).getPieceColor();
+                }
 
                 if (currentPieceColor != consecutivePiecesColor) {
                     if (consecutivePiecesColor != null && consecutivePieces >= 4) {

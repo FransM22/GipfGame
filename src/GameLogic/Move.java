@@ -1,7 +1,5 @@
 package GameLogic;
 
-import GameLogic.Game.Game;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,7 +55,7 @@ public class Move {
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
-        return "" + Game.getPieceColor(addedPiece) + ": "
+        return "" + addedPiece.getPieceColor() + ": "
                 + (addedPiece.getPieceType() == PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
                 "-" + toPos.getName() +

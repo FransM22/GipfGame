@@ -2,7 +2,6 @@ package GUI.GipfBoardComponent.DrawableObjects;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.UIval;
-import GameLogic.Game.Game;
 import GameLogic.Piece;
 import GameLogic.Position;
 
@@ -33,7 +32,7 @@ public class GipfPieces extends Circle {
     }
 
     private Color getFillColorFor(Piece piece) {
-        switch (Game.getPieceColor(piece)) {
+        switch (piece.getPieceColor()) {
             case WHITE:
                 return UIval.get().whitePieceColor;
             case BLACK:

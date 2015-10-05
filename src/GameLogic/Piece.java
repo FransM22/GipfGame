@@ -1,5 +1,10 @@
 package GameLogic;
 
+import static GameLogic.PieceColor.BLACK;
+import static GameLogic.PieceColor.WHITE;
+import static GameLogic.PieceType.GIPF;
+import static GameLogic.PieceType.NORMAL;
+
 /**
  * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same pieceColor.
  * Created by frans on 5-10-2015.
@@ -10,18 +15,16 @@ public enum Piece {
     BLACK_SINGLE,
     BLACK_GIPF;
 
-    private String value;
-
     @Override
     public String toString() {
-        switch (super.name()) {
-            case "WHITE_SINGLE":
+        switch (this) {
+            case WHITE_SINGLE:
                 return "White Single";
-            case "WHITE_GIPF":
+            case WHITE_GIPF:
                 return "White Gipf";
-            case "BLACK_SINGLE":
+            case BLACK_SINGLE:
                 return "Black Single";
-            case "BLACK_GIPF":
+            case BLACK_GIPF:
                 return "Black Gipf";
             default:
                 return "[Piece type not known]";
@@ -29,7 +32,7 @@ public enum Piece {
     }
 
     public int getPieceValue() {
-        return getPieceType() == PieceType.GIPF ? 2 : 1;
+        return getPieceType() == GIPF ? 2 : 1;
     }
 
     /**
@@ -38,8 +41,20 @@ public enum Piece {
      * @return the type of the piece
      */
     public PieceType getPieceType() {
-        if (value == "WHITE_SINGLE" || value == "BLACK_SINGLE")
-            return PieceType.NORMAL;
-        return PieceType.GIPF;
+        if (this == WHITE_SINGLE || this == BLACK_SINGLE)
+            return NORMAL;
+        return GIPF;
+    }
+
+    /**
+     * Returns the color of the piece (either black or white)
+     *
+     * @return the color of the piece
+     */
+    public PieceColor getPieceColor() {
+        if (this == WHITE_SINGLE || this == WHITE_GIPF) {
+            return WHITE;
+        }
+        return BLACK;
     }
 }
