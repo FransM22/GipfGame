@@ -2,6 +2,10 @@ package GameLogic;
 
 import javafx.util.Pair;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,6 +17,7 @@ import java.util.stream.Collectors;
 public class Game {
     public final LinkedList<String> logMessages;    // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
     private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
+    final Instant gameStartedTime;
     public Player whitePlayer = null;                // The black and white player
     public Player blackPlayer = null;
     public boolean isGameOver = false;              // Is only true if the game is finished
@@ -57,6 +62,7 @@ public class Game {
         this.gameType = gameType;
 
         currentPlayer = whitePlayer;
+        gameStartedTime = Instant.now();
         logMessages = new LinkedList<>();
         logOutput("Started a new " + gameType + " GIPF game.");
     }
@@ -402,7 +408,10 @@ public class Game {
     }
 
     public void logOutput(String debug) {
-        logMessages.add(debug);
+        Duration durationOfGame = Duration.between(gameStartedTime, Instant.now());
+        LocalTime time = LocalTime.ofNanoOfDay(durationOfGame.toNanos());
+        String timeString = time.format(DateTimeFormatter.ofPattern("[HH:mm:ss.SSS]"));
+        logMessages.add(timeString + ": " + debug);
     }
 
     public Set<Position> getStartPositionsForMoves() {

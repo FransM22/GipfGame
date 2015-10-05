@@ -2,8 +2,6 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Created by frans on 29-9-2015.
@@ -14,8 +12,7 @@ class DebugTextArea extends JTextArea {
     }
 
     public void append(String message) {
-        String timeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("[HH:mm:ss.SSS]"));
-        super.append(timeString + ": " + message + "\n");
+        super.append(message + "\n");
         setCaretPosition(getDocument().getLength());
     }
 }
