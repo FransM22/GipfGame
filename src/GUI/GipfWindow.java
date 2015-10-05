@@ -15,7 +15,6 @@ import java.awt.*;
 class GipfWindow extends JFrame {
     final JTextArea gameLogTextArea;
     private final GipfBoardComponent gipfBoardComponent;
-    private final Game game;
     private final JTextField newPieceCoordinateTextField;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
@@ -31,7 +30,7 @@ class GipfWindow extends JFrame {
         newPieceCoordinateTextField = new JTextField();
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
         JButton previousStateButton = new JButton("Undo move");
-        game = new Game(Game.GameType.basic);
+        Game game = new Game(Game.GameType.basic);
         gipfBoardComponent = new GipfBoardComponent(game);
         gameLogTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
@@ -86,7 +85,7 @@ class GipfWindow extends JFrame {
 
 
         contentPane.add(new JScrollPane(gameLogTextArea));
-        previousStateButton.setFocusable(false); //  // To avoid the flashing undo button
+        previousStateButton.setFocusable(false);                // To avoid the flashing undo button
 
         pack();
         setVisible(true);
@@ -113,12 +112,12 @@ class GipfWindow extends JFrame {
             int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
             Position newPiecePosition = new Position(colName, rowNumber);
 
-            if (game.isPositionOnBigBoard(newPiecePosition)) {
+            if (gipfBoardComponent.game.isPositionOnBigBoard(newPiecePosition)) {
                 Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
                 gameLogTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
-                game.getGipfBoardState().getPieceMap().put(newPiecePosition, pieceType);
+                gipfBoardComponent.game.getGipfBoardState().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
                 gameLogTextArea.append("Position " + newPiecePosition.getName() + " is invalid");
@@ -129,7 +128,7 @@ class GipfWindow extends JFrame {
     }
 
     private void returnToPreviousState() {
-        game.returnToPreviousBoard();
+        gipfBoardComponent.game.returnToPreviousBoard();
         gipfBoardComponent.repaint();
     }
 

@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
  */
 public class Game {
     public final LinkedList<String> logMessages;    // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
+    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
     public Player whitePlayer = null;                // The black and white player
     public Player blackPlayer = null;
-    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
     public boolean isGameOver = false;              // Is only true if the game is finished
     private Player currentPlayer;                   // Acts as a pointer to the current player
     private Player winningPlayer;                   // Acts as a pointer to the winning player
@@ -31,8 +31,7 @@ public class Game {
             blackPlayer.hasPlacedNormalPieces = true;
             whitePlayer.isPlacingGipfPieces = false;
             blackPlayer.isPlacingGipfPieces = false;
-        }
-        else if (gameType == GameType.standard) {
+        } else if (gameType == GameType.standard) {
             whitePlayer = new Player(PieceColor.WHITE, 18);
             blackPlayer = new Player(PieceColor.BLACK, 18);
             whitePlayer.hasPlacedNormalPieces = true;
@@ -48,8 +47,7 @@ public class Game {
             gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_GIPF);
             gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_GIPF);
 
-        }
-        else if (gameType == GameType.tournament) {
+        } else if (gameType == GameType.tournament) {
             whitePlayer = new Player(PieceColor.WHITE, 18);
             blackPlayer = new Player(PieceColor.BLACK, 18);
         }
@@ -437,6 +435,10 @@ public class Game {
         }
     }
 
+    public GameType getGameType() {
+        return gameType;
+    }
+
     public enum PieceType {
         GIPF,
         NORMAL,
@@ -473,6 +475,12 @@ public class Game {
         BLACK
     }
 
+    public enum GameType {
+        basic,
+        standard,
+        tournament
+    }
+
     public class Player {
         public final PieceColor pieceColor;
         public int piecesLeft;
@@ -496,12 +504,4 @@ public class Game {
             return isPlacingGipfPieces;
         }
     }
-
-    public enum GameType {
-        basic,
-        standard,
-        tournament
-    }
-
-    public GameType getGameType() { return gameType; }
 }
