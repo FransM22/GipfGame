@@ -8,7 +8,7 @@ package GameLogic;
  */
 
 public final class Position {
-    final int posId;    // Final, because a different position is supposed to be a different object
+    public final int posId;    // Final, because a different position is supposed to be a different object
 
     /**
      * Set a position with only a position id (internal notation)

@@ -1,6 +1,6 @@
 package GUI;
 
-import GameLogic.Game;
+import GameLogic.Game.Game;
 
 import java.util.concurrent.TimeUnit;
 

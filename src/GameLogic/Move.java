@@ -1,5 +1,7 @@
 package GameLogic;
 
+import GameLogic.Game.Game;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,10 +14,10 @@ import static java.util.stream.Collectors.toSet;
  * Created by frans on 9-9-2015.
  */
 public class Move {
-    final Game.Piece addedPiece;             // The piece that is added to the board
-    final Position startPos;                      // A newly added piece moves from the startPos to the endPos
-    final Direction direction;                    // The direction in which the piece moves
-    Set<Position> removedPiecePositions;    // Pieces that are removed during this move
+    public final Game.Piece addedPiece;             // The piece that is added to the board
+    public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
+    public final Direction direction;                    // The direction in which the piece moves
+    public Set<Position> removedPiecePositions;    // Pieces that are removed during this move
 
     /**
      * Constructor, creates a Move with the following properties

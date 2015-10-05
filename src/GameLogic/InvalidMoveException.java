@@ -5,6 +5,6 @@ package GameLogic;
  *
  * Created by frans on 18-9-2015.
  */
-class InvalidMoveException extends Exception {
+public class InvalidMoveException extends Exception {
 
 }

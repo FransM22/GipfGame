@@ -1,4 +1,9 @@
-import GameLogic.*;
+import GameLogic.Direction;
+import GameLogic.Game.BasicGame;
+import GameLogic.Game.Game;
+import GameLogic.GipfBoardState;
+import GameLogic.Move;
+import GameLogic.Position;
 
 /**
  * The GipfGame class keeps track of the running game.
@@ -7,7 +12,7 @@ import GameLogic.*;
  */
 class GipfGame {
     public static void main(String argv[]) {
-        Game game = new Game(Game.GameType.basic);
+        Game game = new BasicGame();
         GipfBoardState gipfBoardState = game.getGipfBoardState();
 
         printBoard(gipfBoardState);

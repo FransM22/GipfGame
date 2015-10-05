@@ -2,7 +2,7 @@ package GUI.GipfBoardComponent;
 
 import GUI.UIval;
 import GameLogic.Direction;
-import GameLogic.Game;
+import GameLogic.Game.Game;
 import GameLogic.Move;
 import GameLogic.Position;
 

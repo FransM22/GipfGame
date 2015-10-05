@@ -1,5 +1,7 @@
 package GameLogic;
 
+import GameLogic.Game.Game;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +12,11 @@ import java.util.Map;
  */
 public class GipfBoardState {
     private final Map<Position, Game.Piece> pieceMap;
-    int whitePiecesLeft;
-    int blackPiecesLeft;
-    boolean whiteIsOnTurn;
-    boolean blackHasPlacedNormalPieces;
-    boolean whiteHasPlacedNormalPieces;
+    public int whitePiecesLeft;
+    public int blackPiecesLeft;
+    public boolean whiteIsOnTurn;
+    public boolean blackHasPlacedNormalPieces;
+    public boolean whiteHasPlacedNormalPieces;
 
     /**
      * Initialize an empty Gipf board

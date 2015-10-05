@@ -2,7 +2,7 @@ package GUI.GipfBoardComponent.DrawableObjects;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.UIval;
-import GameLogic.Game;
+import GameLogic.Game.Game;
 import GameLogic.Position;
 
 import java.awt.*;

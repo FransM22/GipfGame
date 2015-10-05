@@ -1,5 +1,6 @@
-package GameLogic;
+package GameLogic.Game;
 
+import GameLogic.*;
 import javafx.util.Pair;
 
 import java.time.Duration;
@@ -14,51 +15,26 @@ import java.util.stream.Collectors;
  * <p/>
  * Created by frans on 21-9-2015.
  */
-public class Game {
-    public final LinkedList<String> logMessages;    // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
-    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
-    final Instant gameStartedTime;
-    public Player whitePlayer = null;                // The black and white player
+public abstract class Game {
+    public final LinkedList<String> logMessages;                // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
+    private final Instant gameStartedTime;                      // The Instant that stores the moment that the game starts
+    private final List<GipfBoardState> boardHistory;            // Stores the history of the boards
+    public Player whitePlayer = null;                           // The black and white player
     public Player blackPlayer = null;
-    public boolean isGameOver = false;              // Is only true if the game is finished
-    private Player currentPlayer;                   // Acts as a pointer to the current player
-    private Player winningPlayer;                   // Acts as a pointer to the winning player
-    private GipfBoardState gipfBoardState;              // The board where the pieces are stored.
-    private GameType gameType;
+    public boolean isGameOver = false;                          // Is only true if the game is finished
+    private Player currentPlayer;                               // Acts as a pointer to the current player
+    private Player winningPlayer;                               // Acts as a pointer to the winning player
+    GipfBoardState gipfBoardState;                      // The board where the pieces are stored.
+    GameType gameType;                                  // The game type (basic, standard, tournament)
+
+    abstract void initializePlayers();
+    void initializeBoard() {
+        this.gipfBoardState = new GipfBoardState();
+    }
 
     public Game(GameType gameType) {
-        gipfBoardState = new GipfBoardState();
-
-        if (gameType == GameType.basic) {
-            whitePlayer = new Player(PieceColor.WHITE, 15);
-            blackPlayer = new Player(PieceColor.BLACK, 15);
-            whitePlayer.hasPlacedNormalPieces = true;
-            blackPlayer.hasPlacedNormalPieces = true;
-            whitePlayer.isPlacingGipfPieces = false;
-            blackPlayer.isPlacingGipfPieces = false;
-        } else if (gameType == GameType.standard) {
-            whitePlayer = new Player(PieceColor.WHITE, 18);
-            blackPlayer = new Player(PieceColor.BLACK, 18);
-            whitePlayer.hasPlacedNormalPieces = true;
-            blackPlayer.hasPlacedNormalPieces = true;
-            whitePlayer.isPlacingGipfPieces = false;
-            blackPlayer.isPlacingGipfPieces = false;
-
-            gipfBoardState.getPieceMap().put(new Position('b', 5), Piece.WHITE_GIPF);
-            gipfBoardState.getPieceMap().put(new Position('e', 2), Piece.WHITE_GIPF);
-            gipfBoardState.getPieceMap().put(new Position('h', 5), Piece.WHITE_GIPF);
-
-            gipfBoardState.getPieceMap().put(new Position('b', 2), Piece.BLACK_GIPF);
-            gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_GIPF);
-            gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_GIPF);
-
-        } else if (gameType == GameType.tournament) {
-            whitePlayer = new Player(PieceColor.WHITE, 18);
-            blackPlayer = new Player(PieceColor.BLACK, 18);
-
-            whitePlayer.isPlacingGipfPieces = true;
-            blackPlayer.isPlacingGipfPieces = true;
-        }
+        initializePlayers();
+        initializeBoard();
 
         boardHistory = new ArrayList<>();
         boardHistory.add(gipfBoardState);
@@ -488,21 +464,17 @@ public class Game {
         BLACK
     }
 
-    public enum GameType {
-        basic,
-        standard,
-        tournament
-    }
-
     public class Player {
         public final PieceColor pieceColor;
-        public int piecesLeft;
+        public int piecesLeft = 18;         // Default for standard and tournament games
         public boolean hasPlacedNormalPieces = false;
         private boolean isPlacingGipfPieces = true;
 
-        Player(PieceColor pieceColor, int piecesAmount) {
+        Player(PieceColor pieceColor, int nrOfPieces, boolean isAllowedToPlaceGipfPieces) {
             this.pieceColor = pieceColor;
-            this.piecesLeft = piecesAmount;
+            this.piecesLeft = nrOfPieces;
+            this.isPlacingGipfPieces = isAllowedToPlaceGipfPieces;
+            this.hasPlacedNormalPieces = !isAllowedToPlaceGipfPieces;
         }
 
         public void toggleIsPlacingGipfPieces() {

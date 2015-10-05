@@ -1,7 +1,9 @@
 package GUI;
 
 import GUI.GipfBoardComponent.GipfBoardComponent;
-import GameLogic.Game;
+import GameLogic.Game.BasicGame;
+import GameLogic.Game.Game;
+import GameLogic.Game.GameType;
 import GameLogic.Position;
 
 import javax.swing.*;
@@ -30,7 +32,7 @@ class GipfWindow extends JFrame {
         newPieceCoordinateTextField = new JTextField();
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
         JButton previousStateButton = new JButton("Undo move");
-        Game game = new Game(Game.GameType.basic);
+        Game game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game);
         gameLogTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
@@ -79,9 +81,9 @@ class GipfWindow extends JFrame {
             gipfBoardComponent.clearSelectedPositions();
         });
 
-        newBasicGameMenuItem.addActionListener(e -> newGame(Game.GameType.basic));
-        newStandardGameMenuItem.addActionListener(e -> newGame(Game.GameType.standard));
-        newTournamentGameMenuItem.addActionListener(e -> newGame(Game.GameType.tournament));
+        newBasicGameMenuItem.addActionListener(e -> newGame(GameType.basic));
+        newStandardGameMenuItem.addActionListener(e -> newGame(GameType.standard));
+        newTournamentGameMenuItem.addActionListener(e -> newGame(GameType.tournament));
 
 
         contentPane.add(new JScrollPane(gameLogTextArea));
@@ -144,7 +146,7 @@ class GipfWindow extends JFrame {
         gameTypeLabel.setText(message);
     }
 
-    private void newGame(Game.GameType gameType) {
+    private void newGame(GameType gameType) {
         gipfBoardComponent.newGame(gameType);
         gameLogTextArea.setText("");
         gameStateUpdater.setGame(gipfBoardComponent.game);

@@ -2,7 +2,7 @@ package GUI.GipfBoardComponent;
 
 import GUI.GipfBoardComponent.DrawableObjects.*;
 import GUI.UIval;
-import GameLogic.Game;
+import GameLogic.Game.*;
 import GameLogic.Position;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public static void main(String argv[]) {
-        Game game = new Game(Game.GameType.basic);
+        Game game = new BasicGame();
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
 
         // These are only for checking whether the component works
@@ -125,8 +125,17 @@ public class GipfBoardComponent extends JComponent {
         repaint();
     }
 
-    public void newGame(Game.GameType gameType) {
-        game = new Game(gameType);
+    public void newGame(GameType gameType) {
+        switch (gameType) {
+            case basic:
+                game = new BasicGame();
+                break;
+            case standard:
+                game = new StandardGame();
+                break;
+            case tournament:
+                game = new TournamentGame();
+        }
         clearSelectedPositions();
     }
 }
