@@ -37,20 +37,20 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
         Game game = gipfBoardComponent.game;
 
         // Only allow to put pieces on selectable positions
-        if (gipfBoardComponent.selectablePositions.contains(selectedPosition)) {
-            if (selectedPosition.equals(gipfBoardComponent.selectedPosition)) {
+        if (gipfBoardComponent.selectableStartPositions.contains(selectedPosition)) {
+            if (selectedPosition.equals(gipfBoardComponent.selectedStartPosition)) {
                 // Toggle gipf pieces
                 this.gipfBoardComponent.game.getCurrentPlayer().toggleIsPlacingGipfPieces();
             }
             else {
-                gipfBoardComponent.selectedPosition = selectedPosition;
+                gipfBoardComponent.selectedStartPosition = selectedPosition;
             }
             gipfBoardComponent.repaint();
         } else if (gipfBoardComponent.selectedMoveToPosition != null) {
-            int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedPosition, gipfBoardComponent.selectedMoveToPosition);
-            Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedPosition, Direction.getDirectionFromDeltaPos(deltaPos));
+            int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedStartPosition, gipfBoardComponent.selectedMoveToPosition);
+            Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedStartPosition, Direction.getDirectionFromDeltaPos(deltaPos));
             game.applyMove(currentMove);
-            gipfBoardComponent.selectedPosition = null;
+            gipfBoardComponent.selectedStartPosition = null;
             gipfBoardComponent.selectedMoveToPosition = null;
         }
     }
@@ -90,7 +90,7 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
             PositionHelper positionHelper = new PositionHelper(gipfBoardComponent);
             Position newHoverPosition = positionHelper.screenCoordinateToPosition((int) mouseLocation.getX(), (int) mouseLocation.getY());
 
-            Set<Position> selectablePositions = gipfBoardComponent.game.getMoveToPositionsForStartPosition(gipfBoardComponent.selectedPosition);
+            Set<Position> selectablePositions = gipfBoardComponent.game.getMoveToPositionsForStartPosition(gipfBoardComponent.selectedStartPosition);
 
 
             if (gipfBoardComponent.game.isPositionOnBigBoard(newHoverPosition)) {

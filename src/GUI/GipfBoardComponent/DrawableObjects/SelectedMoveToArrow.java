@@ -18,7 +18,7 @@ public class SelectedMoveToArrow extends DrawableObject {
     @Override
     public void draw() {
         Position selectedMoveToPosition = gipfBoardComponent.selectedMoveToPosition;
-        Position selectedPosition = gipfBoardComponent.selectedPosition;
+        Position selectedPosition = gipfBoardComponent.selectedStartPosition;
 
         if (selectedMoveToPosition != null && selectedPosition != null) {
             // Get the allowed positions from here

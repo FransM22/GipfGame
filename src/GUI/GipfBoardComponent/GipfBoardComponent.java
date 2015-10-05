@@ -17,11 +17,13 @@ import java.util.List;
  * Created by frans on 18-9-2015.
  */
 public class GipfBoardComponent extends JComponent {
-    public Game game;
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
-    final Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
-    public Position selectedPosition;                                                                                   // The position that is currently selected as start of a new move
+    final Set<Position> selectableStartPositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
+    public Game game;
+    public Position selectedStartPosition;                                                                                   // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
+    public Set<Position> selectableRemovePositions;
+    public Set<Position> selectedRemovePositions = new HashSet<Position>();
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
 
     /**
@@ -84,7 +86,8 @@ public class GipfBoardComponent extends JComponent {
                 new GipfPieces(g2, this),
                 new SelectedMoveToArrow(g2, this),
                 new HoverCircle(g2, this, Collections.singleton(currentHoverPosition)),
-                new SelectedPosition(g2, this, Collections.singleton(selectedPosition)),
+                new SelectedStartPosition(g2, this, Collections.singleton(selectedStartPosition)),
+                new SelectedRemovePositions(g2, this),
                 new PositionNames(g2, this),
                 new GameOverMessage(g2, this)
         );
@@ -117,7 +120,7 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public void clearSelectedPositions() {
-        selectedPosition = null;
+        selectedStartPosition = null;
         selectedMoveToPosition = null;
         repaint();
     }
