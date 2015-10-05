@@ -20,7 +20,7 @@ public class GipfBoardComponent extends JComponent {
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
     final Set<Position> selectableStartPositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
     public Game game;
-    public Position selectedStartPosition;                                                                                   // The position that is currently selected as start of a new move
+    public Position selectedStartPosition;                                                                              // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
     public Set<Position> selectableRemovePositions;
     public Set<Position> selectedRemovePositions = new HashSet<Position>();

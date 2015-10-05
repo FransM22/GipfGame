@@ -17,7 +17,7 @@ public class UIval {
     private static UIval instance = null;    // Needed for singleton behaviour
 
     // Constants which can be changed to change the look
-    public final Stroke normalPieceStroke = new BasicStroke(4.0f);
+    public final Stroke pieceStroke = new BasicStroke(4.0f);
     public final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
     public final int hoverCircleSize = 15;
     public final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
@@ -92,6 +92,8 @@ public class UIval {
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
     public final Color gameOverTextColor = new Color(0xFF0000);
+    public final Color removedPieceSelectionColor = new Color(0xFF0000);
+    public final Stroke removedPieceSelectionStroke = new BasicStroke(5);
 
     private UIval() {
         // Exists only to prohibit instantiation

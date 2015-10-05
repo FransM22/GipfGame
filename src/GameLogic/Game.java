@@ -58,6 +58,7 @@ public class Game {
 
         currentPlayer = whitePlayer;
         logMessages = new LinkedList<>();
+        logOutput("Started a new " + gameType + " GIPF game.");
     }
 
     /**
