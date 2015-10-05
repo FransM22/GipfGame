@@ -19,13 +19,13 @@ public class DrawableGipfBoard extends DrawableObject {
      * line can be drawn.
      * Each set of parallel lines is divided into two, because the direction in which the points move changes halfway
      */
-    private final Lines[] lineSets = {
-            new Lines(g2, gipfBoardComponent, new Position('a', 2), new Position('f', 1), Direction.NORTH, Direction.NORTH_EAST, 4),
-            new Lines(g2, gipfBoardComponent, new Position('b', 6), new Position('i', 2), Direction.NORTH_EAST, Direction.NORTH, 3),
-            new Lines(g2, gipfBoardComponent, new Position('d', 1), new Position('i', 2), Direction.NORTH_WEST, Direction.NORTH, 4),
-            new Lines(g2, gipfBoardComponent, new Position('a', 2), new Position('h', 6), Direction.NORTH, Direction.NORTH_WEST, 3),
-            new Lines(g2, gipfBoardComponent, new Position('b', 1), new Position('b', 6), Direction.SOUTH_EAST, Direction.NORTH_EAST, 4),
-            new Lines(g2, gipfBoardComponent, new Position('f', 1), new Position('f', 8), Direction.NORTH_EAST, Direction.SOUTH_EAST, 3)
+    private final DrawableLines[] lineSets = {
+            new DrawableLines(g2, gipfBoardComponent, new Position('a', 2), new Position('f', 1), Direction.NORTH, Direction.NORTH_EAST, 4),
+            new DrawableLines(g2, gipfBoardComponent, new Position('b', 6), new Position('i', 2), Direction.NORTH_EAST, Direction.NORTH, 3),
+            new DrawableLines(g2, gipfBoardComponent, new Position('d', 1), new Position('i', 2), Direction.NORTH_WEST, Direction.NORTH, 4),
+            new DrawableLines(g2, gipfBoardComponent, new Position('a', 2), new Position('h', 6), Direction.NORTH, Direction.NORTH_WEST, 3),
+            new DrawableLines(g2, gipfBoardComponent, new Position('b', 1), new Position('b', 6), Direction.SOUTH_EAST, Direction.NORTH_EAST, 4),
+            new DrawableLines(g2, gipfBoardComponent, new Position('f', 1), new Position('f', 8), Direction.NORTH_EAST, Direction.SOUTH_EAST, 3)
     };
 
     public DrawableGipfBoard(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
@@ -49,7 +49,7 @@ public class DrawableGipfBoard extends DrawableObject {
         // Draw the lines
         g2.setColor(UIval.get().lineColor);
 
-        for (Lines lineSet : lineSets) {
+        for (DrawableLines lineSet : lineSets) {
             lineSet.draw();
         }
     }

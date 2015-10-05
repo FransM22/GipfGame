@@ -4,9 +4,9 @@ import GameLogic.*;
 import javafx.util.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static GameLogic.Piece.*;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * The Game class controls whether the moves are according to the game rules, and if so, applies those moves to the board
@@ -16,11 +16,11 @@ import static GameLogic.Piece.*;
 public abstract class Game {
     private final GameLogger gameLogger;
     private final List<GipfBoardState> boardHistory;            // Stores the history of the boards
+    private final GameType gameType;                            // The game type (basic, standard, tournament)
     public Player whitePlayer = null;                           // The black and white player
     public Player blackPlayer = null;
     public boolean isGameOver = false;                          // Is only true if the game is finished
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
-    private final GameType gameType;                            // The game type (basic, standard, tournament)
     private Player currentPlayer;                               // Acts as a pointer to the current player
     private Player winningPlayer;                               // Acts as a pointer to the winning player
 
@@ -138,17 +138,46 @@ public abstract class Game {
             try {
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
-                Map<Position, Piece> removablePieces = detectFourPieces(newGipfBoardState); // Applied in normal game
+                Map<Line, PieceColor> removableLines = detectFourPieces(newGipfBoardState); // Applied in normal game
 
-                // Count how many pieces that can be removed are of the current player
-                int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
-                        piece ->
-                                (piece.getPieceColor() == currentPlayer.pieceColor ? 1 : 0)
-                                        * (piece.getPieceValue()))
-                        .sum();
+                Set<Position> piecesBackToWhite = new HashSet<>();
+                Set<Position> piecesBackToBlack = new HashSet<>();
+                Set<Position> piecesRemoved = new HashSet<>();
+
+                for (Map.Entry<Line, PieceColor> entry : removableLines.entrySet()) {
+                    if (entry.getValue() == PieceColor.WHITE) {
+                        Line line = entry.getKey();
+                        line.getPositions()
+                                .stream()
+                                .filter(position -> newGipfBoardState.getPieceMap().containsKey(position))
+                                .forEach(position -> {
+                                    if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.WHITE) {
+                                        piecesBackToWhite.add(position);
+                                    } else {
+                                        piecesRemoved.add(position);
+                                    }
+                                });
+                    } else if (entry.getValue() == PieceColor.BLACK) {
+                        Line line = entry.getKey();
+                        line.getPositions()
+                                .stream()
+                                .filter(position -> newGipfBoardState.getPieceMap().containsKey(position))
+                                .forEach(position -> {
+                                    if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.BLACK) {
+                                        piecesBackToBlack.add(position);
+                                    } else {
+                                        piecesRemoved.add(position);
+                                    }
+                                });
+                    }
+                }
 
                 // Remove the pieces
-                move.removedPiecePositions = removablePieces.keySet();
+                move.removedPiecePositions = new HashSet<>();
+                move.removedPiecePositions.addAll(piecesBackToWhite);
+                move.removedPiecePositions.addAll(piecesBackToBlack);
+                move.removedPiecePositions.addAll(piecesRemoved);
+
                 move.removedPiecePositions.stream().forEach(newGipfBoardState.getPieceMap()::remove);
 
                 gipfBoardState.whiteIsOnTurn = currentPlayer == whitePlayer;
@@ -157,12 +186,16 @@ public abstract class Game {
                 gipfBoardState.blackHasPlacedNormalPieces = blackPlayer.hasPlacedNormalPieces;
                 gipfBoardState.whiteHasPlacedNormalPieces = whitePlayer.hasPlacedNormalPieces;
 
-                currentPlayer.piecesLeft += nrOfPiecesBackToPlayer;
+                whitePlayer.piecesLeft += piecesBackToWhite.size();
+                blackPlayer.piecesLeft += piecesBackToBlack.size();
 
                 gameLogger.log(move.toString());
 
-                if (nrOfPiecesBackToPlayer > 0) {
-                    gameLogger.log(currentPlayer.pieceColor + " retrieved " + nrOfPiecesBackToPlayer + " pieces");
+                if (piecesBackToWhite.size() > 0) {
+                    gameLogger.log(whitePlayer.pieceColor + " retrieved " + piecesBackToWhite.size() + " pieces");
+                }
+                if (piecesBackToBlack.size() > 0) {
+                    gameLogger.log(blackPlayer.pieceColor + " retrieved " + piecesBackToBlack.size() + " pieces");
                 }
 
                 currentPlayer.piecesLeft -= move.addedPiece.getPieceValue();
@@ -282,9 +315,8 @@ public abstract class Game {
     /**
      * By Dingding
      */
-    private Map<Position, Piece> detectFourPieces(GipfBoardState gipfBoardState) {
-        //Direction: South to North
-        Map<Position, Piece> removablePieces = new HashMap<>();
+    private Map<Line, PieceColor> detectFourPieces(GipfBoardState gipfBoardState) {
+        Map<Line, PieceColor> removableLines = new HashMap<>();
 
         Set<Pair<Position, Direction>> lines = new HashSet<>();
         lines.add(new Pair<>(new Position('a', 1), Direction.NORTH_EAST));
@@ -327,13 +359,7 @@ public abstract class Game {
 
                 if (currentPieceColor != consecutivePiecesColor) {
                     if (consecutivePiecesColor != null && consecutivePieces >= 4) {
-
-                        // Remove the pieces on the same line
-                        for (Position pieceToBeRemoved = startPosition; isPositionOnBigBoard(pieceToBeRemoved); pieceToBeRemoved = new Position(pieceToBeRemoved.getPosId() + direction.getDeltaPos())) {
-                            // Add all the pieces on the line to the removablePieces list
-                            if (gipfBoardState.getPieceMap().containsKey(pieceToBeRemoved))
-                                removablePieces.put(pieceToBeRemoved, gipfBoardState.getPieceMap().get(pieceToBeRemoved));
-                        }
+                        removableLines.put(new Line(this, currentPosition, direction), consecutivePiecesColor);
                         break;
                     }
 
@@ -345,14 +371,14 @@ public abstract class Game {
             }
         }
 
-        return removablePieces;
+        return removableLines;
     }
 
     public Set<Position> getStartPositionsForMoves() {
         return getAllowedMoves()
                 .stream()
                 .map(Move::getStartingPosition)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     public Set<Position> getMoveToPositionsForStartPosition(Position position) {
@@ -361,7 +387,7 @@ public abstract class Game {
                 .filter(m -> m.getStartingPosition().equals(position))
                 .map(move -> new Position(
                         move.getStartingPosition().getPosId() + move.getDirection().getDeltaPos()))
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     public void returnToPreviousBoard() {
