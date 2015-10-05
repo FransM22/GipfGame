@@ -7,7 +7,7 @@ import GameLogic.*;
  */
 class GipfGame {
     public static void main(String argv[]) {
-        Game game = new Game();
+        Game game = new Game(Game.GameType.basic);
         GipfBoardState gipfBoardState = game.getGipfBoardState();
 
         printBoard(gipfBoardState);

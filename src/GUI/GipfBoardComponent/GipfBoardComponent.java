@@ -17,7 +17,7 @@ import java.util.List;
  * Created by frans on 18-9-2015.
  */
 public class GipfBoardComponent extends JComponent {
-    public final Game game;
+    public Game game;
     // The next fields have a default scope, as they need to be accessed from GipfBoardComponentMouseListener
     final Set<Position> selectablePositions = new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions));
     public Position selectedPosition;                                                                                   // The position that is currently selected as start of a new move
@@ -37,7 +37,7 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public static void main(String argv[]) {
-        Game game = new Game();
+        Game game = new Game(Game.GameType.basic);
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
 
         // These are only for checking whether the component works
@@ -114,5 +114,10 @@ public class GipfBoardComponent extends JComponent {
         } else {
             return UIval.get().singlePieceBorderColor;
         }
+    }
+
+    public void newGame(Game.GameType gameType) {
+        game = new Game(gameType);
+        repaint();
     }
 }

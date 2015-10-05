@@ -13,13 +13,15 @@ import java.awt.*;
  * Created by frans on 18-9-2015.
  */
 class GipfWindow extends JFrame {
-    final JTextArea debugTextArea;
+    final JTextArea gameLogTextArea;
     private final GipfBoardComponent gipfBoardComponent;
     private final Game game;
     private final JTextField newPieceCoordinateTextField;
     private final JComboBox<Game.Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
+    GameStateUpdater gameStateUpdater;
+    private JLabel gameTypeLabel;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -28,14 +30,15 @@ class GipfWindow extends JFrame {
         final JPanel contentPane = new JPanel();
         newPieceCoordinateTextField = new JTextField();
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
-        JButton previousStateButton = new JButton("Undo");
-        game = new Game();
+        JButton previousStateButton = new JButton("Undo move");
+        game = new Game(Game.GameType.basic);
         gipfBoardComponent = new GipfBoardComponent(game);
-        debugTextArea = new DebugTextArea();
+        gameLogTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
         piecesLeftLabel = new JLabel(" ");
         currentPlayerLabel = new JLabel(" ");
-        GameStateUpdater gameStateUpdater = new GameStateUpdater(this, game);
+        gameTypeLabel = new JLabel(" ");
+        gameStateUpdater = new GameStateUpdater(this, game);
         JMenuBar menubar = new JMenuBar();
         JMenu newGameMenu = new JMenu("New game");
         JMenuItem newBasicGameMenuItem = new JMenuItem("Basic game");
@@ -48,7 +51,7 @@ class GipfWindow extends JFrame {
         newGameMenu.add(newTournamentGameMenuItem);
 
         // Set the properties of the elements
-        debugTextArea.setRows(10);
+        gameLogTextArea.setRows(10);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("GIPF");
@@ -58,6 +61,7 @@ class GipfWindow extends JFrame {
 
         setJMenuBar(menubar);
         contentPane.add(new JLabel("The GIPF game"));
+        contentPane.add(gameTypeLabel);
         contentPane.add(currentPlayerLabel);
         contentPane.add(piecesLeftLabel);
         contentPane.add(gipfBoardComponent);
@@ -73,8 +77,14 @@ class GipfWindow extends JFrame {
         newPieceCoordinateEnterButton.addActionListener(e -> listenerAddNewPiece());
         previousStateButton.addActionListener(e -> returnToPreviousState());
 
+        newBasicGameMenuItem.addActionListener(e -> newGame(Game.GameType.basic));
+        newStandardGameMenuItem.addActionListener(e -> newGame(Game.GameType.standard));
+        newTournamentGameMenuItem.addActionListener(e -> newGame(Game.GameType.tournament));
 
-        contentPane.add(new JScrollPane(debugTextArea));
+
+
+        contentPane.add(new JScrollPane(gameLogTextArea));
+        previousStateButton.setFocusable(false); //  // To avoid the flashing undo button
 
         pack();
         setVisible(true);
@@ -104,15 +114,15 @@ class GipfWindow extends JFrame {
             if (game.isPositionOnBigBoard(newPiecePosition)) {
                 Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
-                debugTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
+                gameLogTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
 
                 game.getGipfBoardState().getPieceMap().put(newPiecePosition, pieceType);
                 gipfBoardComponent.repaint();
             } else {
-                debugTextArea.append("Position " + newPiecePosition.getName() + " is invalid");
+                gameLogTextArea.append("Position " + newPiecePosition.getName() + " is invalid");
             }
         } catch (Exception e) {
-            debugTextArea.append("Can't parse '" + newCoordinateText + "'");
+            gameLogTextArea.append("Can't parse '" + newCoordinateText + "'");
         }
     }
 
@@ -128,4 +138,13 @@ class GipfWindow extends JFrame {
     public void setCurrentPlayerLabel(String message) {
         currentPlayerLabel.setText(message);
     }
+
+    public void setGameTypeLabel(String message) { gameTypeLabel.setText(message); }
+
+    private void newGame(Game.GameType gameType) {
+        gipfBoardComponent.newGame(gameType);
+        gameLogTextArea.setText("");
+        gameStateUpdater.setGame(gipfBoardComponent.game);
+    }
+
 }

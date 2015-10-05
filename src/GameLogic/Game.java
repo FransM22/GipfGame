@@ -19,13 +19,15 @@ public class Game {
     private Player currentPlayer;                   // Acts as a pointer to the current player
     private Player winningPlayer;                   // Acts as a pointer to the winning player
     private GipfBoardState gipfBoardState;              // The board where the pieces are stored.
+    private GameType gameType;
 
-    public Game() {
+    public Game(GameType gameType) {
         gipfBoardState = new GipfBoardState();
         whitePlayer = new Player(PieceColor.WHITE);
         blackPlayer = new Player(PieceColor.BLACK);
         boardHistory = new ArrayList<>();
         boardHistory.add(gipfBoardState);
+        this.gameType = gameType;
 
         currentPlayer = whitePlayer;
         logMessages = new LinkedList<>();
@@ -464,4 +466,12 @@ public class Game {
             return isPlacingGipfPieces;
         }
     }
+
+    public enum GameType {
+        basic,
+        standard,
+        tournament
+    }
+
+    public GameType getGameType() { return gameType; }
 }
