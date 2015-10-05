@@ -14,11 +14,11 @@ public class Game {
     public final LinkedList<String> logMessages;    // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
     public final Player whitePlayer;                // The black and white player
     public final Player blackPlayer;
+    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
     public boolean isGameOver = false;              // Is only true if the game is finished
     private Player currentPlayer;                   // Acts as a pointer to the current player
     private Player winningPlayer;                   // Acts as a pointer to the winning player
     private GipfBoardState gipfBoardState;              // The board where the pieces are stored.
-    private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
 
     public Game() {
         gipfBoardState = new GipfBoardState();
@@ -33,6 +33,7 @@ public class Game {
 
     /**
      * Returns the color of the piece (either black or white)
+     *
      * @param piece Piece of which the color is to be determined
      * @return the color of the piece
      */
@@ -49,6 +50,7 @@ public class Game {
 
     /**
      * Returns the type of the piece (either normal or gipf)
+     *
      * @param piece Piece of which the color is to be determined
      * @return the type of the piece
      */
@@ -80,7 +82,7 @@ public class Game {
     /**
      * Checks whether the position is located on the inner board. Returns fals for positions on the outer positions, as well
      * as positions that are not on the board.
-     *
+     * <p/>
      * By Leroy
      *
      * @param p position of which is to be determined whether the position is located on the inner board
@@ -146,7 +148,7 @@ public class Game {
     public void applyMove(Move move) {
         if (isGameOver) return;
 
-        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);
+        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
         if (currentPlayer.piecesLeft >= getPieceValue(move.addedPiece)) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
@@ -219,8 +221,7 @@ public class Game {
     public int getPieceValue(Piece piece) {
         if (Game.getPieceType(piece) == PieceType.GIPF) {
             return 2;
-        }
-        else
+        } else
             return 1;
     }
 
@@ -289,10 +290,14 @@ public class Game {
     }
 
     public Piece getCurrentPiece() {
-        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == false) return Piece.WHITE_SINGLE;
-        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == true) return Piece.WHITE_GIPF;
-        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == false) return Piece.BLACK_SINGLE;
-        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == true) return Piece.BLACK_GIPF;
+        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == false)
+            return Piece.WHITE_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == true)
+            return Piece.WHITE_GIPF;
+        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == false)
+            return Piece.BLACK_SINGLE;
+        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == true)
+            return Piece.BLACK_GIPF;
 
         return null;
     }
@@ -386,6 +391,21 @@ public class Game {
                 .collect(Collectors.toSet());
     }
 
+    public void returnToPreviousBoard() {
+        if (boardHistory.size() > 1 && !isGameOver) {
+            gipfBoardState = boardHistory.get(boardHistory.size() - 1);
+            currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
+            whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
+            whitePlayer.hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
+            blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
+            blackPlayer.hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
+
+            boardHistory.remove(boardHistory.size() - 1);
+
+            logOutput("Returned to previous game state");
+        }
+    }
+
     public enum PieceType {
         GIPF,
         NORMAL,
@@ -422,26 +442,11 @@ public class Game {
         BLACK
     }
 
-    public void returnToPreviousBoard() {
-        if (boardHistory.size() > 1 && !isGameOver) {
-            gipfBoardState = boardHistory.get(boardHistory.size() - 1);
-            currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
-            whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
-            whitePlayer.hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
-            blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
-            blackPlayer.hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
-
-            boardHistory.remove(boardHistory.size() - 1);
-
-            logOutput("Returned to previous game state");
-        }
-    }
-
     public class Player {
         public final PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
-        private boolean isPlacingGipfPieces = true;
         public boolean hasPlacedNormalPieces = false;
+        private boolean isPlacingGipfPieces = true;
 
         Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;
@@ -450,8 +455,7 @@ public class Game {
         public void toggleIsPlacingGipfPieces() {
             if (hasPlacedNormalPieces) {
                 isPlacingGipfPieces = false;
-            }
-            else {
+            } else {
                 isPlacingGipfPieces = !isPlacingGipfPieces;
             }
         }
