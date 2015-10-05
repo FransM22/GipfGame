@@ -75,12 +75,14 @@ class GipfWindow extends JFrame {
         // Add listeners
         newPieceCoordinateTextField.addActionListener(e -> listenerAddNewPiece());
         newPieceCoordinateEnterButton.addActionListener(e -> listenerAddNewPiece());
-        previousStateButton.addActionListener(e -> returnToPreviousState());
+        previousStateButton.addActionListener(e -> {
+            returnToPreviousState();
+            gipfBoardComponent.clearSelectedPositions();
+        });
 
         newBasicGameMenuItem.addActionListener(e -> newGame(Game.GameType.basic));
         newStandardGameMenuItem.addActionListener(e -> newGame(Game.GameType.standard));
         newTournamentGameMenuItem.addActionListener(e -> newGame(Game.GameType.tournament));
-
 
 
         contentPane.add(new JScrollPane(gameLogTextArea));
@@ -139,7 +141,9 @@ class GipfWindow extends JFrame {
         currentPlayerLabel.setText(message);
     }
 
-    public void setGameTypeLabel(String message) { gameTypeLabel.setText(message); }
+    public void setGameTypeLabel(String message) {
+        gameTypeLabel.setText(message);
+    }
 
     private void newGame(Game.GameType gameType) {
         gipfBoardComponent.newGame(gameType);

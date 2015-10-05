@@ -116,8 +116,14 @@ public class GipfBoardComponent extends JComponent {
         }
     }
 
+    public void clearSelectedPositions() {
+        selectedPosition = null;
+        selectedMoveToPosition = null;
+        repaint();
+    }
+
     public void newGame(Game.GameType gameType) {
         game = new Game(gameType);
-        repaint();
+        clearSelectedPositions();
     }
 }
