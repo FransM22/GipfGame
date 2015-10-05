@@ -18,7 +18,7 @@ public class GameOverMessage extends DrawableObject {
         if (gipfBoardComponent.game.isGameOver) {
             g2.setFont(UIval.get().gameOverFont);
             g2.setColor(UIval.get().gameOverTextColor);
-            g2.drawString(gipfBoardComponent.game.getCurrentPlayer().pieceColor + " won!", 100, 100);
+            g2.drawString(gipfBoardComponent.game.getWinningPlayer().pieceColor + " won!", 100, 100);
         }
     }
 }

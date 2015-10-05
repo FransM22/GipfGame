@@ -17,11 +17,7 @@ public class Player {
     }
 
     public void toggleIsPlacingGipfPieces() {
-        if (hasPlacedNormalPieces) {
-            isPlacingGipfPieces = false;
-        } else {
-            isPlacingGipfPieces = !isPlacingGipfPieces;
-        }
+        isPlacingGipfPieces = !hasPlacedNormalPieces && !isPlacingGipfPieces;
     }
 
     public boolean getIsPlacingGipfPieces() {

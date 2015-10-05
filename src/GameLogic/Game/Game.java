@@ -6,6 +6,8 @@ import javafx.util.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static GameLogic.Piece.*;
+
 /**
  * The Game class controls whether the moves are according to the game rules, and if so, applies those moves to the board
  * <p/>
@@ -17,12 +19,12 @@ public abstract class Game {
     public Player whitePlayer = null;                           // The black and white player
     public Player blackPlayer = null;
     public boolean isGameOver = false;                          // Is only true if the game is finished
-    GipfBoardState gipfBoardState;                      // The board where the pieces are stored.
-    GameType gameType;                                  // The game type (basic, standard, tournament)
+    GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
+    private final GameType gameType;                            // The game type (basic, standard, tournament)
     private Player currentPlayer;                               // Acts as a pointer to the current player
     private Player winningPlayer;                               // Acts as a pointer to the winning player
 
-    public Game(GameType gameType) {
+    Game(GameType gameType) {
         this.gameType = gameType;
 
         initializePlayers();
@@ -62,15 +64,14 @@ public abstract class Game {
     }
 
     /**
-     * Checks whether the position is located on the inner board. Returns fals for positions on the outer positions, as well
+     * Checks whether the position is located on the inner board. Returns false for positions on the outer positions, as well
      * as positions that are not on the board.
      * <p/>
      * By Leroy
      *
      * @param p position of which is to be determined whether the position is located on the inner board
-     * @return
      */
-    public boolean isOnInnerBoard(Position p) {
+    private boolean isOnInnerBoard(Position p) {
         int col = p.getColName() - 'a' + 1;
         int row = p.getRowNumber();
 
@@ -82,7 +83,6 @@ public abstract class Game {
                 col <= 1
         );
     }
-
 
     private boolean isPositionEmpty(GipfBoardState gipfBoardState, Position p) {
         return !gipfBoardState.getPieceMap().containsKey(p);
@@ -203,12 +203,10 @@ public abstract class Game {
     /**
      * This method is currently a placeholder. Currently statically returns all potential candidates for allowed moves,
      * but it should be checked which ones are actually allowed.
-     *
-     * @return
      */
-    public Set<Move> getAllowedMoves() {
+    private Set<Move> getAllowedMoves() {
         if (isGameOver) {
-            return new HashSet<Move>();
+            return new HashSet<>();
         }
         return new HashSet<>(Arrays.asList(
                 new Move(getCurrentPiece(), new Position('a', 1), Direction.NORTH_EAST),
@@ -257,7 +255,7 @@ public abstract class Game {
     }
 
     private Set<Position> getBorderPositions() {
-        return new HashSet<Position>();
+        return new HashSet<>();
     }
 
     private void updateCurrentPlayer() {
@@ -265,14 +263,14 @@ public abstract class Game {
     }
 
     public Piece getCurrentPiece() {
-        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == false)
-            return Piece.WHITE_SINGLE;
-        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces == true)
-            return Piece.WHITE_GIPF;
-        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == false)
-            return Piece.BLACK_SINGLE;
-        if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces == true)
-            return Piece.BLACK_GIPF;
+        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces)
+            return WHITE_GIPF;
+        else if (currentPlayer.pieceColor == PieceColor.WHITE)
+            return WHITE_SINGLE;
+        else if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces)
+            return BLACK_GIPF;
+        else if (currentPlayer.pieceColor == PieceColor.BLACK)
+            return BLACK_SINGLE;
 
         return null;
     }
@@ -284,7 +282,7 @@ public abstract class Game {
     /**
      * By Dingding
      */
-    public Map<Position, Piece> detectFourPieces(GipfBoardState gipfBoardState) {
+    private Map<Position, Piece> detectFourPieces(GipfBoardState gipfBoardState) {
         //Direction: South to North
         Map<Position, Piece> removablePieces = new HashMap<>();
 
@@ -381,9 +379,15 @@ public abstract class Game {
         }
     }
 
-    public GameLogger getGameLogger() { return gameLogger; }
+    public GameLogger getGameLogger() {
+        return gameLogger;
+    }
 
     public GameType getGameType() {
         return gameType;
+    }
+
+    public Player getWinningPlayer() {
+        return winningPlayer;
     }
 }

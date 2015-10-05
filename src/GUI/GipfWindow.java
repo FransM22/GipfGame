@@ -22,8 +22,8 @@ class GipfWindow extends JFrame {
     private final JComboBox<Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
-    GameStateUpdater gameStateUpdater;
-    private JLabel gameTypeLabel;
+    private final GameStateUpdater gameStateUpdater;
+    private final JLabel gameTypeLabel;
 
     private GipfWindow() throws HeadlessException {
         super();
@@ -41,13 +41,13 @@ class GipfWindow extends JFrame {
         currentPlayerLabel = new JLabel(" ");
         gameTypeLabel = new JLabel(" ");
         gameStateUpdater = new GameStateUpdater(this, game);
-        JMenuBar menubar = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
         JMenu newGameMenu = new JMenu("New game");
         JMenuItem newBasicGameMenuItem = new JMenuItem("Basic game");
         JMenuItem newStandardGameMenuItem = new JMenuItem("Standard game");
         JMenuItem newTournamentGameMenuItem = new JMenuItem("Tournament game");
 
-        menubar.add(newGameMenu);
+        menuBar.add(newGameMenu);
         newGameMenu.add(newBasicGameMenuItem);
         newGameMenu.add(newStandardGameMenuItem);
         newGameMenu.add(newTournamentGameMenuItem);
@@ -61,7 +61,7 @@ class GipfWindow extends JFrame {
         getContentPane().add(contentPane);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));    // Put everything in a column
 
-        setJMenuBar(menubar);
+        setJMenuBar(menuBar);
         contentPane.add(new JLabel("The GIPF game"));
         contentPane.add(gameTypeLabel);
         contentPane.add(currentPlayerLabel);

@@ -11,7 +11,7 @@ import java.util.Set;
  * Created by frans on 5-10-2015.
  */
 public class SelectedRemovePositions extends DrawableObject {
-    Set<Position> selectedRemovePositions;
+    private final Set<Position> selectedRemovePositions;
 
     public SelectedRemovePositions(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent);

@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * Created by frans on 5-10-2015.
  */
 public class GameLogger {
-    private Instant gameStartedTime;
+    private final Instant gameStartedTime;
     public final LinkedList<String> logMessages;                // Messages displayed in the log in the window (if there is a GipfWindow instance connected to this game)
 
     public GameLogger(GameType gameType) {

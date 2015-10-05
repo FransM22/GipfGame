@@ -27,7 +27,6 @@ public class Circle extends DrawableObject {
      * would need to take care of creating the correct color game piece for the GipfPieces class. Because I want to keep
      * the method more general I created a method to set the CircleProperties field, allowing the GipfPieces class to take
      * care of it.
-     * @param circles
      */
     void setDrawableCircles(Set<CircleProperties> circles) {
         this.circles = circles;
