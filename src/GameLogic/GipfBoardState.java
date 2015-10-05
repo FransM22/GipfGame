@@ -13,6 +13,8 @@ public class GipfBoardState {
     int whitePiecesLeft;
     int blackPiecesLeft;
     boolean whiteIsOnTurn;
+    boolean blackHasPlacedNormalPieces;
+    boolean whiteHasPlacedNormalPieces;
 
     /**
      * Initialize an empty Gipf board

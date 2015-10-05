@@ -109,7 +109,7 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public Color getBorderColorOfPlayer(Game.Player player) {
-        if (player.isPlacingGipfPieces) {
+        if (player.getIsPlacingGipfPieces()) {
             return UIval.get().gipfPieceBorderColor;
         } else {
             return UIval.get().singlePieceBorderColor;

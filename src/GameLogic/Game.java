@@ -170,13 +170,15 @@ public class Game {
                 gipfBoardState.whiteIsOnTurn = currentPlayer == whitePlayer;
                 gipfBoardState.whitePiecesLeft = whitePlayer.piecesLeft;
                 gipfBoardState.blackPiecesLeft = blackPlayer.piecesLeft;
+                gipfBoardState.blackHasPlacedNormalPieces = blackPlayer.hasPlacedNormalPieces;
+                gipfBoardState.whiteHasPlacedNormalPieces = whitePlayer.hasPlacedNormalPieces;
 
                 currentPlayer.piecesLeft += nrOfPiecesBackToPlayer;
 
                 logOutput(move.toString());
 
                 if (nrOfPiecesBackToPlayer > 0) {
-                    logOutput(currentPlayer.pieceColor + " regained " + nrOfPiecesBackToPlayer + " pieces");
+                    logOutput(currentPlayer.pieceColor + " retrieved " + nrOfPiecesBackToPlayer + " pieces");
                 }
 
                 currentPlayer.piecesLeft -= getPieceValue(move.addedPiece);
@@ -189,6 +191,10 @@ public class Game {
                     logOutput("Game over! " + winningPlayer.pieceColor + " won!");
                 } else {
                     updateCurrentPlayer();
+                }
+
+                if (!currentPlayer.isPlacingGipfPieces) {
+                    currentPlayer.hasPlacedNormalPieces = true;
                 }
 
                 boardHistory.add(gipfBoardState);
@@ -421,7 +427,9 @@ public class Game {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
             currentPlayer = gipfBoardState.whiteIsOnTurn == true ? whitePlayer : blackPlayer;
             whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
+            whitePlayer.hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
             blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
+            blackPlayer.hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
 
             boardHistory.remove(boardHistory.size() - 1);
 
@@ -432,10 +440,24 @@ public class Game {
     public class Player {
         public final PieceColor pieceColor;
         public int piecesLeft = 18;    // Each player starts with 18 pieces
-        public boolean isPlacingGipfPieces = true;
+        private boolean isPlacingGipfPieces = true;
+        public boolean hasPlacedNormalPieces = false;
 
         Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;
+        }
+
+        public void toggleIsPlacingGipfPieces() {
+            if (hasPlacedNormalPieces) {
+                isPlacingGipfPieces = false;
+            }
+            else {
+                isPlacingGipfPieces = !isPlacingGipfPieces;
+            }
+        }
+
+        public boolean getIsPlacingGipfPieces() {
+            return isPlacingGipfPieces;
         }
     }
 }

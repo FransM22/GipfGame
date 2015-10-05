@@ -36,6 +36,16 @@ class GipfWindow extends JFrame {
         piecesLeftLabel = new JLabel(" ");
         currentPlayerLabel = new JLabel(" ");
         GameStateUpdater gameStateUpdater = new GameStateUpdater(this, game);
+        JMenuBar menubar = new JMenuBar();
+        JMenu newGameMenu = new JMenu("New game");
+        JMenuItem newBasicGameMenuItem = new JMenuItem("Basic game");
+        JMenuItem newStandardGameMenuItem = new JMenuItem("Standard game");
+        JMenuItem newTournamentGameMenuItem = new JMenuItem("Tournament game");
+
+        menubar.add(newGameMenu);
+        newGameMenu.add(newBasicGameMenuItem);
+        newGameMenu.add(newStandardGameMenuItem);
+        newGameMenu.add(newTournamentGameMenuItem);
 
         // Set the properties of the elements
         debugTextArea.setRows(10);
@@ -46,16 +56,17 @@ class GipfWindow extends JFrame {
         getContentPane().add(contentPane);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));    // Put everything in a column
 
+        setJMenuBar(menubar);
         contentPane.add(new JLabel("The GIPF game"));
         contentPane.add(currentPlayerLabel);
         contentPane.add(piecesLeftLabel);
         contentPane.add(gipfBoardComponent);
         contentPane.add(previousStateButton);
 
-        contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
-        contentPane.add(newPieceCoordinateTextField);
-        contentPane.add(pieceTypeComboBox);
-        contentPane.add(newPieceCoordinateEnterButton);
+//        contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
+//        contentPane.add(newPieceCoordinateTextField);
+//        contentPane.add(pieceTypeComboBox);
+//        contentPane.add(newPieceCoordinateEnterButton);
 
         // Add listeners
         newPieceCoordinateTextField.addActionListener(e -> listenerAddNewPiece());
@@ -71,8 +82,13 @@ class GipfWindow extends JFrame {
     }
 
     public static void main(String argv[]) {
-        new GipfWindow();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
 
+        new GipfWindow();
     }
 
     private void listenerAddNewPiece() {
