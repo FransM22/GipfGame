@@ -55,6 +55,9 @@ public class Game {
         } else if (gameType == GameType.tournament) {
             whitePlayer = new Player(PieceColor.WHITE, 18);
             blackPlayer = new Player(PieceColor.BLACK, 18);
+
+            whitePlayer.isPlacingGipfPieces = true;
+            blackPlayer.isPlacingGipfPieces = true;
         }
 
         boardHistory = new ArrayList<>();
