@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
  */
 public class Game {
     public final LinkedList<String> logMessages;    // Messages displayd in the log in the window (if there is a GipfWindow instance connected to this game)
-    public final Player whitePlayer;                // The black and white player
-    public final Player blackPlayer;
+    public Player whitePlayer = null;                // The black and white player
+    public Player blackPlayer = null;
     private final List<GipfBoardState> boardHistory;     // Stores the history of the boards
     public boolean isGameOver = false;              // Is only true if the game is finished
     private Player currentPlayer;                   // Acts as a pointer to the current player
@@ -23,8 +23,37 @@ public class Game {
 
     public Game(GameType gameType) {
         gipfBoardState = new GipfBoardState();
-        whitePlayer = new Player(PieceColor.WHITE);
-        blackPlayer = new Player(PieceColor.BLACK);
+
+        if (gameType == GameType.basic) {
+            whitePlayer = new Player(PieceColor.WHITE, 15);
+            blackPlayer = new Player(PieceColor.BLACK, 15);
+            whitePlayer.hasPlacedNormalPieces = true;
+            blackPlayer.hasPlacedNormalPieces = true;
+            whitePlayer.isPlacingGipfPieces = false;
+            blackPlayer.isPlacingGipfPieces = false;
+        }
+        else if (gameType == GameType.standard) {
+            whitePlayer = new Player(PieceColor.WHITE, 18);
+            blackPlayer = new Player(PieceColor.BLACK, 18);
+            whitePlayer.hasPlacedNormalPieces = true;
+            blackPlayer.hasPlacedNormalPieces = true;
+            whitePlayer.isPlacingGipfPieces = false;
+            blackPlayer.isPlacingGipfPieces = false;
+
+            gipfBoardState.getPieceMap().put(new Position('b', 5), Piece.WHITE_GIPF);
+            gipfBoardState.getPieceMap().put(new Position('e', 2), Piece.WHITE_GIPF);
+            gipfBoardState.getPieceMap().put(new Position('h', 5), Piece.WHITE_GIPF);
+
+            gipfBoardState.getPieceMap().put(new Position('b', 2), Piece.BLACK_GIPF);
+            gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_GIPF);
+            gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_GIPF);
+
+        }
+        else if (gameType == GameType.tournament) {
+            whitePlayer = new Player(PieceColor.WHITE, 18);
+            blackPlayer = new Player(PieceColor.BLACK, 18);
+        }
+
         boardHistory = new ArrayList<>();
         boardHistory.add(gipfBoardState);
         this.gameType = gameType;
@@ -446,12 +475,13 @@ public class Game {
 
     public class Player {
         public final PieceColor pieceColor;
-        public int piecesLeft = 18;    // Each player starts with 18 pieces
+        public int piecesLeft;
         public boolean hasPlacedNormalPieces = false;
         private boolean isPlacingGipfPieces = true;
 
-        Player(PieceColor pieceColor) {
+        Player(PieceColor pieceColor, int piecesAmount) {
             this.pieceColor = pieceColor;
+            this.piecesLeft = piecesAmount;
         }
 
         public void toggleIsPlacingGipfPieces() {
