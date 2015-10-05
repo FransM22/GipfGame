@@ -1,7 +1,5 @@
 package GameLogic;
 
-import GameLogic.Game.Game;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +9,7 @@ import java.util.Map;
  *
  */
 public class GipfBoardState {
-    private final Map<Position, Game.Piece> pieceMap;
+    private final Map<Position, Piece> pieceMap;
     public int whitePiecesLeft;
     public int blackPiecesLeft;
     public boolean whiteIsOnTurn;
@@ -35,7 +33,7 @@ public class GipfBoardState {
         pieceMap = new HashMap<>(old.pieceMap);
     }
 
-    public Map<Position, Game.Piece> getPieceMap() {
+    public Map<Position, Piece> getPieceMap() {
         return pieceMap;
     }
 

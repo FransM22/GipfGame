@@ -3,6 +3,7 @@ package GUI.GipfBoardComponent.DrawableObjects;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI.UIval;
 import GameLogic.Game.Game;
+import GameLogic.Piece;
 import GameLogic.Position;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ public class GipfPieces extends Circle {
 
     public GipfPieces(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent, UIval.get().pieceSize, UIval.get().pieceStroke);
-        Map<Position, Game.Piece> pieceMap = gipfBoardComponent.game.getGipfBoardState().getPieceMap();
+        Map<Position, Piece> pieceMap = gipfBoardComponent.game.getGipfBoardState().getPieceMap();
 
         super.setDrawableCircles(
                 pieceMap
@@ -31,7 +32,7 @@ public class GipfPieces extends Circle {
         );
     }
 
-    private Color getFillColorFor(Game.Piece piece) {
+    private Color getFillColorFor(Piece piece) {
         switch (Game.getPieceColor(piece)) {
             case WHITE:
                 return UIval.get().whitePieceColor;
@@ -42,7 +43,7 @@ public class GipfPieces extends Circle {
         return null;
     }
 
-    private Color getBorderColorFor(Game.Piece piece) {
+    private Color getBorderColorFor(Piece piece) {
         switch (piece) {
             case WHITE_SINGLE:
                 return UIval.get().singlePieceBorderColor;

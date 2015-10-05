@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toSet;
  * Created by frans on 9-9-2015.
  */
 public class Move {
-    public final Game.Piece addedPiece;             // The piece that is added to the board
+    public final Piece addedPiece;             // The piece that is added to the board
     public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     public final Direction direction;                    // The direction in which the piece moves
     public Set<Position> removedPiecePositions;    // Pieces that are removed during this move
@@ -27,7 +27,7 @@ public class Move {
      * @param direction             the direction in which the newly added piece is moved
      * @param removedPiecePositions the pieces that are removed
      */
-    public Move(Game.Piece addedPiece,
+    public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction,
                 Set<Position> removedPiecePositions) {
@@ -44,7 +44,7 @@ public class Move {
      * @param startPos   the position where the piece is added
      * @param direction  the direction in which the piece moves
      */
-    public Move(Game.Piece addedPiece,
+    public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction) {
         this.addedPiece = addedPiece;
@@ -58,7 +58,7 @@ public class Move {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
         return "" + Game.getPieceColor(addedPiece) + ": "
-                + (Game.getPieceType(addedPiece) == Game.PieceType.GIPF ? "G" : "")
+                + (addedPiece.getPieceType() == PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
                 "-" + toPos.getName() +
                 (removedPiecePositions.isEmpty() ? "" : ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()));

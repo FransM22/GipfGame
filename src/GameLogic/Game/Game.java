@@ -22,15 +22,10 @@ public abstract class Game {
     public Player whitePlayer = null;                           // The black and white player
     public Player blackPlayer = null;
     public boolean isGameOver = false;                          // Is only true if the game is finished
-    private Player currentPlayer;                               // Acts as a pointer to the current player
-    private Player winningPlayer;                               // Acts as a pointer to the winning player
     GipfBoardState gipfBoardState;                      // The board where the pieces are stored.
     GameType gameType;                                  // The game type (basic, standard, tournament)
-
-    abstract void initializePlayers();
-    void initializeBoard() {
-        this.gipfBoardState = new GipfBoardState();
-    }
+    private Player currentPlayer;                               // Acts as a pointer to the current player
+    private Player winningPlayer;                               // Acts as a pointer to the winning player
 
     public Game(GameType gameType) {
         initializePlayers();
@@ -62,17 +57,10 @@ public abstract class Game {
         return PieceColor.BLACK;
     }
 
+    abstract void initializePlayers();
 
-    /**
-     * Returns the type of the piece (either normal or gipf)
-     *
-     * @param piece Piece of which the color is to be determined
-     * @return the type of the piece
-     */
-    public static PieceType getPieceType(Piece piece) {
-        if (piece == Piece.WHITE_SINGLE || piece == Piece.BLACK_SINGLE)
-            return PieceType.NORMAL;
-        return PieceType.GIPF;
+    void initializeBoard() {
+        this.gipfBoardState = new GipfBoardState();
     }
 
     /**
@@ -165,7 +153,7 @@ public abstract class Game {
 
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
-        if (currentPlayer.piecesLeft >= getPieceValue(move.addedPiece)) {
+        if (currentPlayer.piecesLeft >= move.addedPiece.getPieceValue()) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
@@ -177,7 +165,7 @@ public abstract class Game {
                 int nrOfPiecesBackToPlayer = removablePieces.values().stream().mapToInt(
                         piece ->
                                 (Game.getPieceColor(piece) == currentPlayer.pieceColor ? 1 : 0)
-                                        * (getPieceValue(piece)))
+                                        * (piece.getPieceValue()))
                         .sum();
 
                 // Remove the pieces
@@ -198,7 +186,7 @@ public abstract class Game {
                     logOutput(currentPlayer.pieceColor + " retrieved " + nrOfPiecesBackToPlayer + " pieces");
                 }
 
-                currentPlayer.piecesLeft -= getPieceValue(move.addedPiece);
+                currentPlayer.piecesLeft -= move.addedPiece.getPieceValue();
 
                 if (currentPlayer.piecesLeft == 0) {
                     updateCurrentPlayer();
@@ -225,19 +213,12 @@ public abstract class Game {
         }
     }
 
-    public void setPiece(GipfBoardState gipfBoardState, Position pos, Game.Piece piece) {
+    public void setPiece(GipfBoardState gipfBoardState, Position pos, Piece piece) {
         gipfBoardState.getPieceMap().put(pos, piece);
     }
 
     public GipfBoardState getGipfBoardState() {
         return gipfBoardState;
-    }
-
-    public int getPieceValue(Piece piece) {
-        if (Game.getPieceType(piece) == PieceType.GIPF) {
-            return 2;
-        } else
-            return 1;
     }
 
     /**
@@ -426,36 +407,5 @@ public abstract class Game {
 
     public GameType getGameType() {
         return gameType;
-    }
-
-    public enum PieceType {
-        GIPF,
-        NORMAL,
-    }
-
-    /**
-     * There are four types of pieces. Gipf pieces consist of two stacked normal pieces of the same pieceColor.
-     */
-    public enum Piece {
-        WHITE_SINGLE,
-        WHITE_GIPF,
-        BLACK_SINGLE,
-        BLACK_GIPF;
-
-        @Override
-        public String toString() {
-            switch (super.name()) {
-                case "WHITE_SINGLE":
-                    return "White Single";
-                case "WHITE_GIPF":
-                    return "White Gipf";
-                case "BLACK_SINGLE":
-                    return "Black Single";
-                case "BLACK_GIPF":
-                    return "Black Gipf";
-                default:
-                    return "[Piece type not known]";
-            }
-        }
     }
 }

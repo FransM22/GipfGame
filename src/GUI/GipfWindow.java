@@ -4,6 +4,7 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.Game.GameType;
+import GameLogic.Piece;
 import GameLogic.Position;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ class GipfWindow extends JFrame {
     final JTextArea gameLogTextArea;
     private final GipfBoardComponent gipfBoardComponent;
     private final JTextField newPieceCoordinateTextField;
-    private final JComboBox<Game.Piece> pieceTypeComboBox;
+    private final JComboBox<Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
     GameStateUpdater gameStateUpdater;
@@ -35,7 +36,7 @@ class GipfWindow extends JFrame {
         Game game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game);
         gameLogTextArea = new DebugTextArea();
-        pieceTypeComboBox = new JComboBox<>(Game.Piece.values());
+        pieceTypeComboBox = new JComboBox<>(Piece.values());
         piecesLeftLabel = new JLabel(" ");
         currentPlayerLabel = new JLabel(" ");
         gameTypeLabel = new JLabel(" ");
@@ -115,7 +116,7 @@ class GipfWindow extends JFrame {
             Position newPiecePosition = new Position(colName, rowNumber);
 
             if (gipfBoardComponent.game.isPositionOnBigBoard(newPiecePosition)) {
-                Game.Piece pieceType = (Game.Piece) pieceTypeComboBox.getModel().getSelectedItem();
+                Piece pieceType = (Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
                 gameLogTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());
 

@@ -1,9 +1,6 @@
-import GameLogic.Direction;
+import GameLogic.*;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
-import GameLogic.GipfBoardState;
-import GameLogic.Move;
-import GameLogic.Position;
 
 /**
  * The GipfGame class keeps track of the running game.
@@ -19,18 +16,18 @@ class GipfGame {
 
         System.out.println("Adding piece");
         Move m = new Move(
-                Game.Piece.WHITE_GIPF,
+                Piece.WHITE_GIPF,
                 new Position('a', 5),
                 Direction.SOUTH_EAST
         );
 
         Move m2 = new Move(
-                Game.Piece.BLACK_GIPF,
+                Piece.BLACK_GIPF,
                 new Position('a', 5),
                 Direction.SOUTH_EAST
         );
 
-        game.setPiece(game.getGipfBoardState(), new Position('e', 5), Game.Piece.WHITE_SINGLE);
+        game.setPiece(game.getGipfBoardState(), new Position('e', 5), Piece.WHITE_SINGLE);
 
         game.applyMove(m);
         printBoard(gipfBoardState);

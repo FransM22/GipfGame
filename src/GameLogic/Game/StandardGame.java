@@ -1,5 +1,6 @@
 package GameLogic.Game;
 
+import GameLogic.Piece;
 import GameLogic.PieceColor;
 import GameLogic.Player;
 import GameLogic.Position;
