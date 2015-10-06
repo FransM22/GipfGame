@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static GameLogic.Piece.*;
+import static GameLogic.PieceColor.BLACK;
+import static GameLogic.PieceColor.WHITE;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -158,16 +160,16 @@ public abstract class Game {
 
                         if (line.intersectsWith(otherLine) && !line.equals(otherLine)) {
                             getGameLogger().log("Intersection of 2 lines found ( " + line + " intersects with " + otherLine);
-                            if (rowColor == otherRowColor) {
+                            if (rowColor.equals(otherRowColor)) {
                                 getGameLogger().log("  RowColor == otherRowColor");
                                 // TODO The current player has to choose which row to remove
-                            } else if (rowColor != otherRowColor) {
+                            } else if (!rowColor.equals(otherRowColor)) {
                                 getGameLogger().log("  RowColor != otherRowColor");
-                                if (rowColor == currentPlayer.pieceColor) {
-                                    if (rowColor == PieceColor.WHITE) {
+                                if (rowColor.equals(currentPlayer.pieceColor)) {
+                                    if (rowColor.equals(WHITE)) {
                                         linesTakenByWhite.add(line);
                                         linesNotRemoved.add(otherLine);
-                                    } else if (rowColor == PieceColor.BLACK) {
+                                    } else if (rowColor.equals(BLACK)) {
                                         linesTakenByBlack.add(line);
                                         linesNotRemoved.add(otherLine);
                                     }
@@ -181,9 +183,9 @@ public abstract class Game {
                         getGameLogger().log("  Black lines: " + linesTakenByBlack);
                         getGameLogger().log("  Not removed: " + linesNotRemoved);
                         // If there is no intersection found, add the row to the color of the four pieces set
-                        if (rowColor == PieceColor.WHITE) {
+                        if (rowColor.equals(WHITE)) {
                             linesTakenByWhite.add(line);
-                        } else if (rowColor == PieceColor.BLACK) {
+                        } else if (rowColor == BLACK) {
                             linesTakenByBlack.add(line);
                         }
                     }
@@ -193,7 +195,7 @@ public abstract class Game {
                 for (Line line : linesTakenByWhite) {
                     for (Position position : line.getPositions()) {
                         if (newGipfBoardState.getPieceMap().containsKey(position)) {
-                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.WHITE) {
+                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == WHITE) {
                                 piecesBackToWhite.add(position);
                             } else {
                                 piecesRemoved.add(position);
@@ -206,7 +208,7 @@ public abstract class Game {
                 for (Line line : linesTakenByBlack) {
                     for (Position position : line.getPositions()) {
                         if (newGipfBoardState.getPieceMap().containsKey(position)) {
-                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.BLACK) {
+                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == BLACK) {
                                 piecesBackToBlack.add(position);
                             } else {
                                 piecesRemoved.add(position);
@@ -353,13 +355,13 @@ public abstract class Game {
     }
 
     public Piece getCurrentPiece() {
-        if (currentPlayer.pieceColor == PieceColor.WHITE && currentPlayer.isPlacingGipfPieces)
+        if (currentPlayer.pieceColor == WHITE && currentPlayer.isPlacingGipfPieces)
             return WHITE_GIPF;
-        else if (currentPlayer.pieceColor == PieceColor.WHITE)
+        else if (currentPlayer.pieceColor == WHITE)
             return WHITE_SINGLE;
-        else if (currentPlayer.pieceColor == PieceColor.BLACK && currentPlayer.isPlacingGipfPieces)
+        else if (currentPlayer.pieceColor == BLACK && currentPlayer.isPlacingGipfPieces)
             return BLACK_GIPF;
-        else if (currentPlayer.pieceColor == PieceColor.BLACK)
+        else if (currentPlayer.pieceColor == BLACK)
             return BLACK_SINGLE;
 
         return null;
