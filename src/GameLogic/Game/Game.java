@@ -144,16 +144,65 @@ public abstract class Game {
                 Set<Position> piecesBackToBlack = new HashSet<>();
                 Set<Position> piecesRemoved = new HashSet<>();
 
+                Set<Line> linesTakenByWhite = new HashSet<>();
+                Set<Line> linesTakenByBlack = new HashSet<>();
+                Set<Line> linesNotRemoved = new HashSet<>();
+
                 for (Map.Entry<Line, PieceColor> entry : removableLines.entrySet()) {
                     Line line = entry.getKey();
                     PieceColor rowColor = entry.getValue();
-                    for (Position position : line) {
+
+                    for (Map.Entry<Line, PieceColor> entryOherLine : removableLines.entrySet()) {
+                        Line otherLine = entryOherLine.getKey();
+                        PieceColor otherRowColor = entryOherLine.getValue();
+
+                        if (line.intersectsWith(otherLine) && !line.equals(otherLine)) {
+                            if (rowColor == otherRowColor) {
+                                getGameLogger().log("  RowColor == otherRowColor");
+                                getGameLogger().log("  (Assumes one row has been chosen");
+                                // TODO The current player has to choose which row to remove
+                            } else if (rowColor != otherRowColor) {
+                                if (rowColor == currentPlayer.pieceColor) {
+                                    if (rowColor == PieceColor.WHITE) {
+                                        linesTakenByWhite.add(line);
+                                        linesNotRemoved.add(otherLine);
+                                    } else if (rowColor == PieceColor.BLACK) {
+                                        linesTakenByBlack.add(line);
+                                        linesNotRemoved.add(otherLine);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!(linesTakenByBlack.contains(line) || linesTakenByWhite.contains(line) || linesNotRemoved.contains(line))) {
+                        // If there is no intersection found, add the row to the color of the four pieces set
+                        if (rowColor == PieceColor.WHITE) {
+                            linesTakenByWhite.add(line);
+                        } else if (rowColor == PieceColor.BLACK) {
+                            linesTakenByBlack.add(line);
+                        }
+                    }
+                }
+
+                // Determine the pieces that are going back to the white player
+                for (Line line : linesTakenByWhite) {
+                    for (Position position : line.getPositions()) {
                         if (newGipfBoardState.getPieceMap().containsKey(position)) {
-                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == rowColor) {
-                                if (rowColor == PieceColor.WHITE)
-                                    piecesBackToWhite.add(position);
-                                else if (rowColor == PieceColor.BLACK)
-                                    piecesBackToBlack.add(position);
+                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.WHITE) {
+                                piecesBackToWhite.add(position);
+                            } else {
+                                piecesRemoved.add(position);
+                            }
+                        }
+                    }
+                }
+
+                // Determine the pieces that are going back to the black player
+                for (Line line : linesTakenByBlack) {
+                    for (Position position : line.getPositions()) {
+                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
+                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == PieceColor.BLACK) {
+                                piecesBackToBlack.add(position);
                             } else {
                                 piecesRemoved.add(position);
                             }
