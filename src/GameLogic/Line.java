@@ -98,4 +98,32 @@ public class Line implements Iterable<Position> {
     public Position getStartPosition() { return startPosition; }
 
     public Direction getDirection() { return direction; }
+
+    public static Set<Line> getLinesOnTheBoard(Game game) {
+        Set<Line> linesOnTheBoard = new HashSet<>();
+        linesOnTheBoard.add(new Line(game, new Position('a', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('a', 2), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('a', 3), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('a', 4), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('i', 4), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('i', 3), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('i', 2), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('i', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('h', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('h', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('g', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('g', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('f', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('f', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(game, new Position('e', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('d', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('d', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('c', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('c', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(game, new Position('b', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(game, new Position('b', 1), Direction.NORTH_EAST));
+
+        return linesOnTheBoard;
+    }
+
 }
