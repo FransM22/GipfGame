@@ -157,11 +157,12 @@ public abstract class Game {
                         PieceColor otherRowColor = entryOherLine.getValue();
 
                         if (line.intersectsWith(otherLine) && !line.equals(otherLine)) {
+                            getGameLogger().log("Intersection of 2 lines found ( " + line + " intersects with " + otherLine);
                             if (rowColor == otherRowColor) {
                                 getGameLogger().log("  RowColor == otherRowColor");
-                                getGameLogger().log("  (Assumes one row has been chosen");
                                 // TODO The current player has to choose which row to remove
                             } else if (rowColor != otherRowColor) {
+                                getGameLogger().log("  RowColor != otherRowColor");
                                 if (rowColor == currentPlayer.pieceColor) {
                                     if (rowColor == PieceColor.WHITE) {
                                         linesTakenByWhite.add(line);
@@ -175,6 +176,10 @@ public abstract class Game {
                         }
                     }
                     if (!(linesTakenByBlack.contains(line) || linesTakenByWhite.contains(line) || linesNotRemoved.contains(line))) {
+                        getGameLogger().log("No intersection found for " + line);
+                        getGameLogger().log("  White lines: " + linesTakenByWhite);
+                        getGameLogger().log("  Black lines: " + linesTakenByBlack);
+                        getGameLogger().log("  Not removed: " + linesNotRemoved);
                         // If there is no intersection found, add the row to the color of the four pieces set
                         if (rowColor == PieceColor.WHITE) {
                             linesTakenByWhite.add(line);
