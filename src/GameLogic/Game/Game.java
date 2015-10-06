@@ -272,8 +272,26 @@ public abstract class Game {
         ));
     }
 
+    /**
+     * Gets the border positions by concatenating all the positions per border line. The border lines are hardcoded in this
+     * method.
+     *
+     * @return a set of positions positioned just out of the play area
+     */
     private Set<Position> getBorderPositions() {
-        return new HashSet<>();
+        return Stream.concat(
+                new Line(this, new Position('a', 1), Direction.SOUTH_EAST).getPositions().stream(),
+                Stream.concat(new Line(this, new Position('e', 1), Direction.NORTH_EAST).getPositions().stream(),
+                        Stream.concat(new Line(this, new Position('i', 1), Direction.NORTH).getPositions().stream(),
+                                Stream.concat(new Line(this, new Position('i', 5), Direction.NORTH_WEST).getPositions().stream(),
+                                        Stream.concat(
+                                                new Line(this, new Position('e', 9), Direction.SOUTH_WEST).getPositions().stream(),
+                                                new Line(this, new Position('a', 5), Direction.SOUTH).getPositions().stream()
+                                        )
+                                )
+                        )
+                )
+        ).collect(toSet());
     }
 
     private void updateCurrentPlayer() {

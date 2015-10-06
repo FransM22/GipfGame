@@ -13,9 +13,9 @@ import java.util.Set;
  * Created by frans on 5-10-2015.
  */
 public class Line implements Iterable<Position> {
-    Game game;
-    Position startPosition;
-    Direction direction;
+    private final Game game;
+    private final Position startPosition;
+    private final Direction direction;
 
     public Line(Game game, Position position, Direction direction) {
         int deltaPos = direction.getDeltaPos();
