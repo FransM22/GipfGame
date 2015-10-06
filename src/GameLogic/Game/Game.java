@@ -1,7 +1,6 @@
 package GameLogic.Game;
 
 import GameLogic.*;
-import javafx.util.Pair;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -304,34 +303,32 @@ public abstract class Game {
     private Map<Line, PieceColor> detectFourPieces(GipfBoardState gipfBoardState) {
         Map<Line, PieceColor> removableLines = new HashMap<>();
 
-        Set<Pair<Position, Direction>> lines = new HashSet<>();
-        lines.add(new Pair<>(new Position('a', 1), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('a', 2), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('a', 3), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('a', 4), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('i', 4), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('i', 3), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('i', 2), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('i', 1), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('h', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('h', 1), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('g', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('g', 1), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('f', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('f', 1), Direction.NORTH_WEST));
-        lines.add(new Pair<>(new Position('e', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('d', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('d', 1), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('c', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('c', 1), Direction.NORTH_EAST));
-        lines.add(new Pair<>(new Position('b', 1), Direction.NORTH));
-        lines.add(new Pair<>(new Position('b', 1), Direction.NORTH_EAST));
+        Set<Line> linesOnTheBoard = new HashSet<>();
+        linesOnTheBoard.add(new Line(this, new Position('a', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('a', 2), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('a', 3), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('a', 4), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('i', 4), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('i', 3), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('i', 2), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('i', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('h', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('h', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('g', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('g', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('f', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('f', 1), Direction.NORTH_WEST));
+        linesOnTheBoard.add(new Line(this, new Position('e', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('d', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('d', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('c', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('c', 1), Direction.NORTH_EAST));
+        linesOnTheBoard.add(new Line(this, new Position('b', 1), Direction.NORTH));
+        linesOnTheBoard.add(new Line(this, new Position('b', 1), Direction.NORTH_EAST));
 
-        for (Pair<Position, Direction> entry : lines) {
-            Position startPosition = entry.getKey();
-            Position currentPosition = startPosition;
-            Direction direction = entry.getValue();
-
+        for (Line line : linesOnTheBoard) {
+            Position currentPosition = line.getStartPosition();
+            Direction direction = line.getDirection();
 
             int consecutivePieces = 0;
             PieceColor consecutivePiecesColor = null;

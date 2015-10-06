@@ -94,4 +94,8 @@ public class Line implements Iterable<Position> {
     public Iterator<Position> iterator() {
         return getPositions().iterator();
     }
+
+    public Position getStartPosition() { return startPosition; }
+
+    public Direction getDirection() { return direction; }
 }
