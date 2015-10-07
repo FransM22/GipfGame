@@ -19,8 +19,9 @@ public abstract class Game {
     private final GameLogger gameLogger;
     private final List<GipfBoardState> boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
-    public Player whitePlayer = null;                           // The black and white player
-    public Player blackPlayer = null;
+    public Map<PieceColor, Player> players = new HashMap<>();
+    //    public Player whitePlayer = null;                           // The black and white player
+//    public Player blackPlayer = null;
     public boolean isGameOver = false;                          // Is only true if the game is finished
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private Player currentPlayer;                               // Acts as a pointer to the current player
@@ -35,7 +36,7 @@ public abstract class Game {
         boardHistory = new ArrayList<>();
         boardHistory.add(gipfBoardState);
 
-        currentPlayer = whitePlayer;
+        currentPlayer = players.get(WHITE);
 
         gameLogger = new GameLogger(gameType);
     }
@@ -134,114 +135,195 @@ public abstract class Game {
 
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
-        if (currentPlayer.piecesLeft >= move.addedPiece.getPieceValue()) {
+        if (currentPlayer.reserve >= move.addedPiece.getPieceValue()) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
+                Set<LineSegment> intersectingSegments = new HashSet<>();
 
-                Map<Line, PieceColor> removableLines = detectFourPieces(newGipfBoardState); // Applied in normal game
+                HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
+                piecesBackTo.put(WHITE, new HashSet<>());
+                piecesBackTo.put(BLACK, new HashSet<>());
 
-                Set<Position> piecesBackToWhite = new HashSet<>();
-                Set<Position> piecesBackToBlack = new HashSet<>();
-                Set<Position> piecesRemoved = new HashSet<>();
+                HashMap<PieceColor, Set<LineSegment>> linesTakenBy = new HashMap<>();
+                linesTakenBy.put(WHITE, new HashSet<>());
+                linesTakenBy.put(BLACK, new HashSet<>());
 
-                Set<Line> linesTakenByWhite = new HashSet<>();
-                Set<Line> linesTakenByBlack = new HashSet<>();
-                Set<Line> linesNotRemoved = new HashSet<>();
+                Set<Position> piecesDestroyed = new HashSet<>();
 
-                for (Map.Entry<Line, PieceColor> entry : removableLines.entrySet()) {
-                    Line line = entry.getKey();
-                    PieceColor rowColor = entry.getValue();
 
-                    for (Map.Entry<Line, PieceColor> entryOherLine : removableLines.entrySet()) {
-                        Line otherLine = entryOherLine.getKey();
-                        PieceColor otherRowColor = entryOherLine.getValue();
+                // Get the lines of the own color
+                Set<LineSegment> removableLineSegmentsCurrentPlayer = getRemovableLineSegments(newGipfBoardState, currentPlayer.pieceColor);
+                for (LineSegment segment : removableLineSegmentsCurrentPlayer) {
+                    // Remove the line segments that are not intersecting with other line segments of the set
+                    boolean intersectionFound = false;
 
-                        if (line.intersectsWith(otherLine) && !line.equals(otherLine)) {
-                            getGameLogger().log("Intersection of 2 lines found ( " + line + " intersects with " + otherLine);
-                            if (rowColor.equals(otherRowColor)) {
-                                getGameLogger().log("  RowColor == otherRowColor");
-                                // TODO The current player has to choose which row to remove
-                            } else if (!rowColor.equals(otherRowColor)) {
-                                getGameLogger().log("  RowColor != otherRowColor");
-                                if (rowColor.equals(currentPlayer.pieceColor)) {
-                                    if (rowColor.equals(WHITE)) {
-                                        linesTakenByWhite.add(line);
-                                        linesNotRemoved.add(otherLine);
-                                    } else if (rowColor.equals(BLACK)) {
-                                        linesTakenByBlack.add(line);
-                                        linesNotRemoved.add(otherLine);
-                                    }
+                    for (LineSegment otherSegment : removableLineSegmentsCurrentPlayer) {
+                        if (!segment.equals(otherSegment)) {
+                            if (segment.intersectsWith(otherSegment)) {
+                                intersectingSegments.add(segment);
+                                intersectingSegments.add(otherSegment);
+
+                                intersectionFound = true;
+                            }
+                        }
+                    }
+
+                    if (!intersectionFound) {
+                        linesTakenBy.get(currentPlayer.pieceColor).add(segment);
+                    }
+                    gameLogger.log("Not removing intersecting line segments: ");
+                    intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
+                }
+
+                for (LineSegment segment : linesTakenBy.get(currentPlayer.pieceColor)) {
+                    segment.getOccupiedPositions(newGipfBoardState).forEach(position ->
+                            {
+                                if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == currentPlayer.pieceColor) {
+                                    piecesBackTo.get(currentPlayer.pieceColor).add(position);
+                                } else {
+                                    piecesDestroyed.add(position);
                                 }
                             }
-                        }
-                    }
-                    if (!(linesTakenByBlack.contains(line) || linesTakenByWhite.contains(line) || linesNotRemoved.contains(line))) {
-                        getGameLogger().log("No intersection found for " + line);
-                        getGameLogger().log("  White lines: " + linesTakenByWhite);
-                        getGameLogger().log("  Black lines: " + linesTakenByBlack);
-                        getGameLogger().log("  Not removed: " + linesNotRemoved);
-                        // If there is no intersection found, add the row to the color of the four pieces set
-                        if (rowColor.equals(WHITE)) {
-                            linesTakenByWhite.add(line);
-                        } else if (rowColor == BLACK) {
-                            linesTakenByBlack.add(line);
-                        }
-                    }
+                    );
                 }
 
-                // Determine the pieces that are going back to the white player
-                for (Line line : linesTakenByWhite) {
-                    for (Position position : line.getPositions()) {
-                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
-                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == WHITE) {
-                                piecesBackToWhite.add(position);
-                            } else {
-                                piecesRemoved.add(position);
+                removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
+                for (PieceColor pieceColor : PieceColor.values()) {
+                    removePiecesFromBoard(newGipfBoardState, piecesBackTo.get(pieceColor));
+                }
+
+                // Get lines of the opponent
+                PieceColor opponentColor = currentPlayer.pieceColor == WHITE ? BLACK : WHITE;
+                Set<LineSegment> removableLineSegmentsOpponent = getRemovableLineSegments(newGipfBoardState, opponentColor);
+                for (LineSegment segment : removableLineSegmentsOpponent) {
+                    // Remove the line segments that are not intersecting with other line segments of the set
+                    boolean intersectionFound = false;
+
+                    for (LineSegment otherSegment : removableLineSegmentsOpponent) {
+                        if (!segment.equals(otherSegment)) {
+                            if (segment.intersectsWith(otherSegment)) {
+                                intersectingSegments.add(segment);
+                                intersectingSegments.add(otherSegment);
+
+                                intersectionFound = true;
                             }
                         }
                     }
-                }
 
-                // Determine the pieces that are going back to the black player
-                for (Line line : linesTakenByBlack) {
-                    for (Position position : line.getPositions()) {
-                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
-                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == BLACK) {
-                                piecesBackToBlack.add(position);
-                            } else {
-                                piecesRemoved.add(position);
-                            }
-                        }
+                    if (!intersectionFound) {
+                        linesTakenBy.get(opponentColor).add(segment);
                     }
+                    gameLogger.log("Not removing intersecting line segments: ");
+                    intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
                 }
 
-                // Remove the pieces
-                move.removedPiecePositions = Stream.concat(Stream.concat(piecesBackToWhite.stream(), piecesBackToBlack.stream()), piecesRemoved.stream()).collect(toSet());
-                move.removedPiecePositions.stream().forEach(newGipfBoardState.getPieceMap()::remove);
+                for (LineSegment segment : linesTakenBy.get(opponentColor)) {
+                    segment.getOccupiedPositions(newGipfBoardState).forEach(position ->
+                            {
+                                if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == opponentColor) {
+                                    piecesBackTo.get(opponentColor).add(position);
+                                } else {
+                                    piecesDestroyed.add(position);
+                                }
+                            }
+                    );
+                }
 
-                gipfBoardState.whiteIsOnTurn = currentPlayer == whitePlayer;
-                gipfBoardState.whitePiecesLeft = whitePlayer.piecesLeft;
-                gipfBoardState.blackPiecesLeft = blackPlayer.piecesLeft;
-                gipfBoardState.blackHasPlacedNormalPieces = blackPlayer.hasPlacedNormalPieces;
-                gipfBoardState.whiteHasPlacedNormalPieces = whitePlayer.hasPlacedNormalPieces;
+                // Get the line segments that
+                // Get the lines of the color of the other player
 
-                whitePlayer.piecesLeft += piecesBackToWhite.size();
-                blackPlayer.piecesLeft += piecesBackToBlack.size();
+//                for (Map.Entry<Line, PieceColor> entry : removableLines.entrySet()) {
+//                    Line line = entry.getKey();
+//                    PieceColor rowColor = entry.getValue();
+//
+//                    for (Map.Entry<Line, PieceColor> entryOherLine : removableLines.entrySet()) {
+//                        Line otherLine = entryOherLine.getKey();
+//                        PieceColor otherRowColor = entryOherLine.getValue();
+//
+//                        if (line.intersectsWith(otherLine) && !line.equals(otherLine)) {
+//                            getGameLogger().log("Intersection of 2 lines found ( " + line + " intersects with " + otherLine);
+//                            if (rowColor.equals(otherRowColor)) {
+//                                getGameLogger().log("  RowColor == otherRowColor");
+//                                // TODO The current player has to choose which row to remove
+//                            } else if (!rowColor.equals(otherRowColor)) {
+//                                getGameLogger().log("  RowColor != otherRowColor");
+//                                if (rowColor.equals(currentPlayer.pieceColor)) {
+//                                    if (rowColor.equals(WHITE)) {
+//                                        linesTakenByWhite.add(line);
+//                                        linesNotRemoved.add(otherLine);
+//                                    } else if (rowColor.equals(BLACK)) {
+//                                        linesTakenByBlack.add(line);
+//                                        linesNotRemoved.add(otherLine);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    if (!(linesTakenByBlack.contains(line) || linesTakenByWhite.contains(line) || linesNotRemoved.contains(line))) {
+//                        getGameLogger().log("No intersection found for " + line);
+//                        getGameLogger().log("  White lines: " + linesTakenByWhite);
+//                        getGameLogger().log("  Black lines: " + linesTakenByBlack);
+//                        getGameLogger().log("  Not removed: " + linesNotRemoved);
+//                        // If there is no intersection found, add the row to the color of the four pieces set
+//                        if (rowColor.equals(WHITE)) {
+//                            linesTakenByWhite.add(line);
+//                        } else if (rowColor == BLACK) {
+//                            linesTakenByBlack.add(line);
+//                        }
+//                    }
+//                }
+//
+//                // Determine the pieces that are going back to the white player
+//                for (Line line : linesTakenByWhite) {
+//                    for (Position position : line.getPositions()) {
+//                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
+//                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == WHITE) {
+//                                piecesBackToWhite.add(position);
+//                            } else {
+//                                piecesRemoved.add(position);
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                // Determine the pieces that are going back to the black player
+//                for (Line line : linesTakenByBlack) {
+//                    for (Position position : line.getPositions()) {
+//                        if (newGipfBoardState.getPieceMap().containsKey(position)) {
+//                            if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == BLACK) {
+//                                piecesBackToBlack.add(position);
+//                            } else {
+//                                piecesRemoved.add(position);
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                // Remove the pieces
+//                move.removedPiecePositions = Stream.concat(Stream.concat(piecesBackToWhite.stream(), piecesBackToBlack.stream()), piecesRemoved.stream()).collect(toSet());
+//                move.removedPiecePositions.stream().forEach(newGipfBoardState.getPieceMap()::remove);
+//
+                gipfBoardState.whiteIsOnTurn = currentPlayer == players.get(WHITE);
+                gipfBoardState.whitePiecesLeft = players.get(WHITE).reserve;
+                gipfBoardState.blackPiecesLeft = players.get(BLACK).reserve;
+                gipfBoardState.blackHasPlacedNormalPieces = players.get(WHITE).hasPlacedNormalPieces;
+                gipfBoardState.whiteHasPlacedNormalPieces = players.get(BLACK).hasPlacedNormalPieces;
 
                 gameLogger.log(move.toString());
+                for (PieceColor pieceColor : PieceColor.values()) {
+                    if (piecesBackTo.get(pieceColor).size() != 0) {
+                        players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
 
-                if (piecesBackToWhite.size() > 0) {
-                    gameLogger.log(whitePlayer.pieceColor + " retrieved " + piecesBackToWhite.size() + " pieces");
+                        gameLogger.log(pieceColor + " retrieved " + piecesBackTo.get(pieceColor).size() + " pieces");
+                    }
                 }
-                if (piecesBackToBlack.size() > 0) {
-                    gameLogger.log(blackPlayer.pieceColor + " retrieved " + piecesBackToBlack.size() + " pieces");
-                }
 
-                currentPlayer.piecesLeft -= move.addedPiece.getPieceValue();
+                // Update for the last added piece
+                currentPlayer.reserve -= move.addedPiece.getPieceValue();
 
-                if (currentPlayer.piecesLeft == 0) {
+                if (currentPlayer.reserve == 0) {
                     updateCurrentPlayer();
                     isGameOver = true;
                     winningPlayer = currentPlayer;
@@ -329,12 +411,12 @@ public abstract class Game {
     }
 
     /**
-     * Gets the border positions by concatenating all the positions per border line. The border lines are hardcoded in this
+     * Gets the border positions (dots) by concatenating all the positions per border line. The border lines are hardcoded in this
      * method.
      *
      * @return a set of positions positioned just out of the play area
      */
-    private Set<Position> getBorderPositions() {
+    private Set<Position> getDots() {
         return Stream.concat(
                 new Line(this, new Position('a', 1), Direction.SOUTH_EAST).getPositions().stream(),
                 Stream.concat(new Line(this, new Position('e', 1), Direction.NORTH_EAST).getPositions().stream(),
@@ -351,7 +433,7 @@ public abstract class Game {
     }
 
     private void updateCurrentPlayer() {
-        currentPlayer = ((currentPlayer == whitePlayer) ? blackPlayer : whitePlayer);
+        currentPlayer = ((currentPlayer == players.get(WHITE)) ? players.get(BLACK) : players.get(WHITE));
     }
 
     public Piece getCurrentPiece() {
@@ -410,6 +492,57 @@ public abstract class Game {
         return removableLines;
     }
 
+    private Set<LineSegment> getRemovableLineSegments(GipfBoardState gipfBoardState, PieceColor pieceColor) {
+        Set<LineSegment> removableLines = new HashSet<>();
+        Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);
+
+        for (Line line : linesOnTheBoard) {
+            Position currentPosition = line.getStartPosition();
+            Position startOfSegment = null;
+            Position endOfSegment = null;
+            Direction direction = line.getDirection();
+            int consecutivePieces = 0;
+
+            // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
+            // can't be more than one set of four pieces of the same color (requiring at least 9 positions) on the board.
+            for (; isPositionOnBigBoard(currentPosition) && endOfSegment == null; currentPosition = currentPosition.next(direction)) {
+                PieceColor currentPieceColor = gipfBoardState.getPieceMap().containsKey(currentPosition) ? gipfBoardState.getPieceMap().get(currentPosition).getPieceColor() : null;
+
+                // Update the consecutivePieces
+                if (currentPieceColor == pieceColor) {
+                    consecutivePieces++;
+                }
+                if (consecutivePieces >= 4) {
+                    if (getDots().contains(currentPosition) || currentPieceColor == null) {
+                        endOfSegment = currentPosition.previous(direction);
+                    }
+                }
+                if (currentPieceColor != pieceColor) {
+                    consecutivePieces = 0;
+                }
+
+                // Update the startOfSegment if necessary
+                if (startOfSegment == null) {
+                    if (currentPieceColor != null) {
+                        startOfSegment = currentPosition;
+                    }
+                }
+                if (currentPieceColor == null && endOfSegment == null) {
+                    startOfSegment = null;
+                }
+
+                // Add a line segment to the list if we have found one
+                if (endOfSegment != null) {
+                    removableLines.add(new LineSegment(this, startOfSegment, endOfSegment, direction));
+                }
+            }
+        }
+
+        gameLogger.log("These removable lines have been found: ");
+        removableLines.stream().forEach(e -> gameLogger.log(e.toString()));
+        return removableLines;
+    }
+
     public Set<Position> getStartPositionsForMoves() {
         return getAllowedMoves()
                 .stream()
@@ -429,11 +562,11 @@ public abstract class Game {
     public void returnToPreviousBoard() {
         if (boardHistory.size() > 1 && !isGameOver) {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
-            currentPlayer = gipfBoardState.whiteIsOnTurn ? whitePlayer : blackPlayer;
-            whitePlayer.piecesLeft = gipfBoardState.whitePiecesLeft;
-            whitePlayer.hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
-            blackPlayer.piecesLeft = gipfBoardState.blackPiecesLeft;
-            blackPlayer.hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
+            currentPlayer = gipfBoardState.whiteIsOnTurn ? players.get(WHITE) : players.get(BLACK);
+            players.get(WHITE).reserve = gipfBoardState.whitePiecesLeft;
+            players.get(WHITE).hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
+            players.get(BLACK).reserve = gipfBoardState.blackPiecesLeft;
+            players.get(BLACK).hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
 
             boardHistory.remove(boardHistory.size() - 1);
 
@@ -451,5 +584,11 @@ public abstract class Game {
 
     public Player getWinningPlayer() {
         return winningPlayer;
+    }
+
+    public void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
+        for (Position position : positions) {
+            gipfBoardState.getPieceMap().remove(position);
+        }
     }
 }

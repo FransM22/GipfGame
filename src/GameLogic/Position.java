@@ -109,6 +109,14 @@ public final class Position {
         return to.getPosId() - from.getPosId();
     }
 
+    public Position next(Direction direction) {
+        return new Position(posId + direction.getDeltaPos());
+    }
+
+    public Position previous(Direction direction) {
+        return new Position(posId - direction.getDeltaPos());
+    }
+
     @Override
     public int hashCode() {
         return posId;

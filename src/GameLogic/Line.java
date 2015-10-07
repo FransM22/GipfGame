@@ -13,7 +13,7 @@ import java.util.Set;
  * Created by frans on 5-10-2015.
  */
 public class Line implements Iterable<Position> {
-    private final Game game;
+    final Game game;
     private final Position startPosition;
     private final Direction direction;
 

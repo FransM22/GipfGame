@@ -1,9 +1,11 @@
 package GameLogic.Game;
 
 import GameLogic.Piece;
-import GameLogic.PieceColor;
 import GameLogic.Player;
 import GameLogic.Position;
+
+import static GameLogic.PieceColor.BLACK;
+import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 5-10-2015.
@@ -15,8 +17,8 @@ public class StandardGame extends Game {
 
     @Override
     void initializePlayers() {
-        whitePlayer = new Player(PieceColor.WHITE, 18, false);
-        blackPlayer = new Player(PieceColor.BLACK, 18, false);
+        players.put(WHITE, new Player(WHITE, 12, false));
+        players.put(BLACK, new Player(BLACK, 12, false));
     }
 
     @Override
