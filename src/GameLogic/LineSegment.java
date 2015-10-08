@@ -42,7 +42,7 @@ public class LineSegment extends Line {
     public boolean intersectsWith(LineSegment lineSegment) {
         for (Position position : getAllPositions()) {
             for (Position otherPosition : lineSegment.getAllPositions()) {
-                if (position == otherPosition) {
+                if (position.equals(otherPosition)) {
                     return true;
                 }
             }

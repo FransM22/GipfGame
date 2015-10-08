@@ -152,5 +152,4 @@ class GipfWindow extends JFrame {
         gameLogTextArea.setText("");
         gameStateUpdater.setGame(gipfBoardComponent.game);
     }
-
 }

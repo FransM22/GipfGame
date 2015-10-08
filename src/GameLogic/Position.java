@@ -7,7 +7,7 @@ package GameLogic;
  * Created by frans on 17-9-2015.
  */
 
-public final class Position {
+public final class Position implements Comparable<Position>{
     public final int posId;    // Final, because a different position is supposed to be a different object
 
     /**
@@ -120,5 +120,15 @@ public final class Position {
     @Override
     public int hashCode() {
         return posId;
+    }
+
+    @Override
+    public int compareTo(Position other) {
+        //returns -1 if this is less than the other object
+        //returns 0 if both are equal
+        //returns 1 if this is greater than the other object
+
+        return new Integer(posId).compareTo(other.posId);
+
     }
 }

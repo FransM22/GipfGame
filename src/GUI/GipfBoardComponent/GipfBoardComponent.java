@@ -42,8 +42,9 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public static void main(String argv[]) {
-        Game game = new BasicGame();
+        Game game = null;   // TODO Fix this construction
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
+        game = new BasicGame();
 
         // These are only for checking whether the component works
         game.setPiece(game.getGipfBoardState(), new Position('b', 2), Piece.WHITE_SINGLE);
@@ -140,5 +141,9 @@ public class GipfBoardComponent extends JComponent {
                 game = new TournamentGame();
         }
         clearSelectedPositions();
+    }
+
+    public static int showConfirmDialog(String message, String title) {
+        return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 }
