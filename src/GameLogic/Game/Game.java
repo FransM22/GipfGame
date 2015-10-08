@@ -172,8 +172,12 @@ public abstract class Game {
 
                     if (!intersectionFound) {
                         linesTakenBy.get(currentPlayer.pieceColor).add(segment);
-                    }
-                    gameLogger.log("Not removing intersecting line segments: ");
+                     }
+                }
+
+                if (intersectingSegments.size() > 0) {
+                    // TODO fix this
+                    gameLogger.log("Not removing intersecting line segments (not implemented): ");
                     intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
                 }
 
@@ -502,6 +506,7 @@ public abstract class Game {
             Position endOfSegment = null;
             Direction direction = line.getDirection();
             int consecutivePieces = 0;
+            boolean isInLineSegment = false;
 
             // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
             // can't be more than one set of four pieces of the same color (requiring at least 9 positions) on the board.
@@ -513,13 +518,18 @@ public abstract class Game {
                     consecutivePieces++;
                 }
                 if (consecutivePieces >= 4) {
-                    if (getDots().contains(currentPosition) || currentPieceColor == null) {
-                        endOfSegment = currentPosition.previous(direction);
-                    }
+                    isInLineSegment = true;
                 }
                 if (currentPieceColor != pieceColor) {
                     consecutivePieces = 0;
                 }
+
+                if (isInLineSegment) {
+                    if (getDots().contains(currentPosition) || currentPieceColor == null) {
+                        endOfSegment = currentPosition.previous(direction);
+                    }
+                }
+
 
                 // Update the startOfSegment if necessary
                 if (startOfSegment == null) {
@@ -538,8 +548,6 @@ public abstract class Game {
             }
         }
 
-        gameLogger.log("These removable lines have been found: ");
-        removableLines.stream().forEach(e -> gameLogger.log(e.toString()));
         return removableLines;
     }
 

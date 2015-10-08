@@ -4,6 +4,9 @@ import GameLogic.Game.Game;
 
 import java.util.concurrent.TimeUnit;
 
+import static GameLogic.PieceColor.BLACK;
+import static GameLogic.PieceColor.WHITE;
+
 /**
  * Created by frans on 29-9-2015.
  */
@@ -30,7 +33,7 @@ class GameStateUpdater implements Runnable {
                 }
 
                 gipfWindow.setCurrentPlayerLabel("Current player: " + game.getCurrentPlayer().pieceColor);
-                gipfWindow.setPiecesLeftLabel("White pieces left: " + game.whitePlayer.piecesLeft + " | Black pieces left: " + game.blackPlayer.piecesLeft);
+                gipfWindow.setPiecesLeftLabel("White reserve: " + game.players.get(WHITE).reserve + " | Black reserve: " + game.players.get(BLACK).reserve);
                 gipfWindow.setGameTypeLabel("Game type: " + game.getGameType());
             } catch (InterruptedException e) {
                 break;  // Break out of the loop
