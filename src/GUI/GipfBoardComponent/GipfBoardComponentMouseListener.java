@@ -49,9 +49,9 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
         } else if (gipfBoardComponent.selectedMoveToPosition != null) {
             int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedStartPosition, gipfBoardComponent.selectedMoveToPosition);
             Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedStartPosition, Direction.getDirectionFromDeltaPos(deltaPos));
-            game.applyMove(currentMove);
             gipfBoardComponent.selectedStartPosition = null;
             gipfBoardComponent.selectedMoveToPosition = null;
+            game.applyMove(currentMove);
         }
     }
 

@@ -27,6 +27,7 @@ public abstract class Game {
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private Player currentPlayer;                               // Acts as a pointer to the current player
     private Player winningPlayer;                               // Acts as a pointer to the winning player
+    private Set<Position> currentRemoveSelection = new HashSet<>();
 
     Game(GameType gameType) {
         this.gameType = gameType;
@@ -142,6 +143,15 @@ public abstract class Game {
             try {
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
+                gipfBoardState.whiteIsOnTurn = currentPlayer == players.get(WHITE);
+                gipfBoardState.whitePiecesLeft = players.get(WHITE).reserve;
+                gipfBoardState.blackPiecesLeft = players.get(BLACK).reserve;
+                gipfBoardState.blackHasPlacedNormalPieces = players.get(WHITE).hasPlacedNormalPieces;
+                gipfBoardState.whiteHasPlacedNormalPieces = players.get(BLACK).hasPlacedNormalPieces;
+
+                boardHistory.add(gipfBoardState);
+                gipfBoardState = newGipfBoardState;
+
                 HashMap<PieceColor, Set<LineSegment>> linesTakenBy = new HashMap<>();
                 linesTakenBy.put(WHITE, new HashSet<>());
                 linesTakenBy.put(BLACK, new HashSet<>());
@@ -163,12 +173,6 @@ public abstract class Game {
 
                 // Get the line segments that
                 // Get the lines of the color of the other player
-
-                gipfBoardState.whiteIsOnTurn = currentPlayer == players.get(WHITE);
-                gipfBoardState.whitePiecesLeft = players.get(WHITE).reserve;
-                gipfBoardState.blackPiecesLeft = players.get(BLACK).reserve;
-                gipfBoardState.blackHasPlacedNormalPieces = players.get(WHITE).hasPlacedNormalPieces;
-                gipfBoardState.whiteHasPlacedNormalPieces = players.get(BLACK).hasPlacedNormalPieces;
 
                 gameLogger.log(move.toString());
                 removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
@@ -199,9 +203,6 @@ public abstract class Game {
                 if (!currentPlayer.isPlacingGipfPieces) {
                     currentPlayer.hasPlacedNormalPieces = true;
                 }
-
-                boardHistory.add(gipfBoardState);
-                gipfBoardState = newGipfBoardState;
 
             } catch (InvalidMoveException e) {
                 System.out.println("Move not applied");
@@ -488,17 +489,26 @@ public abstract class Game {
                 }
             }
 
+            gameLogger.log("Intersecting line segments: ");
+            gameLogger.log(intersectingSegments.toString());
+
             if (intersectingSegments.size() > 0) {
                 LineSegment lineSegment = intersectingSegments.iterator().next();
+                currentRemoveSelection = lineSegment.getOccupiedPositions(gipfBoardState);
                 int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove " + lineSegment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
                     linesTakenBy.get(pieceColor).add(lineSegment);
                 }
-                else {
+                else if (dialogResult == JOptionPane.NO_OPTION){
                     // Don't remove the line
                     segmentsNotRemoved.add(lineSegment);
                 }
+                currentRemoveSelection = new HashSet<>();
+            }
+
+            for (PieceColor color : PieceColor.values()) {
+                gameLogger.log("Segments taken by " + color + ":" + linesTakenBy.get(color));
             }
 
             for (LineSegment segment : linesTakenBy.get(pieceColor)) {
@@ -513,9 +523,18 @@ public abstract class Game {
                 );
             }
 
+            for (PieceColor color : PieceColor.values()) {
+                gameLogger.log("Pieces taken by " + color + ": " + piecesBackTo.get(color));
+            }
+            gameLogger.log("Pieces destroyed: " + piecesDestroyed);
+
             removePiecesFromBoard(gipfBoardState, piecesDestroyed);
             Arrays.stream(PieceColor.values()).forEach(color -> removePiecesFromBoard(gipfBoardState, piecesBackTo.get(color)));
         }
         while (intersectingSegments.size() > 0);
+    }
+
+    public Set<Position> getCurrentRemoveSelection() {
+        return currentRemoveSelection;
     }
 }

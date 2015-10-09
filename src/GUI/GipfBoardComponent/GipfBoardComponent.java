@@ -25,8 +25,6 @@ public class GipfBoardComponent extends JComponent {
     public Game game;
     public Position selectedStartPosition;                                                                              // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
-    public Set<Position> selectableRemovePositions;
-    public Set<Position> selectedRemovePositions = new HashSet<>();
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
 
     /**
@@ -42,9 +40,9 @@ public class GipfBoardComponent extends JComponent {
     }
 
     public static void main(String argv[]) {
-        Game game = null;   // TODO Fix this construction
+        Game game = new BasicGame();
+
         GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
-        game = new BasicGame();
 
         // These are only for checking whether the component works
         game.setPiece(game.getGipfBoardState(), new Position('b', 2), Piece.WHITE_SINGLE);

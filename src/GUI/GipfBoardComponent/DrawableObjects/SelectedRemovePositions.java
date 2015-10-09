@@ -15,7 +15,7 @@ public class SelectedRemovePositions extends DrawableObject {
 
     public SelectedRemovePositions(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent);
-        selectedRemovePositions = gipfBoardComponent.selectedRemovePositions;
+        selectedRemovePositions = gipfBoardComponent.game.getCurrentRemoveSelection();
 
     }
 
