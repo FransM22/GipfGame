@@ -3,6 +3,7 @@ package GameLogic.Game;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.*;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -140,7 +141,8 @@ public abstract class Game {
 
             try {
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
-                Set<LineSegment> intersectingSegments = new HashSet<>();
+                Set<LineSegment> intersectingSegments;
+                Set<LineSegment> segmentsNotRemoved = new HashSet<>();
 
                 HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
                 piecesBackTo.put(WHITE, new HashSet<>());
@@ -154,37 +156,49 @@ public abstract class Game {
 
 
                 // Get the lines of the own color
-                Set<LineSegment> removableLineSegmentsCurrentPlayer = getRemovableLineSegments(newGipfBoardState, currentPlayer.pieceColor);
-                for (LineSegment segment : removableLineSegmentsCurrentPlayer) {
-                    // Remove the line segments that are not intersecting with other line segments of the set
-                    boolean intersectionFound = false;
+                do {
+                    intersectingSegments = new HashSet<>();
+                    Set<LineSegment> removableLineSegmentsCurrentPlayer = getRemovableLineSegments(newGipfBoardState, currentPlayer.pieceColor);
+                    for (LineSegment segment : removableLineSegmentsCurrentPlayer) {
+                        // Remove the line segments that are not intersecting with other line segments of the set
+                        boolean intersectionFound = false;
 
-                    for (LineSegment otherSegment : removableLineSegmentsCurrentPlayer) {
-                        if (!segment.equals(otherSegment)) {
-                            if (segment.intersectsWith(otherSegment)) {
-                                intersectingSegments.add(segment);
-                                intersectingSegments.add(otherSegment);
+                        for (LineSegment otherSegment : removableLineSegmentsCurrentPlayer) {
+                            if (!segment.equals(otherSegment)) {
+                                if (segment.intersectsWith(otherSegment)) {
+                                    intersectingSegments.add(segment);
+                                    intersectingSegments.add(otherSegment);
 
-                                intersectionFound = true;
+                                    intersectionFound = true;
 
-                                gameLogger.log("Intersecting lines found: ");
-                                gameLogger.log(intersectingSegments.toString());
+                                    gameLogger.log("Intersecting lines found: ");
+                                    gameLogger.log(intersectingSegments.toString());
+                                }
                             }
+                        }
+
+                        if (!intersectionFound) {
+                            linesTakenBy.get(currentPlayer.pieceColor).add(segment);
                         }
                     }
 
-                    if (!intersectionFound) {
-                        linesTakenBy.get(currentPlayer.pieceColor).add(segment);
-                    }
-                }
+                    intersectingSegments.removeAll(segmentsNotRemoved);
 
-                if (intersectingSegments.size() > 0) {
-                    for (LineSegment lineSegment : intersectingSegments) {
-                        GipfBoardComponent.showConfirmDialog("Do you want to remove " + lineSegment.getOccupiedPositions(newGipfBoardState).stream().map(e -> e.getName()).sorted().collect(toList()) + "?", "Remove line segment");
+                    if (intersectingSegments.size() > 0) {
+                        LineSegment lineSegment = intersectingSegments.iterator().next();
+                        int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove " + lineSegment.getOccupiedPositions(newGipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+                            removePiecesFromBoard(newGipfBoardState, lineSegment.getOccupiedPositions(newGipfBoardState));
+                            gameLogger.log(" -> Removing");
+                        }
+                        else {
+                            segmentsNotRemoved.add(lineSegment);
+                            gameLogger.log(" -> Not removing");
+                        }
+                        intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
                     }
-                    gameLogger.log("Not removing intersecting line segments (not implemented): ");
-                    intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
                 }
+                while (intersectingSegments.size() > 0);
 
                 for (LineSegment segment : linesTakenBy.get(currentPlayer.pieceColor)) {
                     segment.getOccupiedPositions(newGipfBoardState).forEach(position ->
