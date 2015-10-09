@@ -144,13 +144,13 @@ public abstract class Game {
                 Set<LineSegment> intersectingSegments;
                 Set<LineSegment> segmentsNotRemoved = new HashSet<>();
 
-                HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
-                piecesBackTo.put(WHITE, new HashSet<>());
-                piecesBackTo.put(BLACK, new HashSet<>());
-
                 HashMap<PieceColor, Set<LineSegment>> linesTakenBy = new HashMap<>();
                 linesTakenBy.put(WHITE, new HashSet<>());
                 linesTakenBy.put(BLACK, new HashSet<>());
+
+                HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
+                piecesBackTo.put(WHITE, new HashSet<>());
+                piecesBackTo.put(BLACK, new HashSet<>());
 
                 Set<Position> piecesDestroyed = new HashSet<>();
 
@@ -166,17 +166,15 @@ public abstract class Game {
                         for (LineSegment otherSegment : removableLineSegmentsCurrentPlayer) {
                             if (!segment.equals(otherSegment)) {
                                 if (segment.intersectsWith(otherSegment)) {
-                                    intersectingSegments.add(segment);
-                                    intersectingSegments.add(otherSegment);
-
-                                    intersectionFound = true;
+                                    if (!segmentsNotRemoved.contains(segment)) {
+                                        intersectingSegments.add(segment);
+                                        intersectionFound = true;
+                                    }
                                 }
                             }
                         }
 
                         if (!intersectionFound) {
-                            gameLogger.log("Segments not removed: " + segmentsNotRemoved.size());
-                            segmentsNotRemoved.stream().forEach(s -> gameLogger.log(s.toString()));
                             if (!segmentsNotRemoved.contains(segment)) {
                                 linesTakenBy.get(currentPlayer.pieceColor).add(segment);
                             }
@@ -192,7 +190,8 @@ public abstract class Game {
                         }
                         else {
                             segmentsNotRemoved.add(lineSegment);
-                            gameLogger.log(" -> Not removing");
+                            gameLogger.log(" -> Not removing ...");
+                            segmentsNotRemoved.stream().forEach(s -> gameLogger.log(s.toString()));
                         }
                     }
 
