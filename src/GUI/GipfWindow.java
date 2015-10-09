@@ -33,6 +33,7 @@ class GipfWindow extends JFrame {
         newPieceCoordinateTextField = new JTextField();
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
         JButton previousStateButton = new JButton("Undo move");
+        JLabel theGipfGameLabel = new JLabel("The GIPF game");
         Game game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game);
         gameLogTextArea = new DebugTextArea();
@@ -54,6 +55,11 @@ class GipfWindow extends JFrame {
 
         // Set the properties of the elements
         gameLogTextArea.setRows(10);
+        currentPlayerLabel.setFont(UIval.get().largeLabelFont);
+        gameTypeLabel.setFont(UIval.get().largeLabelFont);
+        piecesLeftLabel.setFont(UIval.get().largeLabelFont);
+        theGipfGameLabel.setFont(UIval.get().largeLabelFont);
+        previousStateButton.setFont(UIval.get().buttonFont);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("GIPF");
@@ -62,7 +68,7 @@ class GipfWindow extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));    // Put everything in a column
 
         setJMenuBar(menuBar);
-        contentPane.add(new JLabel("The GIPF game"));
+        contentPane.add(theGipfGameLabel);
         contentPane.add(gameTypeLabel);
         contentPane.add(currentPlayerLabel);
         contentPane.add(piecesLeftLabel);
