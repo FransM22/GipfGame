@@ -170,52 +170,50 @@ public abstract class Game {
                                     intersectingSegments.add(otherSegment);
 
                                     intersectionFound = true;
-
-                                    gameLogger.log("Intersecting lines found: ");
-                                    gameLogger.log(intersectingSegments.toString());
                                 }
                             }
                         }
 
                         if (!intersectionFound) {
-                            linesTakenBy.get(currentPlayer.pieceColor).add(segment);
+                            gameLogger.log("Segments not removed: " + segmentsNotRemoved.size());
+                            segmentsNotRemoved.stream().forEach(s -> gameLogger.log(s.toString()));
+                            if (!segmentsNotRemoved.contains(segment)) {
+                                linesTakenBy.get(currentPlayer.pieceColor).add(segment);
+                            }
                         }
                     }
-
-                    intersectingSegments.removeAll(segmentsNotRemoved);
 
                     if (intersectingSegments.size() > 0) {
                         LineSegment lineSegment = intersectingSegments.iterator().next();
                         int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove " + lineSegment.getOccupiedPositions(newGipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                         if (dialogResult == JOptionPane.YES_OPTION) {
-                            removePiecesFromBoard(newGipfBoardState, lineSegment.getOccupiedPositions(newGipfBoardState));
+                            linesTakenBy.get(currentPlayer.pieceColor).add(lineSegment);
                             gameLogger.log(" -> Removing");
                         }
                         else {
                             segmentsNotRemoved.add(lineSegment);
                             gameLogger.log(" -> Not removing");
                         }
-                        intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
+                    }
+
+                    for (LineSegment segment : linesTakenBy.get(currentPlayer.pieceColor)) {
+                        segment.getOccupiedPositions(newGipfBoardState).forEach(position ->
+                                {
+                                    if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == currentPlayer.pieceColor) {
+                                        piecesBackTo.get(currentPlayer.pieceColor).add(position);
+                                    } else {
+                                        piecesDestroyed.add(position);
+                                    }
+                                }
+                        );
+                    }
+
+                    removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
+                    for (PieceColor pieceColor : PieceColor.values()) {
+                        removePiecesFromBoard(newGipfBoardState, piecesBackTo.get(pieceColor));
                     }
                 }
                 while (intersectingSegments.size() > 0);
-
-                for (LineSegment segment : linesTakenBy.get(currentPlayer.pieceColor)) {
-                    segment.getOccupiedPositions(newGipfBoardState).forEach(position ->
-                            {
-                                if (newGipfBoardState.getPieceMap().get(position).getPieceColor() == currentPlayer.pieceColor) {
-                                    piecesBackTo.get(currentPlayer.pieceColor).add(position);
-                                } else {
-                                    piecesDestroyed.add(position);
-                                }
-                            }
-                    );
-                }
-
-                removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
-                for (PieceColor pieceColor : PieceColor.values()) {
-                    removePiecesFromBoard(newGipfBoardState, piecesBackTo.get(pieceColor));
-                }
 
                 // Get lines of the opponent
                 PieceColor opponentColor = currentPlayer.pieceColor == WHITE ? BLACK : WHITE;
@@ -238,8 +236,6 @@ public abstract class Game {
                     if (!intersectionFound) {
                         linesTakenBy.get(opponentColor).add(segment);
                     }
-                    gameLogger.log("Not removing intersecting line segments: ");
-                    intersectingSegments.stream().forEach(e -> gameLogger.log(e.toString()));
                 }
 
                 for (LineSegment segment : linesTakenBy.get(opponentColor)) {
@@ -264,6 +260,10 @@ public abstract class Game {
                 gipfBoardState.whiteHasPlacedNormalPieces = players.get(BLACK).hasPlacedNormalPieces;
 
                 gameLogger.log(move.toString());
+                removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
+                for (PieceColor pieceColor : PieceColor.values()) {
+                    removePiecesFromBoard(newGipfBoardState, piecesBackTo.get(pieceColor));
+                }
                 for (PieceColor pieceColor : PieceColor.values()) {
                     if (piecesBackTo.get(pieceColor).size() != 0) {
                         players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
