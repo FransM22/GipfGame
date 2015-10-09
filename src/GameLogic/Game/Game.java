@@ -489,9 +489,6 @@ public abstract class Game {
                 }
             }
 
-            gameLogger.log("Intersecting line segments: ");
-            gameLogger.log(intersectingSegments.toString());
-
             if (intersectingSegments.size() > 0) {
                 LineSegment lineSegment = intersectingSegments.iterator().next();
                 currentRemoveSelection = lineSegment.getOccupiedPositions(gipfBoardState);
@@ -507,10 +504,6 @@ public abstract class Game {
                 currentRemoveSelection = new HashSet<>();
             }
 
-            for (PieceColor color : PieceColor.values()) {
-                gameLogger.log("Segments taken by " + color + ":" + linesTakenBy.get(color));
-            }
-
             for (LineSegment segment : linesTakenBy.get(pieceColor)) {
                 segment.getOccupiedPositions(gipfBoardState).forEach(position ->
                         {
@@ -522,11 +515,6 @@ public abstract class Game {
                         }
                 );
             }
-
-            for (PieceColor color : PieceColor.values()) {
-                gameLogger.log("Pieces taken by " + color + ": " + piecesBackTo.get(color));
-            }
-            gameLogger.log("Pieces destroyed: " + piecesDestroyed);
 
             removePiecesFromBoard(gipfBoardState, piecesDestroyed);
             Arrays.stream(PieceColor.values()).forEach(color -> removePiecesFromBoard(gipfBoardState, piecesBackTo.get(color)));
