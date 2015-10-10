@@ -9,6 +9,7 @@ public class Player {
     public boolean hasPlacedNormalPieces = false;
     public boolean isPlacingGipfPieces = true;
     public boolean hasPlacedGipfPieces = false;
+    public boolean mustStartWithGipfPieces = false;
 
     public Player(PieceColor pieceColor, int nrOfPieces, boolean isAllowedToPlaceGipfPieces) {
         this.pieceColor = pieceColor;
@@ -18,7 +19,11 @@ public class Player {
     }
 
     public void toggleIsPlacingGipfPieces() {
-        isPlacingGipfPieces = !hasPlacedNormalPieces && !isPlacingGipfPieces;
+        if (mustStartWithGipfPieces && !hasPlacedGipfPieces) {
+            isPlacingGipfPieces = true;
+        } else {
+            isPlacingGipfPieces = !hasPlacedNormalPieces && !isPlacingGipfPieces;
+        }
     }
 
     public boolean getIsPlacingGipfPieces() {

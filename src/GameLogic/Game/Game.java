@@ -142,6 +142,10 @@ public abstract class Game {
             try {
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
+                if (move.addedPiece.getPieceType() == PieceType.GIPF) {
+                    currentPlayer.hasPlacedGipfPieces = true;
+                }
+
                 gipfBoardState.whiteIsOnTurn = currentPlayer == players.get(WHITE);
                 gipfBoardState.whitePiecesLeft = players.get(WHITE).reserve;
                 gipfBoardState.blackPiecesLeft = players.get(BLACK).reserve;
@@ -198,10 +202,7 @@ public abstract class Game {
                     updateCurrentPlayer();
                 }
 
-                if (currentPlayer.isPlacingGipfPieces) {
-                    currentPlayer.hasPlacedGipfPieces = true;
-                }
-                else {
+                if (!currentPlayer.isPlacingGipfPieces) {
                     currentPlayer.hasPlacedNormalPieces = true;
                 }
 
@@ -455,6 +456,10 @@ public abstract class Game {
         return winningPlayer;
     }
 
+    public void setWinningPlayer(Player winningPlayer) {
+        this.winningPlayer = winningPlayer;
+    }
+
     public void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
         for (Position position : positions) {
             gipfBoardState.getPieceMap().remove(position);
@@ -497,8 +502,7 @@ public abstract class Game {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
                     linesTakenBy.get(pieceColor).add(lineSegment);
-                }
-                else if (dialogResult == JOptionPane.NO_OPTION){
+                } else if (dialogResult == JOptionPane.NO_OPTION) {
                     // Don't remove the line
                     segmentsNotRemoved.add(lineSegment);
                 }
@@ -528,8 +532,4 @@ public abstract class Game {
     }
 
     public abstract boolean updateGameOverState();
-
-    public void setWinningPlayer(Player winningPlayer) {
-        this.winningPlayer = winningPlayer;
-    }
 }

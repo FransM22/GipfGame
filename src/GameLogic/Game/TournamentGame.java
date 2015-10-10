@@ -18,6 +18,9 @@ public class TournamentGame extends Game {
     void initializePlayers() {
         players.put(WHITE, new Player(WHITE, 18, true));
         players.put(BLACK, new Player(BLACK, 18, true));
+
+        players.get(WHITE).mustStartWithGipfPieces = true;
+        players.get(BLACK).mustStartWithGipfPieces = true;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class TournamentGame extends Game {
                 .count();
 
         if (getWinningPlayer() == null) {
-            if (getCurrentPlayer().reserve == 0 || (currentPlayersGipfPiecesOnBoard == 0 && getCurrentPlayer().hasPlacedGipfPieces)) {
+            if (getCurrentPlayer().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
                 setWinningPlayer(getCurrentPlayer());
                 return true;
             }
