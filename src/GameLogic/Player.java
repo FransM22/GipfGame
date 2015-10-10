@@ -8,6 +8,7 @@ public class Player {
     public int reserve = 18;         // Default for standard and tournament games
     public boolean hasPlacedNormalPieces = false;
     public boolean isPlacingGipfPieces = true;
+    public boolean hasPlacedGipfPieces = false;
 
     public Player(PieceColor pieceColor, int nrOfPieces, boolean isAllowedToPlaceGipfPieces) {
         this.pieceColor = pieceColor;

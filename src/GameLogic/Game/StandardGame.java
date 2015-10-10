@@ -1,6 +1,7 @@
 package GameLogic.Game;
 
 import GameLogic.Piece;
+import GameLogic.PieceType;
 import GameLogic.Player;
 import GameLogic.Position;
 
@@ -32,5 +33,27 @@ public class StandardGame extends Game {
         gipfBoardState.getPieceMap().put(new Position('b', 2), Piece.BLACK_GIPF);
         gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_GIPF);
         gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_GIPF);
+    }
+
+    @Override
+    public boolean updateGameOverState() {
+        long currentPlayersGipfPiecesOnBoard = gipfBoardState.getPieceMap()
+                .values()
+                .stream()
+                .filter(piece ->
+                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == getCurrentPlayer().pieceColor)
+                .count();
+
+        if (getWinningPlayer() == null) {
+            if (getCurrentPlayer().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+                setWinningPlayer(getCurrentPlayer());
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -33,4 +33,9 @@ public class BasicGame extends Game {
         gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_SINGLE);
         gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_SINGLE);
     }
+
+    @Override
+    public boolean updateGameOverState() {
+        return getCurrentPlayer().reserve == 0;
+    }
 }

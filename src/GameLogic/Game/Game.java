@@ -23,7 +23,6 @@ public abstract class Game {
     private final List<GipfBoardState> boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
     public Map<PieceColor, Player> players = new HashMap<>();
-    public boolean isGameOver = false;                          // Is only true if the game is finished
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private Player currentPlayer;                               // Acts as a pointer to the current player
     private Player winningPlayer;                               // Acts as a pointer to the winning player
@@ -133,7 +132,7 @@ public abstract class Game {
      * @param move the move that is applied
      */
     public void applyMove(Move move) {
-        if (isGameOver) return;
+        if (winningPlayer != null) return;
 
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
@@ -190,9 +189,8 @@ public abstract class Game {
                 // Update for the last added piece
                 currentPlayer.reserve -= move.addedPiece.getPieceValue();
 
-                if (currentPlayer.reserve == 0) {
+                if (updateGameOverState()) {
                     updateCurrentPlayer();
-                    isGameOver = true;
                     winningPlayer = currentPlayer;
 
                     gameLogger.log("Game over! " + winningPlayer.pieceColor + " won!");
@@ -200,7 +198,10 @@ public abstract class Game {
                     updateCurrentPlayer();
                 }
 
-                if (!currentPlayer.isPlacingGipfPieces) {
+                if (currentPlayer.isPlacingGipfPieces) {
+                    currentPlayer.hasPlacedGipfPieces = true;
+                }
+                else {
                     currentPlayer.hasPlacedNormalPieces = true;
                 }
 
@@ -225,7 +226,7 @@ public abstract class Game {
      * but it should be checked which ones are actually allowed.
      */
     private Set<Move> getAllowedMoves() {
-        if (isGameOver) {
+        if (winningPlayer != null) {
             return new HashSet<>();
         }
         return new HashSet<>(Arrays.asList(
@@ -428,7 +429,7 @@ public abstract class Game {
     }
 
     public void returnToPreviousBoard() {
-        if (boardHistory.size() > 1 && !isGameOver) {
+        if (boardHistory.size() > 1 && !updateGameOverState()) {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
             currentPlayer = gipfBoardState.whiteIsOnTurn ? players.get(WHITE) : players.get(BLACK);
             players.get(WHITE).reserve = gipfBoardState.whitePiecesLeft;
@@ -524,5 +525,11 @@ public abstract class Game {
 
     public Set<Position> getCurrentRemoveSelection() {
         return currentRemoveSelection;
+    }
+
+    public abstract boolean updateGameOverState();
+
+    public void setWinningPlayer(Player winningPlayer) {
+        this.winningPlayer = winningPlayer;
     }
 }
