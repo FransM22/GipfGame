@@ -162,26 +162,21 @@ public abstract class Game {
                 HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
                 piecesBackTo.put(WHITE, new HashSet<>());
                 piecesBackTo.put(BLACK, new HashSet<>());
-
-                Set<Position> piecesDestroyed = new HashSet<>();
-
+                piecesBackTo.put(null, new HashSet<>());    // Hash maps can take null as a key, in this case used for pieces that are removed from the board
 
                 // Get the lines of the own color
-                removeLines(newGipfBoardState, currentPlayer.pieceColor, linesTakenBy, piecesBackTo, piecesDestroyed);
-
+                removeLines(newGipfBoardState, currentPlayer.pieceColor, linesTakenBy, piecesBackTo);
 
                 // Get lines of the opponent
                 PieceColor opponentColor = currentPlayer.pieceColor == WHITE ? BLACK : WHITE;
-                removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo, piecesDestroyed);
+                removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
 
                 // Get the line segments that
                 // Get the lines of the color of the other player
 
                 gameLogger.log(move.toString());
-                removePiecesFromBoard(newGipfBoardState, piecesDestroyed);
-                for (PieceColor pieceColor : PieceColor.values()) {
-                    removePiecesFromBoard(newGipfBoardState, piecesBackTo.get(pieceColor));
-                }
+                piecesBackTo.entrySet().forEach(e -> removePiecesFromBoard(newGipfBoardState, e.getValue()));
+
                 for (PieceColor pieceColor : PieceColor.values()) {
                     if (piecesBackTo.get(pieceColor).size() != 0) {
                         players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
@@ -322,42 +317,6 @@ public abstract class Game {
     /**
      * By Dingding
      */
-    private Map<Line, PieceColor> detectFourPieces(GipfBoardState gipfBoardState) {
-        Map<Line, PieceColor> removableLines = new HashMap<>();
-
-        Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);
-
-        for (Line line : linesOnTheBoard) {
-            Position currentPosition = line.getStartPosition();
-            Direction direction = line.getDirection();
-
-            int consecutivePieces = 0;
-            PieceColor consecutivePiecesColor = null;
-
-            for (; isPositionOnBigBoard(currentPosition); currentPosition = new Position(currentPosition.getPosId() + direction.getDeltaPos())) {
-                PieceColor currentPieceColor = null;
-
-                if (gipfBoardState.getPieceMap().containsKey(currentPosition)) {
-                    currentPieceColor = gipfBoardState.getPieceMap().get(currentPosition).getPieceColor();
-                }
-
-                if (currentPieceColor != consecutivePiecesColor) {
-                    if (consecutivePiecesColor != null && consecutivePieces >= 4) {
-                        removableLines.put(new Line(this, currentPosition, direction), consecutivePiecesColor);
-                        break;
-                    }
-
-                    consecutivePiecesColor = currentPieceColor;
-                    consecutivePieces = 1;
-                } else {
-                    consecutivePieces++;
-                }
-            }
-        }
-
-        return removableLines;
-    }
-
     private Set<LineSegment> getRemovableLineSegments(GipfBoardState gipfBoardState, PieceColor pieceColor) {
         Set<LineSegment> removableLines = new HashSet<>();
         Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);
@@ -466,7 +425,7 @@ public abstract class Game {
         }
     }
 
-    private void removeLines(GipfBoardState gipfBoardState, PieceColor pieceColor, Map<PieceColor, Set<LineSegment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo, Set<Position> piecesDestroyed) {
+    private void removeLines(GipfBoardState gipfBoardState, PieceColor pieceColor, Map<PieceColor, Set<LineSegment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo) {
         Set<LineSegment> intersectingSegments;
         Set<LineSegment> segmentsNotRemoved = new HashSet<>();
 
@@ -512,17 +471,22 @@ public abstract class Game {
             for (LineSegment segment : linesTakenBy.get(pieceColor)) {
                 segment.getOccupiedPositions(gipfBoardState).forEach(position ->
                         {
-                            if (gipfBoardState.getPieceMap().get(position).getPieceColor() == pieceColor) {
-                                piecesBackTo.get(pieceColor).add(position);
+                            Piece piece = gipfBoardState.getPieceMap().get(position);
+                            if (piece.getPieceColor() == pieceColor) {
+                                if (piece.getPieceType() == PieceType.NORMAL || doesPlayerWantToRemoveGipf(position)) {
+                                    piecesBackTo.get(pieceColor).add(position);
+                                }
                             } else {
-                                piecesDestroyed.add(position);
+                                if (piece.getPieceType() == PieceType.NORMAL || doesPlayerWantToRemoveGipf(position)) {
+                                    piecesBackTo.get(null).add(position);
+                                }
                             }
                         }
                 );
             }
 
-            removePiecesFromBoard(gipfBoardState, piecesDestroyed);
-            Arrays.stream(PieceColor.values()).forEach(color -> removePiecesFromBoard(gipfBoardState, piecesBackTo.get(color)));
+            piecesBackTo.entrySet()
+                    .forEach(e -> removePiecesFromBoard(gipfBoardState, e.getValue()));
         }
         while (intersectingSegments.size() > 0);
     }
@@ -532,4 +496,11 @@ public abstract class Game {
     }
 
     public abstract boolean updateGameOverState();
+
+    public boolean doesPlayerWantToRemoveGipf(Position position) {
+        currentRemoveSelection.add(position);
+        int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove the Gipf at " + position.getName() + "?", "Remove Gipf");
+        currentRemoveSelection = new HashSet<>();
+        return dialogResult == JOptionPane.YES_OPTION;
+    }
 }
