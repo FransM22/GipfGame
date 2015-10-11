@@ -2,10 +2,6 @@ package GameLogic.Game;
 
 import GameLogic.Piece;
 import GameLogic.PieceType;
-import GameLogic.Player;
-
-import static GameLogic.PieceColor.BLACK;
-import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 5-10-2015.
@@ -17,31 +13,27 @@ public class TournamentGame extends Game {
 
     @Override
     void initializePlayers() {
-        players.put(WHITE, new Player(WHITE, 18, true));
-        players.put(BLACK, new Player(BLACK, 18, true));
+        super.initializePlayers();
 
-        players.get(WHITE).mustStartWithGipfPieces = true;
-        players.get(BLACK).mustStartWithGipfPieces = true;
+        players.values().stream()
+                .forEach(player -> {
+                    player.setReserve(18);
+                    player.setMustStartWithGipfPieces(true);
+                });
     }
 
     @Override
-    public boolean updateGameOverState() {
-        long currentPlayersGipfPiecesOnBoard = gipfBoardState.getPieceMap()
-                .values()
-                .stream()
+    public boolean getGameOverState() {
+        long currentPlayersGipfPiecesOnBoard = gipfBoardState.getPieceMap().values().stream()
                 .filter(piece ->
-                        piece.equals(Piece.of(PieceType.GIPF, piece.getPieceColor())))
+                        piece.equals(Piece.of(PieceType.GIPF, players.current().pieceColor)))
                 .count();
 
-        if (getWinningPlayer() == null) {
-            if (getCurrentPlayer().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
-                setWinningPlayer(getCurrentPlayer());
-                return true;
-            } else {
-                return false;
-            }
+        if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+            players.makeCurrentPlayerWinner();
+            return true;
+        } else {
+            return false;
         }
-
-        return true;
     }
 }

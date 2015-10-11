@@ -1,11 +1,7 @@
 package GameLogic.Game;
 
 import GameLogic.Piece;
-import GameLogic.Player;
 import GameLogic.Position;
-
-import static GameLogic.PieceColor.BLACK;
-import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 5-10-2015.
@@ -17,8 +13,14 @@ public class BasicGame extends Game {
 
     @Override
     void initializePlayers() {
-        players.put(WHITE, new Player(WHITE, 12, false));
-        players.put(BLACK, new Player(BLACK, 12, false));
+        super.initializePlayers();
+
+        players.values().stream()
+                .forEach(player -> {
+                    player.setReserve(12);                  // Set the reserve of each player to 12
+                    player.setIsPlacingGipfPieces(false);
+                    player.setHasPlacedNormalPieces(true);
+                });
     }
 
     @Override
@@ -35,7 +37,7 @@ public class BasicGame extends Game {
     }
 
     @Override
-    public boolean updateGameOverState() {
-        return getCurrentPlayer().reserve == 0;
+    public boolean getGameOverState() {
+        return players.current().reserve == 0;
     }
 }

@@ -2,11 +2,7 @@ package GameLogic.Game;
 
 import GameLogic.Piece;
 import GameLogic.PieceType;
-import GameLogic.Player;
 import GameLogic.Position;
-
-import static GameLogic.PieceColor.BLACK;
-import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 5-10-2015.
@@ -18,8 +14,13 @@ public class StandardGame extends Game {
 
     @Override
     void initializePlayers() {
-        players.put(WHITE, new Player(WHITE, 12, false));
-        players.put(BLACK, new Player(BLACK, 12, false));
+        super.initializePlayers();
+
+        players.values().stream()
+                .forEach(player -> {
+                    player.setReserve(12);
+                    player.setHasPlacedGipfPieces(true);
+                });
     }
 
     @Override
@@ -36,17 +37,17 @@ public class StandardGame extends Game {
     }
 
     @Override
-    public boolean updateGameOverState() {
+    public boolean getGameOverState() {
         long currentPlayersGipfPiecesOnBoard = gipfBoardState.getPieceMap()
                 .values()
                 .stream()
                 .filter(piece ->
-                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == getCurrentPlayer().pieceColor)
+                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == players.current().pieceColor)
                 .count();
 
-        if (getWinningPlayer() == null) {
-            if (getCurrentPlayer().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
-                setWinningPlayer(getCurrentPlayer());
+        if (players.winner() == null) {
+            if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+                players.makeCurrentPlayerWinner();
                 return true;
             }
             else {

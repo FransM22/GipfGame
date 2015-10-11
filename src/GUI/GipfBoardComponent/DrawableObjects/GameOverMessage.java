@@ -15,10 +15,10 @@ public class GameOverMessage extends DrawableObject {
 
     @Override
     public void draw() {
-        if (gipfBoardComponent.game.getWinningPlayer() != null) {
+        if (gipfBoardComponent.game.players.winner() != null) {
             g2.setFont(UIval.get().gameOverFont);
             g2.setColor(UIval.get().gameOverTextColor);
-            g2.drawString(gipfBoardComponent.game.getWinningPlayer().pieceColor + " won!", 100, 100);
+            g2.drawString(gipfBoardComponent.game.players.winner().pieceColor + " won!", 100, 100);
         }
     }
 }

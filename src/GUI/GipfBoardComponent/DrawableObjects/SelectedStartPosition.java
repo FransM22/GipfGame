@@ -16,8 +16,8 @@ public class SelectedStartPosition extends Circle {
                 gipfBoardComponent,
                 selectedPositions,
                 UIval.get().pieceSize,
-                gipfBoardComponent.getColorOfPlayer(gipfBoardComponent.game.getCurrentPlayer()),
-                gipfBoardComponent.getBorderColorOfPlayer(gipfBoardComponent.game.getCurrentPlayer()),
+                gipfBoardComponent.getColorOfPlayer(gipfBoardComponent.game.players.current()),
+                gipfBoardComponent.getBorderColorOfPlayer(gipfBoardComponent.game.players.current()),
                 UIval.get().hoverPositionStroke);
     }
 }
