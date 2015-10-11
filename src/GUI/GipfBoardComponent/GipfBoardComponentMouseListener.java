@@ -9,6 +9,7 @@ import GameLogic.Position;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +49,7 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
             gipfBoardComponent.repaint();
         } else if (gipfBoardComponent.selectedMoveToPosition != null) {
             int deltaPos = Position.getDeltaPos(gipfBoardComponent.selectedStartPosition, gipfBoardComponent.selectedMoveToPosition);
-            Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedStartPosition, Direction.getDirectionFromDeltaPos(deltaPos));
+            Move currentMove = new Move(game.getCurrentPiece(), gipfBoardComponent.selectedStartPosition, Direction.getDirectionFromDeltaPos(deltaPos), Optional.empty());
             gipfBoardComponent.selectedStartPosition = null;
             gipfBoardComponent.selectedMoveToPosition = null;
             game.applyMove(currentMove);

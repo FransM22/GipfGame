@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static GameLogic.Direction.*;
 import static GameLogic.Piece.*;
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
@@ -226,48 +227,48 @@ public abstract class Game {
             return new HashSet<>();
         }
         return new HashSet<>(Arrays.asList(
-                new Move(getCurrentPiece(), new Position('a', 1), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 2), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 2), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 3), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 3), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 4), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 4), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('a', 5), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('b', 6), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('b', 6), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('c', 7), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('c', 7), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('d', 8), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('d', 8), Direction.SOUTH_EAST),
-                new Move(getCurrentPiece(), new Position('e', 9), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('f', 8), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('f', 8), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('g', 7), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('g', 7), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('h', 6), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('h', 6), Direction.SOUTH),
-                new Move(getCurrentPiece(), new Position('i', 5), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 4), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 4), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 3), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 3), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 2), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 2), Direction.SOUTH_WEST),
-                new Move(getCurrentPiece(), new Position('i', 1), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('h', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('h', 1), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('g', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('g', 1), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('f', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('f', 1), Direction.NORTH_WEST),
-                new Move(getCurrentPiece(), new Position('e', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('d', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('d', 1), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('c', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('c', 1), Direction.NORTH_EAST),
-                new Move(getCurrentPiece(), new Position('b', 1), Direction.NORTH),
-                new Move(getCurrentPiece(), new Position('b', 1), Direction.NORTH_EAST)
+                new Move(getCurrentPiece(), new Position('a', 1), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 2), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 2), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 3), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 3), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 4), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 4), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('a', 5), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('b', 6), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('b', 6), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('c', 7), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('c', 7), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('d', 8), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('d', 8), SOUTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('e', 9), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('f', 8), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('f', 8), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('g', 7), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('g', 7), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('h', 6), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('h', 6), SOUTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 5), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 4), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 4), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 3), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 3), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 2), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 2), SOUTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('i', 1), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('h', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('h', 1), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('g', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('g', 1), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('f', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('f', 1), NORTH_WEST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('e', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('d', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('d', 1), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('c', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('c', 1), NORTH_EAST, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('b', 1), NORTH, Optional.empty()),
+                new Move(getCurrentPiece(), new Position('b', 1), NORTH_EAST, Optional.empty())
         ));
     }
 
@@ -279,13 +280,13 @@ public abstract class Game {
      */
     private Set<Position> getDots() {
         return Stream.concat(
-                new Line(this, new Position('a', 1), Direction.SOUTH_EAST).getPositions().stream(),
-                Stream.concat(new Line(this, new Position('e', 1), Direction.NORTH_EAST).getPositions().stream(),
-                        Stream.concat(new Line(this, new Position('i', 1), Direction.NORTH).getPositions().stream(),
-                                Stream.concat(new Line(this, new Position('i', 5), Direction.NORTH_WEST).getPositions().stream(),
+                new Line(this, new Position('a', 1), SOUTH_EAST).getPositions().stream(),
+                Stream.concat(new Line(this, new Position('e', 1), NORTH_EAST).getPositions().stream(),
+                        Stream.concat(new Line(this, new Position('i', 1), NORTH).getPositions().stream(),
+                                Stream.concat(new Line(this, new Position('i', 5), NORTH_WEST).getPositions().stream(),
                                         Stream.concat(
-                                                new Line(this, new Position('e', 9), Direction.SOUTH_WEST).getPositions().stream(),
-                                                new Line(this, new Position('a', 5), Direction.SOUTH).getPositions().stream()
+                                                new Line(this, new Position('e', 9), SOUTH_WEST).getPositions().stream(),
+                                                new Line(this, new Position('a', 5), SOUTH).getPositions().stream()
                                         )
                                 )
                         )

@@ -57,4 +57,13 @@ public enum Piece {
         }
         return BLACK;
     }
+
+    public static Piece of(PieceType pieceType, PieceColor pieceColor) {
+        if (pieceType == NORMAL) {
+            if (pieceColor == WHITE) return WHITE_SINGLE;
+            else return BLACK_SINGLE;
+        }
+        else if (pieceColor == WHITE) return WHITE_GIPF;
+        else return BLACK_GIPF;
+    }
 }

@@ -1,6 +1,6 @@
 package GameLogic;
 
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
@@ -28,27 +28,11 @@ public class Move {
     public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction,
-                Set<Position> removedPiecePositions) {
+                Optional<Set<Position>> removedPiecePositions) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
         this.direction = direction;
-        this.removedPiecePositions = removedPiecePositions;
-    }
-
-    /**
-     * Constructor, creates a Move with the following properties. This constructor only uses the required fields.
-     *
-     * @param addedPiece the piece that is added to the board
-     * @param startPos   the position where the piece is added
-     * @param direction  the direction in which the piece moves
-     */
-    public Move(Piece addedPiece,
-                Position startPos,
-                Direction direction) {
-        this.addedPiece = addedPiece;
-        this.startPos = startPos;
-        this.direction = direction;
-        this.removedPiecePositions = new HashSet<>();   // An empty set
+        removedPiecePositions.ifPresent(rpp -> this.removedPiecePositions = rpp);
     }
 
     @Override
@@ -59,7 +43,7 @@ public class Move {
                 + (addedPiece.getPieceType() == PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
                 "-" + toPos.getName() +
-                (removedPiecePositions.isEmpty() ? "" : ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()));
+                (removedPiecePositions == null ? "" : ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()));
     }
 
     public Position getStartingPosition() { return startPos; }

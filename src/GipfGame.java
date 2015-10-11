@@ -2,6 +2,8 @@ import GameLogic.*;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 
+import java.util.Optional;
+
 /**
  * The GipfGame class keeps track of the running game.
  * <p/>
@@ -18,13 +20,15 @@ class GipfGame {
         Move m = new Move(
                 Piece.WHITE_GIPF,
                 new Position('a', 5),
-                Direction.SOUTH_EAST
+                Direction.SOUTH_EAST,
+                Optional.empty()
         );
 
         Move m2 = new Move(
                 Piece.BLACK_GIPF,
                 new Position('a', 5),
-                Direction.SOUTH_EAST
+                Direction.SOUTH_EAST,
+                Optional.empty()
         );
 
         game.setPiece(game.getGipfBoardState(), new Position('e', 5), Piece.WHITE_SINGLE);

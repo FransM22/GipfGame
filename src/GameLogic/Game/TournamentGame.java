@@ -1,5 +1,6 @@
 package GameLogic.Game;
 
+import GameLogic.Piece;
 import GameLogic.PieceType;
 import GameLogic.Player;
 
@@ -29,15 +30,14 @@ public class TournamentGame extends Game {
                 .values()
                 .stream()
                 .filter(piece ->
-                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == getCurrentPlayer().pieceColor)
+                        piece.equals(Piece.of(PieceType.GIPF, piece.getPieceColor())))
                 .count();
 
         if (getWinningPlayer() == null) {
             if (getCurrentPlayer().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
                 setWinningPlayer(getCurrentPlayer());
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
