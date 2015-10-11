@@ -457,7 +457,7 @@ public abstract class Game {
             if (intersectingSegments.size() > 0) {
                 LineSegment lineSegment = intersectingSegments.iterator().next();
                 currentRemoveSelection = lineSegment.getOccupiedPositions(gipfBoardState);
-                int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove " + lineSegment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
+                int dialogResult = GipfBoardComponent.showConfirmDialog(currentPlayer.pieceColor + ", do you want to remove " + lineSegment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
                     linesTakenBy.get(pieceColor).add(lineSegment);
@@ -499,7 +499,7 @@ public abstract class Game {
 
     public boolean doesPlayerWantToRemoveGipf(Position position) {
         currentRemoveSelection.add(position);
-        int dialogResult = GipfBoardComponent.showConfirmDialog("Do you want to remove the Gipf at " + position.getName() + "?", "Remove Gipf");
+        int dialogResult = GipfBoardComponent.showConfirmDialog(currentPlayer.pieceColor + ", do you want to remove the Gipf at " + position.getName() + "?", "Remove Gipf");
         currentRemoveSelection = new HashSet<>();
         return dialogResult == JOptionPane.YES_OPTION;
     }
