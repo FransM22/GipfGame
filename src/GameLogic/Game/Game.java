@@ -12,6 +12,7 @@ import static GameLogic.Direction.*;
 import static GameLogic.Piece.*;
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
+import static GameLogic.PieceType.NORMAL;
 import static java.util.stream.Collectors.*;
 
 /**
@@ -467,25 +468,21 @@ public abstract class Game {
             }
 
             for (Line.Segment segment : linesTakenBy.get(pieceColor)) {
+                Predicate<Map.Entry<Position, Piece>> isNormalPiece = entry -> entry.getValue().getPieceType() == NORMAL;
+                Predicate<Map.Entry<Position, Piece>> isCurrentPlayersColor = entry -> entry.getValue().getPieceColor() == pieceColor;
+                Predicate<Map.Entry<Position, Piece>> doesPlayerWantToRemoveGipf = e -> this.doesPlayerWantToRemoveGipf.test(e.getKey());
+
                 Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(gipfBoardState).stream().collect(toMap(p -> p, p -> gipfBoardState.getPieceMap().get(p)));
 
-                piecesRemovedMap.entrySet().stream()
-                        .filter(entry -> e.getValue().getPieceColor() == pieceColor)
-                        .
-                segment.getOccupiedPositions(gipfBoardState).stream().forEach(position ->
-                        {
-                            Piece piece = gipfBoardState.getPieceMap().get(position);
-                            if (piece.getPieceColor() == pieceColor) {
-                                if (!Piece.isGipf.test(piece) || doesPlayerWantToRemoveGipf.test(position)) {
-                                    piecesBackTo.get(pieceColor).add(position);
-                                }
-                            } else {
-                                if (!Piece.isGipf.test(piece) || doesPlayerWantToRemoveGipf.test(position)) {
-                                    piecesBackTo.get(null).add(position);
-                                }
-                            }
-                        }
-                );
+                piecesBackTo.get(pieceColor).addAll(piecesRemovedMap.entrySet().stream()
+                        .filter(isCurrentPlayersColor.and(isNormalPiece.or(doesPlayerWantToRemoveGipf)))
+                        .map(Map.Entry::getKey)
+                        .collect(toSet()));
+
+                piecesBackTo.get(null).addAll(piecesRemovedMap.entrySet().stream()
+                        .filter(isCurrentPlayersColor.negate().and(isNormalPiece.or(doesPlayerWantToRemoveGipf)))
+                        .map(Map.Entry::getKey)
+                        .collect(toSet()));
             }
 
             piecesBackTo.values()

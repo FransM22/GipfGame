@@ -1,7 +1,5 @@
 package GameLogic;
 
-import java.util.function.Predicate;
-
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 import static GameLogic.PieceType.GIPF;
@@ -16,8 +14,6 @@ public enum Piece {
     WHITE_GIPF,
     BLACK_SINGLE,
     BLACK_GIPF;
-
-    public static Predicate<Piece> isGipf = piece -> piece.getPieceType() == GIPF;
 
     public static Piece of(PieceType pieceType, PieceColor pieceColor) {
         if (pieceType == NORMAL) {
