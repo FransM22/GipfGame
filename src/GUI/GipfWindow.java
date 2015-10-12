@@ -18,7 +18,7 @@ import java.io.*;
  * Created by frans on 18-9-2015.
  */
 public class GipfWindow extends JFrame {
-    final JTextArea gameLogTextArea;
+    JTextArea gameLogTextArea;
     private final JTextField newPieceCoordinateTextField;
     private final JComboBox<Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
@@ -41,6 +41,8 @@ public class GipfWindow extends JFrame {
                 fileIn.close();
 
                 gipfBoardComponent.setGame(game);
+                gameLogTextArea.setText("");
+                gipfBoardComponent.game.newGameLogger();
                 gameStateUpdater.setGame(game);
                 System.out.println("Game is opened from " + fileChooser.getSelectedFile().getAbsolutePath());
             } catch (IOException | ClassNotFoundException exception) {

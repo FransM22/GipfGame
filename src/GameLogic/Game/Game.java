@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.*;
  * Created by frans on 21-9-2015.
  */
 public abstract class Game implements Serializable{
-    private final GameLogger gameLogger;
+    private GameLogger gameLogger;
     private final BoardHistory boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
     public PlayersInGame players;
@@ -495,7 +495,7 @@ public abstract class Game implements Serializable{
      */
     public abstract boolean getGameOverState();
 
-    public void setGipfBoardState(GipfBoardState gipfBoardState) {
-        this.gipfBoardState = gipfBoardState;
+    public void newGameLogger() {
+        this.gameLogger = new GameLogger(gameType);
     }
 }
