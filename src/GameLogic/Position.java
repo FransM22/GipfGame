@@ -1,5 +1,7 @@
 package GameLogic;
 
+import java.io.Serializable;
+
 /**
  * A position is determined by a position id. A position id can be converted to a col name (a..i) and a row
  * number (1..9), and vice versa.
@@ -7,7 +9,7 @@ package GameLogic;
  * Created by frans on 17-9-2015.
  */
 
-public final class Position implements Comparable<Position>{
+public final class Position implements Comparable<Position>, Serializable{
     public final int posId;    // Final, because a different position is supposed to be a different object
 
     /**

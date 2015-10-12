@@ -1,5 +1,6 @@
 package GameLogic;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,8 +9,8 @@ import java.util.Map;
  * This class represents the board that is used in the game.
  *
  */
-public class GipfBoardState {
-    private final Map<Position, Piece> pieceMap;
+public class GipfBoardState implements Serializable {
+    private HashMap<Position, Piece> pieceMap;
     public int whitePiecesLeft;
     public int blackPiecesLeft;
     public boolean whiteIsOnTurn;
@@ -36,5 +37,6 @@ public class GipfBoardState {
     public Map<Position, Piece> getPieceMap() {
         return pieceMap;
     }
+
 
 }

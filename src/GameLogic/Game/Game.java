@@ -4,6 +4,7 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.*;
 
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -20,19 +21,13 @@ import static java.util.stream.Collectors.*;
  * <p/>
  * Created by frans on 21-9-2015.
  */
-public abstract class Game {
+public abstract class Game implements Serializable{
     private final GameLogger gameLogger;
     private final BoardHistory boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
     public PlayersInGame players;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private Set<Position> currentRemoveSelection = new HashSet<>();
-    Predicate<Position> doesPlayerWantToRemoveGipf = position -> {
-        currentRemoveSelection.add(position);
-        int dialogResult = GipfBoardComponent.showConfirmDialog(players.current().pieceColor + ", do you want to remove the Gipf at " + position.getName() + "?", "Remove Gipf");
-        currentRemoveSelection = new HashSet<>();
-        return dialogResult == JOptionPane.YES_OPTION;
-    };
 
     Game(GameType gameType) {
         this.gameType = gameType;
@@ -470,7 +465,12 @@ public abstract class Game {
             for (Line.Segment segment : linesTakenBy.get(pieceColor)) {
                 Predicate<Map.Entry<Position, Piece>> isNormalPiece = entry -> entry.getValue().getPieceType() == NORMAL;
                 Predicate<Map.Entry<Position, Piece>> isCurrentPlayersColor = entry -> entry.getValue().getPieceColor() == pieceColor;
-                Predicate<Map.Entry<Position, Piece>> doesPlayerWantToRemoveGipf = e -> this.doesPlayerWantToRemoveGipf.test(e.getKey());
+                Predicate<Map.Entry<Position, Piece>> doesPlayerWantToRemoveGipf = entry -> {
+                    currentRemoveSelection.add(entry.getKey());
+                    int dialogResult = GipfBoardComponent.showConfirmDialog(players.current().pieceColor + ", do you want to remove the Gipf at " + entry.getKey().getName() + "?", "Remove Gipf");
+                    currentRemoveSelection = new HashSet<>();
+                    return dialogResult == JOptionPane.YES_OPTION;
+                };
 
                 Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(gipfBoardState).stream().collect(toMap(p -> p, p -> gipfBoardState.getPieceMap().get(p)));
 
@@ -502,4 +502,8 @@ public abstract class Game {
      * @return true if the game over condition has been fulfilled, false otherwise.
      */
     public abstract boolean getGameOverState();
+
+    public void setGipfBoardState(GipfBoardState gipfBoardState) {
+        this.gipfBoardState = gipfBoardState;
+    }
 }

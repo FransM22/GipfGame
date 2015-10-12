@@ -1,5 +1,6 @@
 package GameLogic;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import static GameLogic.PieceColor.BLACK;
@@ -8,7 +9,7 @@ import static GameLogic.PieceColor.WHITE;
 /**
  * Created by frans on 11-10-2015.
  */
-public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> {
+public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> implements Serializable {
     // These two Players are pointers to the winning player and the current player
     private Player winningPlayer = null;
     private Player currentPlayer = null;
@@ -47,7 +48,7 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> {
     /**
      * Created by frans on 5-10-2015.
      */
-    public static class Player {
+    public static class Player implements Serializable {
         public final PieceColor pieceColor;
         public int reserve = 18;         // Default for standard and tournament games
         public boolean hasPlacedNormalPieces = false;

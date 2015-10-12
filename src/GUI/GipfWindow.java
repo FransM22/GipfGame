@@ -9,6 +9,8 @@ import GameLogic.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.*;
 
 /**
  * The GipfWindow uses a GipfBoardComponent to show the board. More information about the game can be added to the window
@@ -17,13 +19,54 @@ import java.awt.*;
  */
 public class GipfWindow extends JFrame {
     final JTextArea gameLogTextArea;
-    private final GipfBoardComponent gipfBoardComponent;
     private final JTextField newPieceCoordinateTextField;
     private final JComboBox<Piece> pieceTypeComboBox;
     private final JLabel piecesLeftLabel;
     private final JLabel currentPlayerLabel;
-    private final GameStateUpdater gameStateUpdater;
     private final JLabel gameTypeLabel;
+    private GameStateUpdater gameStateUpdater;
+    private GipfBoardComponent gipfBoardComponent;
+    ActionListener openDialog = e -> {
+        JFileChooser fileChooser = new JFileChooser();
+        int rval = fileChooser.showOpenDialog(this);
+
+        if (rval == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileInputStream fileIn = new FileInputStream(fileChooser.getSelectedFile().getAbsolutePath());
+                ObjectInputStream in = null;
+                in = new ObjectInputStream(fileIn);
+
+                Game game = (Game) in.readObject();
+                in.close();
+                fileIn.close();
+
+                gipfBoardComponent.setGame(game);
+                gameStateUpdater.setGame(game);
+                System.out.println("Game is opened from " + fileChooser.getSelectedFile().getAbsolutePath());
+            } catch (IOException | ClassNotFoundException exception) {
+                exception.printStackTrace();
+            }
+        }
+    };
+    ActionListener saveDialog = e -> {
+        JFileChooser fileChooser = new JFileChooser();
+        int rval = fileChooser.showSaveDialog(this);
+
+        if (rval == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileOutputStream fileOut = new FileOutputStream(fileChooser.getSelectedFile().getAbsolutePath());
+                ObjectOutputStream out = null;
+                out = new ObjectOutputStream(fileOut);
+
+                out.writeObject(gipfBoardComponent.game);
+                out.close();
+                fileOut.close();
+                System.out.println("Game is saved in " + fileChooser.getSelectedFile().getAbsolutePath());
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+    };
 
     public GipfWindow() throws HeadlessException {
         super();
@@ -43,11 +86,20 @@ public class GipfWindow extends JFrame {
         gameTypeLabel = new JLabel(" ");
         gameStateUpdater = new GameStateUpdater(this, game);
         JMenuBar menuBar = new JMenuBar();
-        JMenu newGameMenu = new JMenu("New game");
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem saveAsMenuItem = new JMenuItem("Save as...");
+        JMenuItem openMenuItem = new JMenuItem("Open...");
+        JMenuItem closeMenuItem = new JMenuItem("Close");
+        JMenu newGameMenu = new JMenu("New");
         JMenuItem newBasicGameMenuItem = new JMenuItem("Basic game");
         JMenuItem newStandardGameMenuItem = new JMenuItem("Standard game");
         JMenuItem newTournamentGameMenuItem = new JMenuItem("Tournament game");
 
+        menuBar.add(fileMenu);
+        fileMenu.add(openMenuItem);
+        fileMenu.add(saveAsMenuItem);
+        fileMenu.addSeparator();
+        fileMenu.add(closeMenuItem);
         menuBar.add(newGameMenu);
         newGameMenu.add(newBasicGameMenuItem);
         newGameMenu.add(newStandardGameMenuItem);
@@ -83,6 +135,9 @@ public class GipfWindow extends JFrame {
             gipfBoardComponent.clearSelectedPositions();
         });
 
+        openMenuItem.addActionListener(openDialog);
+        saveAsMenuItem.addActionListener(saveDialog);
+        closeMenuItem.addActionListener(e -> System.exit(0));
         newBasicGameMenuItem.addActionListener(e -> newGame(GameType.basic));
         newStandardGameMenuItem.addActionListener(e -> newGame(GameType.standard));
         newTournamentGameMenuItem.addActionListener(e -> newGame(GameType.tournament));

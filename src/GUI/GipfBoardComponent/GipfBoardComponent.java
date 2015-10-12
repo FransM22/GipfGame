@@ -113,4 +113,9 @@ public class GipfBoardComponent extends JComponent {
     public static int showConfirmDialog(String message, String title) {
         return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
+
+    public void setGame(Game game) {
+        this.game = game;
+        clearSelectedPositions();
+    }
 }
