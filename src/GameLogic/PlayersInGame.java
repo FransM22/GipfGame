@@ -88,8 +88,26 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
             }
         }
 
+        public Player(Player other) {
+            this.pieceColor = other.pieceColor;
+            this.reserve = other.reserve;
+            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
+            this.isPlacingGipfPieces = other.isPlacingGipfPieces;
+            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
+            this.mustStartWithGipfPieces = other.mustStartWithGipfPieces;
+        }
+
         public boolean getIsPlacingGipfPieces() {
             return isPlacingGipfPieces;
         }
+    }
+
+    public PlayersInGame(PlayersInGame other) {
+
+        this.currentPlayer = other.currentPlayer;
+        this.winningPlayer = other.winningPlayer;
+
+        other.entrySet().stream()
+                .forEach(otherEntry -> put(otherEntry.getKey(), new Player(otherEntry.getValue())));
     }
 }

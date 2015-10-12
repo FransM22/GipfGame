@@ -11,11 +11,8 @@ import java.util.Map;
  */
 public class GipfBoardState implements Serializable {
     private HashMap<Position, Piece> pieceMap;
-    public int whitePiecesLeft;
-    public int blackPiecesLeft;
-    public boolean whiteIsOnTurn;
-    public boolean blackHasPlacedNormalPieces;
-    public boolean whiteHasPlacedNormalPieces;
+
+    public PlayersInGame players;
 
     /**
      * Initialize an empty Gipf board
@@ -37,6 +34,5 @@ public class GipfBoardState implements Serializable {
     public Map<Position, Piece> getPieceMap() {
         return pieceMap;
     }
-
 
 }

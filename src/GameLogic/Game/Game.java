@@ -379,19 +379,11 @@ public abstract class Game implements Serializable{
     }
 
     public void storeState(GipfBoardState gipfBoardState) {
-        gipfBoardState.whiteIsOnTurn = players.current() == players.get(WHITE);
-        gipfBoardState.whitePiecesLeft = players.get(WHITE).reserve;
-        gipfBoardState.blackPiecesLeft = players.get(BLACK).reserve;
-        gipfBoardState.blackHasPlacedNormalPieces = players.get(WHITE).hasPlacedNormalPieces;
-        gipfBoardState.whiteHasPlacedNormalPieces = players.get(BLACK).hasPlacedNormalPieces;
+        gipfBoardState.players = new PlayersInGame(players);
     }
 
     public void loadState(GipfBoardState gipfBoardState) {
-        players.setCurrent(gipfBoardState.whiteIsOnTurn ? players.get(WHITE) : players.get(BLACK));
-        players.get(WHITE).reserve = gipfBoardState.whitePiecesLeft;
-        players.get(WHITE).hasPlacedNormalPieces = gipfBoardState.whiteHasPlacedNormalPieces;
-        players.get(BLACK).reserve = gipfBoardState.blackPiecesLeft;
-        players.get(BLACK).hasPlacedNormalPieces = gipfBoardState.blackHasPlacedNormalPieces;
+        players = new PlayersInGame(gipfBoardState.players);
     }
 
     public void returnToPreviousBoard() {
