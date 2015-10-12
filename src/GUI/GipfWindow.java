@@ -15,7 +15,7 @@ import java.awt.*;
  * <p/>
  * Created by frans on 18-9-2015.
  */
-class GipfWindow extends JFrame {
+public class GipfWindow extends JFrame {
     final JTextArea gameLogTextArea;
     private final GipfBoardComponent gipfBoardComponent;
     private final JTextField newPieceCoordinateTextField;
@@ -25,7 +25,7 @@ class GipfWindow extends JFrame {
     private final GameStateUpdater gameStateUpdater;
     private final JLabel gameTypeLabel;
 
-    private GipfWindow() throws HeadlessException {
+    public GipfWindow() throws HeadlessException {
         super();
 
         // Initialize the fields
@@ -74,11 +74,6 @@ class GipfWindow extends JFrame {
         contentPane.add(piecesLeftLabel);
         contentPane.add(gipfBoardComponent);
         contentPane.add(previousStateButton);
-
-//        contentPane.add(new JLabel("Enter coordinates for a new piece. (For example a2)"));
-//        contentPane.add(newPieceCoordinateTextField);
-//        contentPane.add(pieceTypeComboBox);
-//        contentPane.add(newPieceCoordinateEnterButton);
 
         // Add listeners
         newPieceCoordinateTextField.addActionListener(e -> listenerAddNewPiece());

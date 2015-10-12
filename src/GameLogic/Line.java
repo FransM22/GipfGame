@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * A line is uniquely defined by a startPosition and a direction. A Line can be created by just any position and a direction,
  * internally it is represented by the position with the position with the lowest id value and the corresponding direction.
@@ -126,4 +128,80 @@ public class Line implements Iterable<Position> {
         return linesOnTheBoard;
     }
 
+    /**
+     * Created by frans on 6-10-2015.
+     */
+    public static class Segment extends Line {
+        final Position startPosition;
+        final Position endPosition;
+
+        public Segment(Game game, Position endpoint1, Position endpoint2, Direction direction) {
+            super(game, endpoint1, direction);
+
+            if (endpoint1.getPosId() < endpoint2.getPosId()) {
+                startPosition = endpoint1;
+                endPosition = endpoint2;
+            }
+            else {
+                startPosition = endpoint2;
+                endPosition = endpoint1;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Segment)) return false;
+            if (!super.equals(o)) return false;
+
+            Segment positions = (Segment) o;
+
+            if (!startPosition.equals(positions.startPosition)) return false;
+            return endPosition.equals(positions.endPosition);
+
+        }
+
+        public boolean intersectsWith(Segment segment) {
+            for (Position position : getAllPositions()) {
+                for (Position otherPosition : segment.getAllPositions()) {
+                    if (position.equals(otherPosition)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public Set<Position> getOccupiedPositions(GipfBoardState gipfBoardState) {
+            return getAllPositions()
+                    .stream()
+                    .filter(position -> gipfBoardState.getPieceMap()
+                            .containsKey(position))
+                    .collect(toSet());
+        }
+
+        public Set<Position> getAllPositions() {
+            return super.getPositions()
+                    .stream()
+                    .filter(
+                            position -> startPosition.posId <= position.posId && position.posId <= endPosition.posId)
+                    .collect(toSet());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + startPosition.hashCode();
+            result = 31 * result + endPosition.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Segment{" +
+                    "startPosition=" + startPosition +
+                    ", endPosition=" + endPosition +
+                    '}';
+        }
+    }
 }

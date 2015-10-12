@@ -30,7 +30,7 @@ public class UIval {
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
     public final Font gameOverFont = new Font("default", Font.BOLD, 40);
     public final Font largeLabelFont = new Font("default", Font.PLAIN, 14);
-    public Font buttonFont = new Font("default", Font.PLAIN, 14);
+    public final Font buttonFont = new Font("default", Font.PLAIN, 14);
 
     // Interval times
     public final long hoverUpdateIntervalMs = 100;                    // The interval in ms of updating the position over which is being hovered

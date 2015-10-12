@@ -42,16 +42,6 @@ public final class Position implements Comparable<Position>{
         this.posId = p.posId;
     }
 
-    public static void main(String argv[]) {
-        // Run only to test code
-        System.out.println(new Position(15));
-        System.out.println(new Position(59));
-        System.out.println(new Position(87));
-        System.out.println(new Position('a', 5));
-        System.out.println(new Position('e', 9));
-        System.out.println(new Position('h', 4));
-    }
-
     /**
      * This method is used to get the position id (of the internal notation)
      */

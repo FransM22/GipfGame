@@ -3,7 +3,6 @@ package GUI.GipfBoardComponent;
 import GUI.GipfBoardComponent.DrawableObjects.*;
 import GUI.UIval;
 import GameLogic.Game.*;
-import GameLogic.Piece;
 import GameLogic.PieceColor;
 import GameLogic.PlayersInGame;
 import GameLogic.Position;
@@ -37,36 +36,6 @@ public class GipfBoardComponent extends JComponent {
         addMouseListener(new GipfBoardComponentMouseListener(this));
 
         setPreferredSize(new Dimension(600, 600));
-    }
-
-    public static void main(String argv[]) {
-        Game game = new BasicGame();
-
-        GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
-
-        // These are only for checking whether the component works
-        game.setPiece(game.getGipfBoardState(), new Position('b', 2), Piece.WHITE_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('b', 3), Piece.WHITE_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('b', 4), Piece.WHITE_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('b', 5), Piece.WHITE_SINGLE);
-
-        game.setPiece(game.getGipfBoardState(), new Position('c', 6), Piece.BLACK_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('d', 7), Piece.BLACK_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('e', 8), Piece.BLACK_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('f', 7), Piece.BLACK_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('g', 6), Piece.BLACK_SINGLE);
-        game.setPiece(game.getGipfBoardState(), new Position('h', 5), Piece.BLACK_SINGLE);
-
-        game.setPiece(game.getGipfBoardState(), new Position('e', 4), Piece.BLACK_GIPF);
-        game.setPiece(game.getGipfBoardState(), new Position('f', 6), Piece.WHITE_GIPF);
-
-        JFrame frame = new JFrame();
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.getContentPane().add(gipfBoardComponent);
-
-        frame.pack();
-        frame.setVisible(true);
     }
 
     /**
