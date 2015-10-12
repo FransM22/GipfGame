@@ -190,7 +190,6 @@ public class GipfWindow extends JFrame {
 
     private void returnToPreviousState() {
         gipfBoardComponent.game.returnToPreviousBoard();
-        gipfBoardComponent.repaint();
     }
 
     public void setPiecesLeftLabel(String message) {

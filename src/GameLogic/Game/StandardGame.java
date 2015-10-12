@@ -48,7 +48,7 @@ public class StandardGame extends Game {
                 .count();
 
         if (players.winner() == null) {
-            if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+            if (players.current().getReserve() == 0 || currentPlayersGipfPiecesOnBoard == 0) {
                 players.makeCurrentPlayerWinner();
                 return true;
             }

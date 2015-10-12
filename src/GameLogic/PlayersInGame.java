@@ -21,6 +21,14 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
         put(PieceColor.BLACK, new Player(PieceColor.BLACK));
     }
 
+    public PlayersInGame(PlayersInGame other) {
+        other.entrySet().stream()
+                .forEach(otherEntry -> put(otherEntry.getKey(), new Player(otherEntry.getValue())));
+
+        this.currentPlayer = other.currentPlayer == other.get(WHITE) ? get(WHITE) : get(BLACK);
+        this.winningPlayer = null;
+    }
+
     public void setStartingPlayer(Player startingPlayer) {
         currentPlayer = startingPlayer;
     }
@@ -50,22 +58,34 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
      */
     public static class Player implements Serializable {
         public final PieceColor pieceColor;
-        public int reserve = 18;         // Default for standard and tournament games
+        private int reserve = 18;         // Default for standard and tournament games
         public boolean hasPlacedNormalPieces = false;
         public boolean isPlacingGipfPieces = true;
         public boolean hasPlacedGipfPieces = false;
         public boolean mustStartWithGipfPieces = false;
-
         public Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;
+        }
+
+        public Player(Player other) {
+            this.pieceColor = other.pieceColor;
+            this.reserve = other.reserve;
+            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
+            this.isPlacingGipfPieces = other.isPlacingGipfPieces;
+            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
+            this.mustStartWithGipfPieces = other.mustStartWithGipfPieces;
+        }
+
+        public int getReserve() {
+            return reserve;
         }
 
         public void setReserve(int reserve) {
             this.reserve = reserve;
         }
 
-        public void setIsPlacingGipfPieces(boolean isPlacingGipfPieces) {
-            this.isPlacingGipfPieces = isPlacingGipfPieces;
+        public void increaseReserve(int increase) {
+            this.reserve += increase;
         }
 
         public void setMustStartWithGipfPieces(boolean mustStartWithGipfPieces) {
@@ -88,26 +108,12 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
             }
         }
 
-        public Player(Player other) {
-            this.pieceColor = other.pieceColor;
-            this.reserve = other.reserve;
-            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
-            this.isPlacingGipfPieces = other.isPlacingGipfPieces;
-            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
-            this.mustStartWithGipfPieces = other.mustStartWithGipfPieces;
-        }
-
         public boolean getIsPlacingGipfPieces() {
             return isPlacingGipfPieces;
         }
-    }
 
-    public PlayersInGame(PlayersInGame other) {
-
-        this.currentPlayer = other.currentPlayer;
-        this.winningPlayer = other.winningPlayer;
-
-        other.entrySet().stream()
-                .forEach(otherEntry -> put(otherEntry.getKey(), new Player(otherEntry.getValue())));
+        public void setIsPlacingGipfPieces(boolean isPlacingGipfPieces) {
+            this.isPlacingGipfPieces = isPlacingGipfPieces;
+        }
     }
 }

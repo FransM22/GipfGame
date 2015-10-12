@@ -38,6 +38,6 @@ public class BasicGame extends Game {
 
     @Override
     public boolean getGameOverState() {
-        return players.current().reserve == 0;
+        return players.current().getReserve() == 0;
     }
 }

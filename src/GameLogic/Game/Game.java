@@ -138,7 +138,7 @@ public abstract class Game implements Serializable{
 
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
-        if (players.current().reserve >= move.addedPiece.getPieceValue()) {
+        if (players.current().getReserve() >= move.addedPiece.getPieceValue()) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
@@ -176,14 +176,14 @@ public abstract class Game implements Serializable{
 
                 for (PieceColor pieceColor : PieceColor.values()) {
                     if (piecesBackTo.get(pieceColor).size() != 0) {
-                        players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
+                        players.get(pieceColor).increaseReserve(piecesBackTo.get(pieceColor).size());
 
                         gameLogger.log(pieceColor + " retrieved " + piecesBackTo.get(pieceColor).size() + " pieces");
                     }
                 }
 
                 // Update for the last added piece
-                players.current().reserve -= move.addedPiece.getPieceValue();
+                players.current().increaseReserve(-move.addedPiece.getPieceValue());
 
                 if (getGameOverState()) {
                     players.updateCurrent();
@@ -383,11 +383,13 @@ public abstract class Game implements Serializable{
     }
 
     public void loadState(GipfBoardState gipfBoardState) {
-        players = new PlayersInGame(gipfBoardState.players);
+        this.players = new PlayersInGame(gipfBoardState.players);
+        this.gipfBoardState = gipfBoardState;
     }
 
     public void returnToPreviousBoard() {
-        if (boardHistory.size() > 1 && !getGameOverState()) {
+
+        if (boardHistory.size() > 1) {
             gipfBoardState = boardHistory.get(boardHistory.size() - 1);
             boardHistory.remove(boardHistory.size() - 1);
 
