@@ -20,6 +20,8 @@ public class StandardGame extends Game {
                 .forEach(player -> {
                     player.setReserve(12);
                     player.setHasPlacedGipfPieces(true);
+                    player.setIsPlacingGipfPieces(false);
+                    player.setHasPlacedNormalPieces(true);
                 });
     }
 
