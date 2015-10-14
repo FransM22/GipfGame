@@ -17,7 +17,7 @@ public class BasicGame extends Game {
 
         players.values().stream()
                 .forEach(player -> {
-                    player.setReserve(12);                  // Set the reserve of each player to 12
+                    player.reserve = 12;                  // Set the reserve of each player to 12
                     player.setIsPlacingGipfPieces(false);
                     player.setHasPlacedNormalPieces(true);
                 });
@@ -38,6 +38,6 @@ public class BasicGame extends Game {
 
     @Override
     public boolean getGameOverState() {
-        return players.current().getReserve() == 0;
+        return players.current().reserve == 0;
     }
 }

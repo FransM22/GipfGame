@@ -58,7 +58,7 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
      */
     public static class Player implements Serializable {
         public final PieceColor pieceColor;
-        private int reserve = 18;         // Default for standard and tournament games
+        public int reserve = 18;         // Default for standard and tournament games
         public boolean hasPlacedNormalPieces = false;
         public boolean isPlacingGipfPieces = true;
         public boolean hasPlacedGipfPieces = false;
@@ -72,20 +72,8 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
             this.reserve = other.reserve;
             this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
             this.isPlacingGipfPieces = other.isPlacingGipfPieces;
-            this.hasPlacedGipfPieces = other.hasPlacedGipfPieces;
+            this.hasPlacedNormalPieces = other.hasPlacedNormalPieces;
             this.mustStartWithGipfPieces = other.mustStartWithGipfPieces;
-        }
-
-        public int getReserve() {
-            return reserve;
-        }
-
-        public void setReserve(int reserve) {
-            this.reserve = reserve;
-        }
-
-        public void increaseReserve(int increase) {
-            this.reserve += increase;
         }
 
         public void setMustStartWithGipfPieces(boolean mustStartWithGipfPieces) {

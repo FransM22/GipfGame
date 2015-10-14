@@ -18,7 +18,7 @@ public class StandardGame extends Game {
 
         players.values().stream()
                 .forEach(player -> {
-                    player.setReserve(12);
+                    player.reserve = 12;
                     player.setHasPlacedGipfPieces(true);
                     player.setIsPlacingGipfPieces(false);
                     player.setHasPlacedNormalPieces(true);
@@ -48,7 +48,7 @@ public class StandardGame extends Game {
                 .count();
 
         if (players.winner() == null) {
-            if (players.current().getReserve() == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+            if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
                 players.makeCurrentPlayerWinner();
                 return true;
             }

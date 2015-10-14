@@ -17,7 +17,7 @@ public class TournamentGame extends Game {
 
         players.values().stream()
                 .forEach(player -> {
-                    player.setReserve(18);
+                    player.reserve = 18;
                     player.setMustStartWithGipfPieces(true);
                 });
     }
@@ -29,7 +29,7 @@ public class TournamentGame extends Game {
                         piece.equals(Piece.of(PieceType.GIPF, players.current().pieceColor)))
                 .count();
 
-        if (players.current().getReserve() == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+        if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
             players.makeCurrentPlayerWinner();
             return true;
         } else {
