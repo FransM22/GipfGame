@@ -142,13 +142,15 @@ public abstract class Game implements Serializable{
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
+                boolean hasPlacedGipfPieces = players.current().hasPlacedGipfPieces;
+
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
                 if (move.addedPiece.getPieceType() == PieceType.GIPF) {
                     players.current().hasPlacedGipfPieces = true;
                 }
 
-                storeState(gipfBoardState);
+                storeState(gipfBoardState, hasPlacedGipfPieces);
                 boardHistory.add(gipfBoardState);
                 gipfBoardState = newGipfBoardState;
 
@@ -378,8 +380,9 @@ public abstract class Game implements Serializable{
                 .collect(toSet());
     }
 
-    public void storeState(GipfBoardState gipfBoardState) {
+    public void storeState(GipfBoardState gipfBoardState, boolean hasPlacedGipfPieces) {
         gipfBoardState.players = new PlayersInGame(players);
+        gipfBoardState.players.current().hasPlacedGipfPieces = hasPlacedGipfPieces;
     }
 
     public void loadState(GipfBoardState gipfBoardState) {
