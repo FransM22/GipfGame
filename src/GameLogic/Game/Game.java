@@ -13,6 +13,7 @@ import static GameLogic.Direction.*;
 import static GameLogic.Piece.*;
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
+import static GameLogic.PieceType.GIPF;
 import static GameLogic.PieceType.NORMAL;
 import static java.util.stream.Collectors.*;
 
@@ -94,7 +95,7 @@ public abstract class Game implements Serializable{
         return !gipfBoardState.getPieceMap().containsKey(p);
     }
 
-    private void movePiece(GipfBoardState gipfBoardState, Position currentPosition, int deltaPos) throws Exception {
+    private void movePiece(GipfBoardState gipfBoardState, Position currentPosition, int deltaPos) throws InvalidMoveException {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
         if (!isOnInnerBoard(nextPosition)) {
@@ -224,6 +225,36 @@ public abstract class Game implements Serializable{
         if (players.winner() != null) {
             return new HashSet<>();
         }
+
+        Set<Piece> allowedStartPieces = new HashSet<>();
+        allowedStartPieces.add(getCurrentPiece());
+        if (getCurrentPiece().getPieceType() == GIPF) {
+            allowedStartPieces.add(Piece.of(NORMAL, players.current().pieceColor));
+        }
+
+        Set<Move> potentialMoves = allowedStartPieces.stream().flatMap(
+                piece -> getPotentialStartMoves(piece).stream()
+        ).collect(toSet());
+
+        Set<Move> potentialMovesIncludingPieceRemoval = new HashSet<>();
+        for (Move potentialMove : potentialMoves) {
+            GipfBoardState temporaryBoardState = new GipfBoardState(getGipfBoardState());
+            try {
+                movePiece(temporaryBoardState, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
+
+                getRemovableLineSegments(temporaryBoardState, (players.current().pieceColor == WHITE) ? BLACK : WHITE);
+
+
+            } catch (InvalidMoveException e) {
+                // TODO remove move from set;
+            }
+        }
+        /* TODO
+          * Determine which lines can be selected
+          * Determine the pieces which can be chosen to be removed
+         */
+
+        // Old stuff
         return new HashSet<>(Arrays.asList(
                 new Move(getCurrentPiece(), new Position('a', 1), NORTH_EAST, Optional.empty()),
                 new Move(getCurrentPiece(), new Position('a', 2), NORTH_EAST, Optional.empty()),
@@ -502,5 +533,52 @@ public abstract class Game implements Serializable{
 
     public void newGameLogger() {
         this.gameLogger = new GameLogger(gameType);
+    }
+
+    public Set<Move> getPotentialStartMoves(Piece piece) {
+        return new HashSet<Move>(Arrays.asList(
+                new Move(piece, new Position('a', 1), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 2), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 2), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 3), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 3), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 4), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 4), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('a', 5), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('b', 6), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('b', 6), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('c', 7), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('c', 7), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('d', 8), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('d', 8), SOUTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('e', 9), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('f', 8), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('f', 8), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('g', 7), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('g', 7), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('h', 6), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('h', 6), SOUTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 5), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 4), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 4), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 3), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 3), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 2), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 2), SOUTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('i', 1), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('h', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('h', 1), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('g', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('g', 1), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('f', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('f', 1), NORTH_WEST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('e', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('d', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('d', 1), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('c', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('c', 1), NORTH_EAST, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('b', 1), NORTH, Optional.<Set<Position>>empty()),
+                new Move(piece, new Position('b', 1), NORTH_EAST, Optional.<Set<Position>>empty())
+        ));
     }
 }
