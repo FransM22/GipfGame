@@ -15,6 +15,7 @@ public class Move {
     public final Piece addedPiece;             // The piece that is added to the board
     public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     public final Direction direction;                    // The direction in which the piece moves
+    public Set<Line.Segment> removedSegments;
     public Set<Position> removedPiecePositions;    // Pieces that are removed during this move
 
     /**
@@ -28,11 +29,25 @@ public class Move {
     public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction,
-                Optional<Set<Position>> removedPiecePositions) {
+                Optional<Set<Position>> removedPiecePositions,
+                Optional<Set<Line.Segment>> removedSegments) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
         this.direction = direction;
+        removedSegments.ifPresent(rs -> this.removedSegments = rs);
         removedPiecePositions.ifPresent(rpp -> this.removedPiecePositions = rpp);
+    }
+
+    public Move(Move otherMove) {
+        this.addedPiece = otherMove.addedPiece;
+        this.startPos = otherMove.startPos;
+        this.direction = otherMove.direction;
+        this.removedSegments = otherMove.removedSegments;
+        this.removedPiecePositions = otherMove.removedPiecePositions;
+    }
+
+    public void setRemovedLineSegments(Set<Line.Segment> removedSegments) {
+        this.removedSegments = removedSegments;
     }
 
     @Override

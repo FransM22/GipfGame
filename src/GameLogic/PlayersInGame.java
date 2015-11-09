@@ -22,6 +22,8 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
     }
 
     public PlayersInGame(PlayersInGame other) {
+        super(other);
+
         other.entrySet().stream()
                 .forEach(otherEntry -> put(otherEntry.getKey(), new Player(otherEntry.getValue())));
 

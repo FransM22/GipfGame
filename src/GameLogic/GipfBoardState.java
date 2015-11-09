@@ -26,9 +26,11 @@ public class GipfBoardState implements Serializable {
      * Initialize a new Gipf board, with the same pieces on the same locations as an old board.
      *
      * @param old board with pieces that should be copied
+     * @param players
      */
-    public GipfBoardState(GipfBoardState old) {
-        pieceMap = new HashMap<>(old.pieceMap);
+    public GipfBoardState(GipfBoardState old, PlayersInGame players) {
+        this.pieceMap = new HashMap<>(old.pieceMap);
+        this.players = new PlayersInGame(players);
     }
 
     public Map<Position, Piece> getPieceMap() {
