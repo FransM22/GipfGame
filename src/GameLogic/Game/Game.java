@@ -226,7 +226,7 @@ public abstract class Game implements Serializable{
      * This method is currently a placeholder. Currently statically returns all potential candidates for allowed moves,
      * but it should be checked which ones are actually allowed.
      */
-    private Set<Move> getAllowedMoves() {
+    public Set<Move> getAllowedMoves() {
         if (players.winner() != null) {
             return new HashSet<>();
         }

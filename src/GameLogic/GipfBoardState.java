@@ -20,6 +20,7 @@ public class GipfBoardState implements Serializable {
     public GipfBoardState() {
         // Initialize the lists
         pieceMap = new HashMap<>();
+        this.players = new PlayersInGame();
     }
 
     /**

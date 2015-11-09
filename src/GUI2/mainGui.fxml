@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.embed.swing.SwingNode?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" fx:controller="GUI2.Controller" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
+  <tabs>
+    <Tab text="Game">
+         <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <SwingNode fx:id="gipfGameNode" />
+               </children>
+            </VBox>
+         </content>
+    </Tab>
+    <Tab text="Analyze game">
+         <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TreeTableView fx:id="boardStateTreeTableView" prefHeight="200.0" prefWidth="600.0">
+                    <columns>
+                      <TreeTableColumn fx:id="columnBoardName" prefWidth="75.0" text="C1" />
+                      <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TreeTableView>
+               </children>
+            </HBox>
+         </content>
+    </Tab>
+  </tabs>
+</TabPane>
