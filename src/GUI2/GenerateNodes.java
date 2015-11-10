@@ -31,6 +31,7 @@ public class GenerateNodes {
                 move -> {
                     Game childGame = new BasicGame();
                     childGame.loadState(treeItem.getValue());
+                    childGame.players.updateCurrent();
 
                     childGame.applyMove(move);
 

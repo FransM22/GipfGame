@@ -24,11 +24,15 @@
                                 <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="White Reserve" />
                                 <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="Black Reserve" />
                                 <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0" text="Current player" />
-                                <TreeTableColumn fx:id="columnBoardRepresentation" prefWidth="150.0" text="Board representation" />
                                 <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="Heuristic #0" />
                             </columns>
                         </TreeTableView>
-                  <Button mnemonicParsing="false" text="Button" />
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <SwingNode fx:id="smallGipfGameVisualisationNode" />
+                        <Label text="Label" />
+                     </children>
+                  </VBox>
                </items>
             </SplitPane>
             </content>
