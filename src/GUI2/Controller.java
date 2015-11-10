@@ -17,10 +17,18 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.ResourceBundle;
 
+import static GameLogic.PieceColor.BLACK;
+import static GameLogic.PieceColor.WHITE;
+import static java.util.stream.Collectors.toList;
+
 public class Controller implements Initializable{
     @FXML
     private SwingNode gipfGameNode;
     @FXML private TreeTableColumn<GipfBoardState, String> columnBoardName;
+    @FXML private TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
+    @FXML private TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
+    @FXML private TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
+    @FXML private TreeTableColumn<GipfBoardState, String> columnBoardRepresentation;
     @FXML private TreeTableColumn<GipfBoardState, Integer> columnHeuristic0;
     @FXML private TreeTableView<GipfBoardState> boardStateTreeTableView;
     private Game game;
@@ -36,10 +44,29 @@ public class Controller implements Initializable{
                 )
         );
 
-        columnHeuristic0.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().players.current().reserve).asObject());
+        columnWhiteReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().players.get(WHITE).reserve).asObject());
+        columnBlackReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().players.get(BLACK).reserve).asObject());
 
-        GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1));
+
+        columnCurrentPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
+                        p.getValue().getValue().players.current().pieceColor.toString()
+                )
+        );
+        columnBoardRepresentation.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
+                        p.getValue().getValue().getPieceMap().entrySet()
+                                .stream()
+                                .map(
+                                        entry -> {
+                                            return entry.getKey().getName() + ": " + entry.getValue();
+                                        }
+                                )
+                                .collect(toList()
+                ).toString()
+        ));
+
+        GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(2));
         boardStateTreeTableView.setRoot(generateNodes.root);
     }
 }

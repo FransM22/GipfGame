@@ -31,7 +31,9 @@ public class GenerateNodes {
                 move -> {
                     Game childGame = new BasicGame();
                     childGame.loadState(treeItem.getValue());
+
                     childGame.applyMove(move);
+
                     TreeItem<GipfBoardState> childItem = new TreeItem<GipfBoardState>(childGame.getGipfBoardState());
                     treeItem.getChildren().add(childItem);
 
