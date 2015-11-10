@@ -23,6 +23,8 @@
                                 <TreeTableColumn fx:id="columnBoardName" prefWidth="75.0" text="Board ID" />
                                 <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="White Reserve" />
                                 <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="Black Reserve" />
+                                <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG" />
+                                <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG" />
                                 <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0" text="Current player" />
                                 <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="Heuristic #0" />
                             </columns>
@@ -30,7 +32,7 @@
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <SwingNode fx:id="smallGipfGameVisualisationNode" />
-                        <Label text="Label" />
+                        <Label fx:id="boardDescriptionLabel" text="Label" />
                      </children>
                   </VBox>
                </items>

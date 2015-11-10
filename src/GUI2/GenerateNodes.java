@@ -3,6 +3,7 @@ package GUI2;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
+import GameLogic.PieceType;
 import javafx.scene.control.TreeItem;
 
 import java.util.Optional;
@@ -31,9 +32,14 @@ public class GenerateNodes {
                 move -> {
                     Game childGame = new BasicGame();
                     childGame.loadState(treeItem.getValue());
-                    childGame.players.updateCurrent();
+
+                    if (move.addedPiece.getPieceType() == PieceType.GIPF) {
+                        childGame.players.current().hasPlacedGipfPieces = true;
+                    }
 
                     childGame.applyMove(move);
+
+                    childGame.storeState(childGame.getGipfBoardState(), childGame.players.current().hasPlacedGipfPieces);
 
                     TreeItem<GipfBoardState> childItem = new TreeItem<GipfBoardState>(childGame.getGipfBoardState());
                     treeItem.getChildren().add(childItem);

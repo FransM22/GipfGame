@@ -4,13 +4,13 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -32,8 +32,11 @@ public class Controller implements Initializable{
     @FXML private TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
     @FXML private TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
     @FXML private TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
+    @FXML private TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
+    @FXML private TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
     @FXML private TreeTableColumn<GipfBoardState, Integer> columnHeuristic0;
     @FXML private TreeTableView<GipfBoardState> boardStateTreeTableView;
+    @FXML private Label boardDescriptionLabel;
     private Game game;
 
     @Override
@@ -61,15 +64,24 @@ public class Controller implements Initializable{
                 )
         );
 
+        columnWhiteGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
+                        p.getValue().getValue().players.get(WHITE).hasPlacedNormalPieces).asObject()
+        );
+
+        columnBlackGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
+                        p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject()
+        );
+
         GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(2));
         boardStateTreeTableView.setRoot(generateNodes.root);
-        boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<GipfBoardState>>() {
-            @Override
-            public void changed(ObservableValue<? extends TreeItem<GipfBoardState>> observable, TreeItem<GipfBoardState> oldValue, TreeItem<GipfBoardState> newValue) {
-                TreeItem<GipfBoardState> selectedItem = (TreeItem<GipfBoardState>) newValue;
-                smallVisualisationGame.loadState(selectedItem.getValue());
-                smallVisualisationComponent.repaint();
-            }
+
+        UpdateTreeTableViewSelection updateTreeTableViewSelection = new UpdateTreeTableViewSelection(boardDescriptionLabel, smallVisualisationComponent);
+
+        boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            TreeItem<GipfBoardState> selectedItem = (TreeItem<GipfBoardState>) newValue;
+            smallVisualisationGame.loadState(selectedItem.getValue());
+            updateTreeTableViewSelection.updateDescriptionLabel();
+            smallVisualisationComponent.repaint();
         });
     }
 }
