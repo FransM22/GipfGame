@@ -23,7 +23,7 @@ public class UpdateTreeTableViewSelection {
     }
 
     public void updateDescriptionLabel() {
-        PlayersInGame players = gipfBoardComponent.game.players;
+        PlayersInGame players = gipfBoardComponent.game.getGipfBoardState().players;
 
         String whiteLabelText =
                 "Placing GIPF pieces? " + players.get(WHITE).isPlacingGipfPieces + "\n" +

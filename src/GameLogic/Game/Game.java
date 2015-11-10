@@ -26,15 +26,14 @@ public abstract class Game implements Serializable{
     private GameLogger gameLogger;
     private final BoardHistory boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
-    public PlayersInGame players;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private Set<Position> currentRemoveSelection = new HashSet<>();
 
     Game(GameType gameType) {
         this.gameType = gameType;
 
-        initializePlayers();
         initializeBoard();
+        initializePlayers();
 
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
@@ -43,8 +42,8 @@ public abstract class Game implements Serializable{
     }
 
     void initializePlayers() {
-        players = new PlayersInGame();
-        players.setStartingPlayer(players.get(WHITE));
+        gipfBoardState.players = new PlayersInGame();
+        gipfBoardState.players.setStartingPlayer(gipfBoardState.players.get(WHITE));
     }
 
     void initializeBoard() {
@@ -140,20 +139,20 @@ public abstract class Game implements Serializable{
      * @param move the move that is applied
      */
     public void applyMove(Move move) {
-        if (players.winner() != null) return;
+        if (gipfBoardState.players.winner() != null) return;
 
-        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState, players);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
+        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
-        if (players.current().reserve >= move.addedPiece.getPieceValue()) {
+        if (gipfBoardState.players.current().reserve >= move.addedPiece.getPieceValue()) {
             setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
-                boolean hasPlacedGipfPieces = players.current().hasPlacedGipfPieces;
+                boolean hasPlacedGipfPieces = gipfBoardState.players.current().hasPlacedGipfPieces;
 
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
                 if (move.addedPiece.getPieceType() == PieceType.GIPF) {
-                    players.current().hasPlacedGipfPieces = true;
+                    gipfBoardState.players.current().hasPlacedGipfPieces = true;
                 }
 
                 storeState(gipfBoardState, hasPlacedGipfPieces);
@@ -170,10 +169,10 @@ public abstract class Game implements Serializable{
                 piecesBackTo.put(null, new HashSet<>());    // Hash maps can take null as a key, in this case used for pieces that are removed from the board
 
                 // Get the lines of the own color
-                removeLines(newGipfBoardState, players.current().pieceColor, linesTakenBy, piecesBackTo);
+                removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
 
                 // Get lines of the opponent
-                PieceColor opponentColor = players.current().pieceColor == WHITE ? BLACK : WHITE;
+                PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
                 removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
 
                 // Get the line segments that
@@ -184,26 +183,26 @@ public abstract class Game implements Serializable{
 
                 for (PieceColor pieceColor : PieceColor.values()) {
                     if (piecesBackTo.get(pieceColor).size() != 0) {
-                        players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
+                        gipfBoardState.players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
 
                         gameLogger.log(pieceColor + " retrieved " + piecesBackTo.get(pieceColor).size() + " pieces");
                     }
                 }
 
                 // Update for the last added piece
-                players.current().reserve -= move.addedPiece.getPieceValue();
+                gipfBoardState.players.current().reserve -= move.addedPiece.getPieceValue();
 
                 if (getGameOverState()) {
-                    players.updateCurrent();
-                    players.makeCurrentPlayerWinner();
+                    gipfBoardState.players.updateCurrent();
+                    gipfBoardState.players.makeCurrentPlayerWinner();
 
-                    gameLogger.log("Game over! " + players.winner().pieceColor + " won!");
+                    gameLogger.log("Game over! " + gipfBoardState.players.winner().pieceColor + " won!");
                 } else {
-                    players.updateCurrent();
+                    gipfBoardState.players.updateCurrent();
                 }
 
-                if (!players.current().isPlacingGipfPieces) {
-                    players.current().hasPlacedNormalPieces = true;
+                if (!gipfBoardState.players.current().isPlacingGipfPieces) {
+                    gipfBoardState.players.current().hasPlacedNormalPieces = true;
                 }
 
             } catch (InvalidMoveException e) {
@@ -227,14 +226,14 @@ public abstract class Game implements Serializable{
      * but it should be checked which ones are actually allowed.
      */
     public Set<Move> getAllowedMoves() {
-        if (players.winner() != null) {
+        if (gipfBoardState.players.winner() != null) {
             return new HashSet<>();
         }
 
         Set<Piece> allowedStartPieces = new HashSet<>();
         allowedStartPieces.add(getCurrentPiece());
         if (getCurrentPiece().getPieceType() == GIPF) {
-            allowedStartPieces.add(Piece.of(NORMAL, players.current().pieceColor));
+            allowedStartPieces.add(Piece.of(NORMAL, gipfBoardState.players.current().pieceColor));
         }
 
         Set<Move> potentialMoves = allowedStartPieces.stream().flatMap(
@@ -243,11 +242,11 @@ public abstract class Game implements Serializable{
 
         Set<Move> potentialMovesIncludingLineSegmentRemoval = new HashSet<>();
         for (Move potentialMove : potentialMoves) {
-            GipfBoardState temporaryBoardState = new GipfBoardState(getGipfBoardState(), players);
+            GipfBoardState temporaryBoardState = new GipfBoardState(getGipfBoardState());
             try {
                 movePiece(temporaryBoardState, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
 
-                Set<Line.Segment> removableLineSegments = getRemovableLineSegments(temporaryBoardState, (players.current().pieceColor == WHITE) ? BLACK : WHITE);
+                Set<Line.Segment> removableLineSegments = getRemovableLineSegments(temporaryBoardState, (temporaryBoardState.players.current().pieceColor == WHITE) ? BLACK : WHITE);
                 if (removableLineSegments.size() == 0) {
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
                 }
@@ -270,52 +269,6 @@ public abstract class Game implements Serializable{
         /* TODO
           * Determine the pieces which can be chosen to be removed
          */
-
-//        // Old stuff
-//        return new HashSet<>(Arrays.asList(
-//                new Move(getCurrentPiece(), new Position('a', 1), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 2), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 2), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 3), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 3), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 4), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 4), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('a', 5), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('b', 6), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('b', 6), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('c', 7), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('c', 7), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('d', 8), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('d', 8), SOUTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('e', 9), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('f', 8), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('f', 8), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('g', 7), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('g', 7), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('h', 6), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('h', 6), SOUTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 5), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 4), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 4), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 3), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 3), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 2), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 2), SOUTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('i', 1), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('h', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('h', 1), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('g', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('g', 1), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('f', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('f', 1), NORTH_WEST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('e', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('d', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('d', 1), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('c', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('c', 1), NORTH_EAST, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('b', 1), NORTH, Optional.empty(), Optional.empty()),
-//                new Move(getCurrentPiece(), new Position('b', 1), NORTH_EAST, Optional.empty(), Optional.empty())
-//        ));
     }
 
     /**
@@ -341,7 +294,7 @@ public abstract class Game implements Serializable{
     }
 
     public Piece getCurrentPiece() {
-        PlayersInGame.Player currentPlayer = players.current();
+        PlayersInGame.Player currentPlayer = gipfBoardState.players.current();
         if (currentPlayer.pieceColor == WHITE && currentPlayer.isPlacingGipfPieces)
             return WHITE_GIPF;
         else if (currentPlayer.pieceColor == WHITE)
@@ -429,12 +382,10 @@ public abstract class Game implements Serializable{
     }
 
     public void storeState(GipfBoardState gipfBoardState, boolean hasPlacedGipfPieces) {
-        gipfBoardState.players = new PlayersInGame(players);
         gipfBoardState.players.current().hasPlacedGipfPieces = hasPlacedGipfPieces;
     }
 
     public void loadState(GipfBoardState gipfBoardState) {
-        this.players = new PlayersInGame(gipfBoardState.players);
         this.gipfBoardState = gipfBoardState;
     }
 
@@ -496,7 +447,7 @@ public abstract class Game implements Serializable{
             if (intersectingSegments.size() > 0) {
                 Line.Segment segment = intersectingSegments.iterator().next();
                 currentRemoveSelection = segment.getOccupiedPositions(gipfBoardState);
-                int dialogResult = GipfBoardComponent.showConfirmDialog(players.current().pieceColor + ", do you want to remove " + segment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
+                int dialogResult = GipfBoardComponent.showConfirmDialog(gipfBoardState.players.current().pieceColor + ", do you want to remove " + segment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
                     linesTakenBy.get(pieceColor).add(segment);
@@ -512,7 +463,7 @@ public abstract class Game implements Serializable{
                 Predicate<Map.Entry<Position, Piece>> isCurrentPlayersColor = entry -> entry.getValue().getPieceColor() == pieceColor;
                 Predicate<Map.Entry<Position, Piece>> doesPlayerWantToRemoveGipf = entry -> {
                     currentRemoveSelection.add(entry.getKey());
-                    int dialogResult = GipfBoardComponent.showConfirmDialog(players.current().pieceColor + ", do you want to remove the Gipf at " + entry.getKey().getName() + "?", "Remove Gipf");
+                    int dialogResult = GipfBoardComponent.showConfirmDialog(gipfBoardState.players.current().pieceColor + ", do you want to remove the Gipf at " + entry.getKey().getName() + "?", "Remove Gipf");
                     currentRemoveSelection = new HashSet<>();
                     return dialogResult == JOptionPane.YES_OPTION;
                 };

@@ -16,7 +16,7 @@ public class StandardGame extends Game {
     void initializePlayers() {
         super.initializePlayers();
 
-        players.values().stream()
+        gipfBoardState.players.values().stream()
                 .forEach(player -> {
                     player.reserve = 12;
                     player.setHasPlacedGipfPieces(true);
@@ -44,12 +44,12 @@ public class StandardGame extends Game {
                 .values()
                 .stream()
                 .filter(piece ->
-                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == players.current().pieceColor)
+                        piece.getPieceType() == PieceType.GIPF && piece.getPieceColor() == gipfBoardState.players.current().pieceColor)
                 .count();
 
-        if (players.winner() == null) {
-            if (players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
-                players.makeCurrentPlayerWinner();
+        if (gipfBoardState.players.winner() == null) {
+            if (gipfBoardState.players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
+                gipfBoardState.players.makeCurrentPlayerWinner();
                 return true;
             }
             else {

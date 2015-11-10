@@ -32,8 +32,8 @@ class GameStateUpdater implements Runnable {
                     gipfWindow.gameLogTextArea.append(game.getGameLogger().logMessages.pop());
                 }
 
-                gipfWindow.setCurrentPlayerLabel("Current player: " + game.players.current().pieceColor);
-                gipfWindow.setPiecesLeftLabel("White reserve: " + game.players.get(WHITE).reserve + " | Black reserve: " + game.players.get(BLACK).reserve);
+                gipfWindow.setCurrentPlayerLabel("Current player: " + game.getGipfBoardState().players.current().pieceColor);
+                gipfWindow.setPiecesLeftLabel("White reserve: " + game.getGipfBoardState().players.get(WHITE).reserve + " | Black reserve: " + game.getGipfBoardState().players.get(BLACK).reserve);
                 gipfWindow.setGameTypeLabel("Game type: " + game.getGameType());
             } catch (InterruptedException e) {
                 break;  // Break out of the loop

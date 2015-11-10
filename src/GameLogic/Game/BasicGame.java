@@ -15,7 +15,7 @@ public class BasicGame extends Game {
     void initializePlayers() {
         super.initializePlayers();
 
-        players.values().stream()
+        gipfBoardState.players.values().stream()
                 .forEach(player -> {
                     player.reserve = 12;                  // Set the reserve of each player to 12
                     player.setIsPlacingGipfPieces(false);
@@ -38,6 +38,6 @@ public class BasicGame extends Game {
 
     @Override
     public boolean getGameOverState() {
-        return players.current().reserve == 0;
+        return getGipfBoardState().players.current().reserve == 0;
     }
 }

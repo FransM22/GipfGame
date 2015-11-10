@@ -41,7 +41,7 @@ class GipfBoardComponentMouseListener extends MouseAdapter implements Runnable {
         if (gipfBoardComponent.selectableStartPositions.contains(selectedPosition)) {
             if (selectedPosition.equals(gipfBoardComponent.selectedStartPosition)) {
                 // Toggle gipf pieces
-                this.gipfBoardComponent.game.players.current().toggleIsPlacingGipfPieces();
+                this.gipfBoardComponent.game.getGipfBoardState().players.current().toggleIsPlacingGipfPieces();
             }
             else {
                 gipfBoardComponent.selectedStartPosition = selectedPosition;

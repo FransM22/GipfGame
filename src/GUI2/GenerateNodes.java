@@ -35,10 +35,10 @@ public class GenerateNodes {
 
                     childGame.applyMove(move);
                     if (move.addedPiece.getPieceType() == PieceType.GIPF) {
-                        childGame.players.current().hasPlacedGipfPieces = true;
+                        childGame.getGipfBoardState().players.current().hasPlacedGipfPieces = true;
                     }
 
-                    childGame.storeState(childGame.getGipfBoardState(), childGame.players.current().hasPlacedGipfPieces);
+                    childGame.storeState(childGame.getGipfBoardState(), childGame.getGipfBoardState().players.current().hasPlacedGipfPieces);
 
                     TreeItem<GipfBoardState> childItem = new TreeItem<GipfBoardState>(childGame.getGipfBoardState());
                     treeItem.getChildren().add(childItem);
