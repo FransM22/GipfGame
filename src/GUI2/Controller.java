@@ -10,10 +10,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.Optional;
@@ -23,29 +20,44 @@ import java.util.ResourceBundle;
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
-public class Controller implements Initializable{
+public class Controller implements Initializable {
+    @FXML
+    private TabPane tabPane;
     @FXML
     private SwingNode gipfGameNode;
     @FXML
     private SwingNode smallGipfGameVisualisationNode;
-    @FXML private TreeTableColumn<GipfBoardState, String> columnBoardName;
-    @FXML private TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
-    @FXML private TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
-    @FXML private TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
-    @FXML private TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
-    @FXML private TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
-    @FXML private TreeTableColumn<GipfBoardState, Integer> columnHeuristic0;
-    @FXML private TreeTableView<GipfBoardState> boardStateTreeTableView;
-    @FXML private Label boardDescriptionLabel;
+    @FXML
+    private TreeTableColumn<GipfBoardState, String> columnBoardName;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
+    @FXML
+    private TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Integer> columnHeuristic0;
+    @FXML
+    private TreeTableView<GipfBoardState> boardStateTreeTableView;
+    @FXML
+    private Label whitePlayerDescriptionLabel;
+    @FXML
+    private Label blackPlayerDescriptionLabel;
     private Game game;
+    private GipfBoardComponent gipfBoardComponent;
+    private GipfBoardComponent smallVisualisationComponent;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         game = new BasicGame();
-        GipfBoardComponent gipfBoardComponent = new GipfBoardComponent(game);
+        gipfBoardComponent = new GipfBoardComponent(game, true);
         gipfGameNode.setContent(gipfBoardComponent);
         Game smallVisualisationGame = new BasicGame();
-        GipfBoardComponent smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame);
+        smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, false);
         smallGipfGameVisualisationNode.setContent(smallVisualisationComponent);
 
         columnBoardName.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
@@ -75,13 +87,22 @@ public class Controller implements Initializable{
         GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(2));
         boardStateTreeTableView.setRoot(generateNodes.root);
 
-        UpdateTreeTableViewSelection updateTreeTableViewSelection = new UpdateTreeTableViewSelection(boardDescriptionLabel, smallVisualisationComponent);
+        UpdateTreeTableViewSelection updateTreeTableViewSelection = new UpdateTreeTableViewSelection(whitePlayerDescriptionLabel, blackPlayerDescriptionLabel, smallVisualisationComponent);
 
         boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            TreeItem<GipfBoardState> selectedItem = (TreeItem<GipfBoardState>) newValue;
-            smallVisualisationGame.loadState(selectedItem.getValue());
-            updateTreeTableViewSelection.updateDescriptionLabel();
-            smallVisualisationComponent.repaint();
+            if (newValue != null) {
+                TreeItem<GipfBoardState> selectedItem = (TreeItem<GipfBoardState>) newValue;
+                smallVisualisationGame.loadState(selectedItem.getValue());
+                updateTreeTableViewSelection.updateDescriptionLabel();
+                smallVisualisationComponent.repaint();
+            }
         });
+
     }
+
+    public void repaintGipfBoards() {
+        gipfBoardComponent.repaint();
+        smallVisualisationComponent.repaint();
+    }
+
 }

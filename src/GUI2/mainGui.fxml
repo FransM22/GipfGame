@@ -2,41 +2,68 @@
 
 <?import javafx.embed.swing.SwingNode?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI2.Controller">
+<?import javafx.scene.text.Font?>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+         prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.40"
+         xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI2.Controller">
     <tabs>
         <Tab text="Game">
             <content>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
-                        <SwingNode fx:id="gipfGameNode" />
+                        <SwingNode fx:id="gipfGameNode"/>
                     </children>
                 </VBox>
             </content>
         </Tab>
         <Tab text="Analyze game">
             <content>
-            <SplitPane dividerPositions="0.5">
-               <items>
-                        <TreeTableView fx:id="boardStateTreeTableView" prefHeight="200.0" prefWidth="600.0">
+                <SplitPane dividerPositions="0.5">
+                    <items>
+                        <TreeTableView fx:id="boardStateTreeTableView" prefHeight="250.0" prefWidth="600.0">
                             <columns>
-                                <TreeTableColumn fx:id="columnBoardName" prefWidth="75.0" text="Board ID" />
-                                <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="White Reserve" />
-                                <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="Black Reserve" />
-                                <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG" />
-                                <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG" />
-                                <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0" text="Current player" />
-                                <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="Heuristic #0" />
+                                <TreeTableColumn fx:id="columnBoardName" prefWidth="150.0" text="Board ID"/>
+                                <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="White Reserve"/>
+                                <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="Black Reserve"/>
+                                <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"/>
+                                <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG"/>
+                                <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0" text="Current player"/>
+                                <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="Heuristic #0"/>
                             </columns>
                         </TreeTableView>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <SwingNode fx:id="smallGipfGameVisualisationNode" />
-                        <Label fx:id="boardDescriptionLabel" text="Label" />
-                     </children>
-                  </VBox>
-               </items>
-            </SplitPane>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <SwingNode fx:id="smallGipfGameVisualisationNode"/>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <TitledPane animated="false" collapsible="false" prefWidth="200.0"
+                                                    text="White player">
+                                            <content>
+                                                <Label fx:id="whitePlayerDescriptionLabel" text="Label">
+                                                    <font>
+                                                        <Font name="Monospaced Regular" size="12.0"/>
+                                                    </font>
+                                                </Label>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane animated="false" collapsible="false" prefWidth="200.0"
+                                                    text="Black player">
+                                            <content>
+                                                <Label fx:id="blackPlayerDescriptionLabel" text="Label">
+                                                    <font>
+                                                        <Font name="Monospaced Regular" size="12.0"/>
+                                                    </font>
+                                                </Label>
+                                            </content>
+                                        </TitledPane>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
             </content>
         </Tab>
     </tabs>

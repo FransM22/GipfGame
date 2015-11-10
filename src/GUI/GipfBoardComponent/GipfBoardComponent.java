@@ -31,11 +31,17 @@ public class GipfBoardComponent extends JComponent {
      *
      * @param game the game of which the state is shown in the GipfBoardComponent
      */
-    public GipfBoardComponent(Game game) {
+    public GipfBoardComponent(Game game, boolean addMouseListener) {
         this.game = game;
-        addMouseListener(new GipfBoardComponentMouseListener(this));
+
+        if (addMouseListener)
+            addMouseListener(new GipfBoardComponentMouseListener(this));
 
         setPreferredSize(new Dimension(600, 600));
+    }
+
+    public static int showConfirmDialog(String message, String title) {
+        return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     /**
@@ -108,10 +114,6 @@ public class GipfBoardComponent extends JComponent {
                 game = new TournamentGame();
         }
         clearSelectedPositions();
-    }
-
-    public static int showConfirmDialog(String message, String title) {
-        return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     public void setGame(Game game) {

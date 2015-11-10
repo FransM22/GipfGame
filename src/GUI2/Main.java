@@ -10,10 +10,25 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("mainGui.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainGui.fxml"));
+        Parent root = (Parent)loader.load();
+        Scene scene = new Scene(root, 800, 600);
+
         primaryStage.setTitle("GIPF Game");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(scene);
         primaryStage.show();
+
+        /*
+         * JavaFX doesn't go entirely well with Swing. Need to repaint the swing components after the scene has been drawn
+         */
+        new Thread(() -> {
+            try {
+                Thread.sleep(50);
+                ((Controller) loader.getController()).repaintGipfBoards();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 

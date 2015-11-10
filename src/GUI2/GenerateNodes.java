@@ -28,16 +28,15 @@ public class GenerateNodes {
         Game game = new BasicGame();
         game.loadState(treeItem.getValue());
 
-        game.getAllowedMoves().stream().forEach(
+        game.getAllowedMoves().stream().sorted().forEach(
                 move -> {
                     Game childGame = new BasicGame();
                     childGame.loadState(treeItem.getValue());
 
+                    childGame.applyMove(move);
                     if (move.addedPiece.getPieceType() == PieceType.GIPF) {
                         childGame.players.current().hasPlacedGipfPieces = true;
                     }
-
-                    childGame.applyMove(move);
 
                     childGame.storeState(childGame.getGipfBoardState(), childGame.players.current().hasPlacedGipfPieces);
 

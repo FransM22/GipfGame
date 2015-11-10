@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toSet;
  * <p/>
  * Created by frans on 9-9-2015.
  */
-public class Move {
+public class Move implements Comparable<Move>{
     public final Piece addedPiece;             // The piece that is added to the board
     public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     public final Direction direction;                    // The direction in which the piece moves
@@ -63,4 +63,9 @@ public class Move {
 
     public Position getStartingPosition() { return startPos; }
     public Direction getDirection() { return direction; }
+
+    @Override
+    public int compareTo(Move o) {
+        return this.startPos.getPosId() - o.startPos.getPosId();
+    }
 }
