@@ -15,8 +15,8 @@ import static java.util.stream.Collectors.toSet;
  */
 public class GipfPieces extends Circle {
 
-    public GipfPieces(Graphics2D g2, GipfBoardComponent gipfBoardComponent) {
-        super(g2, gipfBoardComponent, UIval.get().pieceSize, UIval.get().pieceStroke);
+    public GipfPieces(Graphics2D g2, int circleSize, Stroke pieceStroke, GipfBoardComponent gipfBoardComponent) {
+        super(g2, gipfBoardComponent, circleSize, pieceStroke);
         Map<Position, Piece> pieceMap = gipfBoardComponent.game.getGipfBoardState().getPieceMap();
 
         super.setDrawableCircles(

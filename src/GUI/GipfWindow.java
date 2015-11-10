@@ -80,7 +80,7 @@ public class GipfWindow extends JFrame {
         JButton previousStateButton = new JButton("Undo move");
         JLabel theGipfGameLabel = new JLabel("The GIPF game");
         Game game = new BasicGame();
-        gipfBoardComponent = new GipfBoardComponent(game, true);
+        gipfBoardComponent = new GipfBoardComponent(game, false);
         gameLogTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Piece.values());
         piecesLeftLabel = new JLabel(" ");

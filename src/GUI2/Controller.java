@@ -54,10 +54,10 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         game = new BasicGame();
-        gipfBoardComponent = new GipfBoardComponent(game, true);
+        gipfBoardComponent = new GipfBoardComponent(game, false);
         gipfGameNode.setContent(gipfBoardComponent);
         Game smallVisualisationGame = new BasicGame();
-        smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, false);
+        smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, true);
         smallGipfGameVisualisationNode.setContent(smallVisualisationComponent);
 
         columnBoardName.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(

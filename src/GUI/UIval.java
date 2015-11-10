@@ -17,15 +17,16 @@ public class UIval {
     private static UIval instance = null;    // Needed for singleton behaviour
 
     // Constants which can be changed to change the look
-    public final Stroke pieceStroke = new BasicStroke(4.0f);
-    public final int pieceSize = 50;                               // The size in pixels in which the pieces are displayed
+    public final int pieceSizeNormalView = 50;                               // The size in pixels in which the pieces are displayed
+    public final int pieceSizeSmallView = 15;
     public final int hoverCircleSize = 15;
     public final Stroke hoverPositionStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);     // A dashed stroke style. Don't really know how this works.
     public final int nrOfColumnsOnGipfBoard = 9;                      // The number of columns on a gipf board. Only edit if the GipfBoardState class can handle it
     public final int nrOfRowsOnGipfBoard = 9;                         // The number of rows on a gipf board. Only edit if the GipfBoardState class can handle it
     public final int marginSize = 25;                                 // The margin on the sides of the board
     public final boolean antiAliasingEnabled = true;                  // Enable anti aliasing. If disabled, the drawing will be much faster. Can be disabled for performance
-    public final int filledCircleSize = 15;                           // The size of the filled circles
+    public final int filledCircleSizeNormalView = 15;                           // The size of the filled circles
+    public final int filledCircleSizeSmallView = 7;
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
     public final Font gameOverFont = new Font("default", Font.BOLD, 40);
@@ -89,13 +90,18 @@ public class UIval {
             new Position('i', 4)
     };
     // These positions are named on the board
-    public final Position[] namedPositionsOnBoard = topAndBottomPositions;
+    public final Position[] namedPositionsOnBoardNormalView = topAndBottomPositions;
+    public final Position[] namedPositionsOnBoardSmallView = {};
+
     // These positions have a circle on their position
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
     public final Color gameOverTextColor = new Color(0xFF0000);
     public final Color removedPieceSelectionColor = new Color(0xFF0000);
-    public final Stroke removedPieceSelectionStroke = new BasicStroke(5);
+    public final Stroke pieceStrokeNormalView = new BasicStroke(4.0f);
+    public final Stroke pieceStrokeSmallView = new BasicStroke(2f);
+    public final Stroke removedPieceSelectionStroke = new BasicStroke(5.0f);
+
 
     private UIval() {
         // Exists only to prohibit instantiation

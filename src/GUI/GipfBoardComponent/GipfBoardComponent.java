@@ -25,19 +25,35 @@ public class GipfBoardComponent extends JComponent {
     public Position selectedStartPosition;                                                                              // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
+    private int pieceSize;
+    private int filledCircleSize;
+    private Stroke pieceStroke;
+    private Position[] namedPositions;
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
      *
      * @param game the game of which the state is shown in the GipfBoardComponent
      */
-    public GipfBoardComponent(Game game, boolean addMouseListener) {
+    public GipfBoardComponent(Game game, boolean isPreviewComponent) {
         this.game = game;
 
-        if (addMouseListener)
+        if (isPreviewComponent) {
+            setPreferredSize(new Dimension(200, 200));
+            pieceSize = UIval.get().pieceSizeSmallView;
+            filledCircleSize = UIval.get().filledCircleSizeSmallView;
+            pieceStroke = UIval.get().pieceStrokeSmallView;
+            namedPositions = UIval.get().namedPositionsOnBoardSmallView;
+        }
+        else {
             addMouseListener(new GipfBoardComponentMouseListener(this));
+            setPreferredSize(new Dimension(600, 600));
+            pieceSize = UIval.get().pieceSizeNormalView;
+            filledCircleSize = UIval.get().filledCircleSizeNormalView;
+            pieceStroke = UIval.get().pieceStrokeNormalView;
+            namedPositions = UIval.get().namedPositionsOnBoardNormalView;
+        }
 
-        setPreferredSize(new Dimension(600, 600));
     }
 
     public static int showConfirmDialog(String message, String title) {
@@ -59,13 +75,13 @@ public class GipfBoardComponent extends JComponent {
         // The object (sets) that are drawn on the component. The order *does* matter.
         List<DrawableObject> drawableObjects = Arrays.asList(
                 new DrawableGipfBoard(g2, this),
-                new FilledCircles(g2, this, new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions))),
-                new GipfPieces(g2, this),
+                new FilledCircles(g2, filledCircleSize, this, new HashSet<>(Arrays.asList(UIval.get().filledCirclePositions))),
+                new GipfPieces(g2, pieceSize, pieceStroke, this),
                 new SelectedMoveToArrow(g2, this),
                 new HoverCircle(g2, this, Collections.singleton(currentHoverPosition)),
-                new SelectedStartPosition(g2, this, Collections.singleton(selectedStartPosition)),
+                new SelectedStartPosition(g2, pieceSize, this, Collections.singleton(selectedStartPosition)),
                 new SelectedRemovePositions(g2, this),
-                new PositionNames(g2, this),
+                new PositionNames(g2, namedPositions, this),
                 new GameOverMessage(g2, this)
         );
 

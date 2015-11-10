@@ -11,11 +11,11 @@ import java.util.Set;
  * Created by frans on 22-9-2015.
  */
 public class SelectedStartPosition extends Circle {
-    public SelectedStartPosition(Graphics2D g2, GipfBoardComponent gipfBoardComponent, Set<Position> selectedPositions) {
+    public SelectedStartPosition(Graphics2D g2, int circleSize, GipfBoardComponent gipfBoardComponent, Set<Position> selectedPositions) {
         super(g2,
                 gipfBoardComponent,
                 selectedPositions,
-                UIval.get().pieceSize,
+                circleSize,
                 gipfBoardComponent.getColorOfPlayer(gipfBoardComponent.game.players.current()),
                 gipfBoardComponent.getBorderColorOfPlayer(gipfBoardComponent.game.players.current()),
                 UIval.get().hoverPositionStroke);

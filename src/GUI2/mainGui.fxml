@@ -2,7 +2,6 @@
 
 <?import javafx.embed.swing.SwingNode?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
@@ -11,7 +10,7 @@
     <tabs>
         <Tab text="Game">
             <content>
-                <VBox prefHeight="200.0" prefWidth="100.0">
+                <VBox>
                     <children>
                         <SwingNode fx:id="gipfGameNode"/>
                     </children>
@@ -20,9 +19,9 @@
         </Tab>
         <Tab text="Analyze game">
             <content>
-                <SplitPane dividerPositions="0.5">
+                <SplitPane dividerPositions="0.75">
                     <items>
-                        <TreeTableView fx:id="boardStateTreeTableView" prefHeight="250.0" prefWidth="600.0">
+                        <TreeTableView fx:id="boardStateTreeTableView">
                             <columns>
                                 <TreeTableColumn fx:id="columnBoardName" prefWidth="150.0" text="Board ID"/>
                                 <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="White Reserve"/>
@@ -33,33 +32,27 @@
                                 <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="Heuristic #0"/>
                             </columns>
                         </TreeTableView>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        <VBox>
                             <children>
                                 <SwingNode fx:id="smallGipfGameVisualisationNode"/>
-                                <HBox prefHeight="100.0" prefWidth="200.0">
-                                    <children>
-                                        <TitledPane animated="false" collapsible="false" prefWidth="200.0"
-                                                    text="White player">
-                                            <content>
-                                                <Label fx:id="whitePlayerDescriptionLabel" text="Label">
-                                                    <font>
-                                                        <Font name="Monospaced Regular" size="12.0"/>
-                                                    </font>
-                                                </Label>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane animated="false" collapsible="false" prefWidth="200.0"
-                                                    text="Black player">
-                                            <content>
-                                                <Label fx:id="blackPlayerDescriptionLabel" text="Label">
-                                                    <font>
-                                                        <Font name="Monospaced Regular" size="12.0"/>
-                                                    </font>
-                                                </Label>
-                                            </content>
-                                        </TitledPane>
-                                    </children>
-                                </HBox>
+                                <TitledPane animated="false" collapsible="false" text="White player">
+                                    <content>
+                                        <Label fx:id="whitePlayerDescriptionLabel" text="">
+                                            <font>
+                                                <Font name="Monospaced Regular" size="11.0"/>
+                                            </font>
+                                        </Label>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane animated="false" collapsible="false" text="Black player">
+                                    <content>
+                                        <Label fx:id="blackPlayerDescriptionLabel" text="">
+                                            <font>
+                                                <Font name="Monospaced Regular" size="11.0"/>
+                                            </font>
+                                        </Label>
+                                    </content>
+                                </TitledPane>
                             </children>
                         </VBox>
                     </items>
