@@ -11,8 +11,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainGui.fxml"));
+        String css = this.getClass().getResource("treeTableView.css").toExternalForm();
+
         Parent root = (Parent)loader.load();
         Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(css);
 
         primaryStage.setTitle("GIPF Game");
         primaryStage.setScene(scene);

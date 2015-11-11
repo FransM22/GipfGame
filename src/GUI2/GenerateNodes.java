@@ -3,8 +3,8 @@ package GUI2;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
-import GameLogic.PieceType;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
 
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -14,8 +14,11 @@ import java.util.OptionalInt;
  */
 public class GenerateNodes {
     public TreeItem<GipfBoardState> root = new TreeItem<>();
+    public TreeTableView<GipfBoardState> treeTableView;
 
-    public GenerateNodes(Optional<GipfBoardState> start, OptionalInt depth) {
+    public GenerateNodes(Optional<GipfBoardState> start, OptionalInt depth, TreeTableView<GipfBoardState> boardStateTreeTableView) {
+        this.treeTableView = boardStateTreeTableView;
+
         if (start.isPresent()) root.setValue(start.get());
         else root.setValue(new GipfBoardState());
 
@@ -23,7 +26,7 @@ public class GenerateNodes {
     }
 
     private void setChildNodes(TreeItem<GipfBoardState> treeItem, OptionalInt depth) {
-        if (depth.isPresent() && depth.getAsInt() < 1 ) return;
+        if (depth.isPresent() && depth.getAsInt() < 1) return;
 
         Game game = new BasicGame();
         game.loadState(treeItem.getValue());
@@ -34,16 +37,22 @@ public class GenerateNodes {
                     childGame.loadState(treeItem.getValue());
 
                     childGame.applyMove(move);
-                    if (move.addedPiece.getPieceType() == PieceType.GIPF) {
-                        childGame.getGipfBoardState().players.current().hasPlacedGipfPieces = true;
-                    }
-
-                    childGame.storeState(childGame.getGipfBoardState(), childGame.getGipfBoardState().players.current().hasPlacedGipfPieces);
 
                     TreeItem<GipfBoardState> childItem = new TreeItem<GipfBoardState>(childGame.getGipfBoardState());
-                    treeItem.getChildren().add(childItem);
 
-                    this.setChildNodes(childItem, OptionalInt.of(depth.getAsInt() - 1));
+
+                    treeItem.getChildren().add(childItem);
+                    treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                        this.setChildNodes(childItem, OptionalInt.of(1));
+                    });
+
+//                    treeTableView.sort();
+                    // Don't include double boards
+                    // - doesn't work (because of map implementation?)
+//                    if (!treeItem.getChildren().contains(childItem)) {
+//                          ...
+//                        });
+//                    }
                 }
         );
     }

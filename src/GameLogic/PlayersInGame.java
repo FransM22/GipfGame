@@ -106,4 +106,26 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
             this.isPlacingGipfPieces = isPlacingGipfPieces;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PlayersInGame)) return false;
+        if (!super.equals(o)) return false;
+
+        PlayersInGame that = (PlayersInGame) o;
+
+        if (winningPlayer != null ? !winningPlayer.equals(that.winningPlayer) : that.winningPlayer != null)
+            return false;
+        return !(currentPlayer != null ? !currentPlayer.equals(that.currentPlayer) : that.currentPlayer != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (winningPlayer != null ? winningPlayer.hashCode() : 0);
+        result = 31 * result + (currentPlayer != null ? currentPlayer.hashCode() : 0);
+        return result;
+    }
 }

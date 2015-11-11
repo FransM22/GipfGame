@@ -40,6 +40,7 @@ public class GipfBoardComponent extends JComponent {
 
         if (isPreviewComponent) {
             setPreferredSize(new Dimension(200, 200));
+            setMinimumSize(new Dimension(200, 200));
             pieceSize = UIval.get().pieceSizeSmallView;
             filledCircleSize = UIval.get().filledCircleSizeSmallView;
             pieceStroke = UIval.get().pieceStrokeSmallView;

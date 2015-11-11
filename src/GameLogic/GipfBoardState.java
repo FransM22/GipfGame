@@ -37,4 +37,22 @@ public class GipfBoardState implements Serializable {
         return pieceMap;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GipfBoardState)) return false;
+
+        GipfBoardState that = (GipfBoardState) o;
+
+        if (!pieceMap.equals(that.pieceMap)) return false;
+        return players.equals(that.players);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pieceMap.hashCode();
+        result = 31 * result + players.hashCode();
+        return result;
+    }
 }
