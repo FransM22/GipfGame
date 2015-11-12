@@ -7,8 +7,8 @@ import GameLogic.PieceType;
  * Created by frans on 5-10-2015.
  */
 public class TournamentGame extends Game {
-    public TournamentGame() {
-        super(GameType.tournament);
+    public TournamentGame(boolean isRanInteractively) {
+        super(GameType.tournament, isRanInteractively);
     }
 
     @Override

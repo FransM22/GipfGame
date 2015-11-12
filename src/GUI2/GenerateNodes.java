@@ -28,12 +28,12 @@ public class GenerateNodes {
     private void setChildNodes(TreeItem<GipfBoardState> treeItem, OptionalInt depth) {
         if (depth.isPresent() && depth.getAsInt() < 1) return;
 
-        Game game = new BasicGame();
+        Game game = new BasicGame(false);
         game.loadState(treeItem.getValue());
 
-        game.getAllowedMoves().stream().sorted().forEach(
+        game.getAllowedMoves().stream().forEach(
                 move -> {
-                    Game childGame = new BasicGame();
+                    Game childGame = new BasicGame(false);
                     childGame.loadState(treeItem.getValue());
 
                     childGame.applyMove(move);
@@ -45,15 +45,11 @@ public class GenerateNodes {
                     treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
                         this.setChildNodes(childItem, OptionalInt.of(1));
                     });
-
-//                    treeTableView.sort();
-                    // Don't include double boards
-                    // - doesn't work (because of map implementation?)
-//                    if (!treeItem.getChildren().contains(childItem)) {
-//                          ...
-//                        });
-//                    }
                 }
         );
+
+        if (treeTableView.getComparator() != null) {
+            treeItem.getChildren().sort(treeTableView.getComparator());
+        }
     }
 }

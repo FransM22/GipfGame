@@ -1,5 +1,7 @@
 package GameLogic;
 
+import AI.BoardStateProperties;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Map;
  */
 public class GipfBoardState implements Serializable {
     private HashMap<Position, Piece> pieceMap;
+    public BoardStateProperties boardStateProperties;
 
     public PlayersInGame players;
 
@@ -19,8 +22,9 @@ public class GipfBoardState implements Serializable {
      */
     public GipfBoardState() {
         // Initialize the lists
-        pieceMap = new HashMap<>();
+        this.pieceMap = new HashMap<>();
         this.players = new PlayersInGame();
+        this.boardStateProperties = new BoardStateProperties(this);
     }
 
     /**
@@ -31,6 +35,7 @@ public class GipfBoardState implements Serializable {
     public GipfBoardState(GipfBoardState old) {
         this.pieceMap = new HashMap<>(old.pieceMap);
         this.players = new PlayersInGame(old.players);
+        this.boardStateProperties = new BoardStateProperties(this);
     }
 
     public Map<Position, Piece> getPieceMap() {
@@ -44,7 +49,7 @@ public class GipfBoardState implements Serializable {
 
         GipfBoardState that = (GipfBoardState) o;
 
-        if (!pieceMap.equals(that.pieceMap)) return false;
+        if (!(pieceMap.keySet().size() == that.pieceMap.keySet().size() && pieceMap.values().containsAll(that.pieceMap.values()))) return false;
         return players.equals(that.players);
 
     }

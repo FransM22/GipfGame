@@ -41,15 +41,15 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
     @FXML
+    private TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
+    @FXML
     private TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
     @FXML
-    private TreeTableView<GipfBoardState> boardStateTreeTableView;
-    @FXML
-    private Label whitePlayerDescriptionLabel;
-    @FXML
-    private Label blackPlayerDescriptionLabel;
+    private TreeTableColumn<GipfBoardState, Integer> columnHeuristic1;
     @FXML
     private Label boardDescriptionLabel;
+    @FXML
+    private TreeTableView<GipfBoardState> boardStateTreeTableView;
     @FXML
     private Tab analyzeGameTab;
 
@@ -59,40 +59,16 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        game = new BasicGame();
+        game = new BasicGame(false);
         gipfBoardComponent = new GipfBoardComponent(game, false);
         gipfGameNode.setContent(gipfBoardComponent);
-        Game smallVisualisationGame = new BasicGame();
+        Game smallVisualisationGame = new BasicGame(false);
         smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, true);
         smallGipfGameVisualisationNode.setContent(smallVisualisationComponent);
 
-        columnBoardName.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
-                        Integer.toHexString(p.getValue().getValue().hashCode())
-                )
-        );
+        initializeColumns();
 
-        columnWhiteReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().players.get(WHITE).reserve).asObject());
-        columnBlackReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().players.get(BLACK).reserve).asObject());
-
-
-        columnCurrentPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
-                        p.getValue().getValue().players.current().pieceColor.toString()
-                )
-        );
-
-        columnWhiteGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
-                        p.getValue().getValue().players.get(WHITE).hasPlacedNormalPieces).asObject()
-        );
-
-        columnBlackGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
-                        p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject()
-        );
-
-        columnHeuristic0.setCellValueFactory((p) -> new ReadOnlyDoubleWrapper(Math.random()).asObject());
-
-        UpdateTreeTableViewSelection updateTreeTableViewSelection = new UpdateTreeTableViewSelection(whitePlayerDescriptionLabel, blackPlayerDescriptionLabel, boardDescriptionLabel, boardStateTreeTableView);
+        UpdateTreeTableViewSelection updateTreeTableViewSelection = new UpdateTreeTableViewSelection(boardDescriptionLabel, boardStateTreeTableView);
 
         boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -114,4 +90,30 @@ public class Controller implements Initializable {
         smallVisualisationComponent.repaint();
     }
 
+    private void initializeColumns() {
+        columnBoardName.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
+                        Integer.toHexString(p.getValue().getValue().hashCode())));
+
+        columnWhiteReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().players.get(WHITE).reserve).asObject());
+        columnBlackReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().players.get(BLACK).reserve).asObject());
+
+        columnCurrentPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
+                        p.getValue().getValue().players.current().pieceColor.toString()));
+
+        columnWhiteGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
+                        p.getValue().getValue().players.get(WHITE).hasPlacedNormalPieces).asObject());
+
+        columnBlackGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
+                        p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject());
+
+        columnIsPruned.setCellValueFactory((p) -> new ReadOnlyBooleanWrapper(false).asObject());
+
+        columnHeuristic0.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
+                p.getValue().getValue().boardStateProperties.heuristicRandomValue).asObject());
+
+        columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().boardStateProperties.heuristicBlackMinusWhitePieces).asObject());
+    }
 }

@@ -2,6 +2,10 @@
     -fx-background-color: whitesmoke;
 }
 
+#boardDescriptionLabel {
+    -fx-padding: 15px;
+}
+
 /* Code below is copied from the default Modena theme - https://code.google.com/p/javafx-demos/source/browse/trunk/javafx-demos/src/main/resources/modena/Modena.css?r=73 */
 .table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:focused:selected,
 .tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:focused:selected {

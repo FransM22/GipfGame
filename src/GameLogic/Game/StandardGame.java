@@ -8,8 +8,8 @@ import GameLogic.Position;
  * Created by frans on 5-10-2015.
  */
 public class StandardGame extends Game {
-    public StandardGame() {
-        super(GameType.standard);
+    public StandardGame(boolean isRanInteractively) {
+        super(GameType.standard, isRanInteractively);
     }
 
     @Override

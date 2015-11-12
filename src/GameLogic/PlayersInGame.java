@@ -111,7 +111,7 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PlayersInGame)) return false;
-        if (!super.equals(o)) return false;
+        if (!(this.keySet().size() == ((PlayersInGame) o).keySet().size() && this.values().containsAll(((PlayersInGame) o).values()))) return false;
 
         PlayersInGame that = (PlayersInGame) o;
 

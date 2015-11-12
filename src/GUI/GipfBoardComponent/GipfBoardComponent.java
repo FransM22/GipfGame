@@ -48,7 +48,7 @@ public class GipfBoardComponent extends JComponent {
         }
         else {
             addMouseListener(new GipfBoardComponentMouseListener(this));
-            setPreferredSize(new Dimension(600, 600));
+            setPreferredSize(new Dimension(1000, 1000));
             pieceSize = UIval.get().pieceSizeNormalView;
             filledCircleSize = UIval.get().filledCircleSizeNormalView;
             pieceStroke = UIval.get().pieceStrokeNormalView;
@@ -122,13 +122,13 @@ public class GipfBoardComponent extends JComponent {
     public void newGame(GameType gameType) {
         switch (gameType) {
             case basic:
-                game = new BasicGame();
+                game = new BasicGame(true);
                 break;
             case standard:
-                game = new StandardGame();
+                game = new StandardGame(true);
                 break;
             case tournament:
-                game = new TournamentGame();
+                game = new TournamentGame(true);
         }
         clearSelectedPositions();
     }

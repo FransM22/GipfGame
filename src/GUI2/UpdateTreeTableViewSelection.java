@@ -14,16 +14,12 @@ import static GameLogic.PieceColor.WHITE;
  */
 public class UpdateTreeTableViewSelection {
     private final TreeTableView<GipfBoardState> gipfBoardStateTreeTableView;
-    private Label whiteLabel;
-    private Label blackLabel;
     private Label boardDescriptionLabel;
 
 
-    public UpdateTreeTableViewSelection(Label whiteLabel, Label blackLabel, Label boardDescriptionLabel, TreeTableView<GipfBoardState> gipfBoardStateTreeTableView) {
-        this.whiteLabel = whiteLabel;
-        this.blackLabel = blackLabel;
-        this.gipfBoardStateTreeTableView = gipfBoardStateTreeTableView;
+    public UpdateTreeTableViewSelection(Label boardDescriptionLabel, TreeTableView<GipfBoardState> gipfBoardStateTreeTableView) {
         this.boardDescriptionLabel = boardDescriptionLabel;
+        this.gipfBoardStateTreeTableView = gipfBoardStateTreeTableView;
     }
 
     public void updateDescriptionLabel() {
@@ -31,22 +27,23 @@ public class UpdateTreeTableViewSelection {
         PlayersInGame players = gipfBoardStateTreeItem.getValue().players;
 
         String whiteLabelText =
-                "Placing GIPF pieces? " + players.get(WHITE).isPlacingGipfPieces + "\n" +
-                "Pieces left:         " + players.get(WHITE).reserve + "\n" +
-                "On turn:             " + (players.current() == players.get(WHITE));
+                "WHITE player:\n" +
+                "Placing GIPF pieces?\t" + players.get(WHITE).isPlacingGipfPieces + "\n" +
+                "Pieces left:\t\t\t" + players.get(WHITE).reserve + "\n" +
+                "On turn:\t\t\t\t" + (players.current() == players.get(WHITE)) + "\n\n";
 
         String blackLabelText =
-                "Placing GIPF pieces? " + players.get(BLACK).isPlacingGipfPieces + "\n" +
-                "Pieces left:         " + players.get(BLACK).reserve + "\n" +
-                "On turn:             " + (players.current() == players.get(BLACK));
+                "BLACK player:\n" +
+                "Placing GIPF pieces?\t" + players.get(BLACK).isPlacingGipfPieces + "\n" +
+                "Pieces left:\t\t\t" + players.get(BLACK).reserve + "\n" +
+                "On turn:\t\t\t\t" + (players.current() == players.get(BLACK)) + "\n\n";
 
         String boardLabelText =
-                "Depth:               " + gipfBoardStateTreeTableView.getTreeItemLevel(gipfBoardStateTreeItem) + "\n" +
-                "Direct children:     " + gipfBoardStateTreeItem.getChildren().size() + "\n" +
-                "Expanded nodes:      " + gipfBoardStateTreeTableView.getExpandedItemCount();
+                "BOARD:\n" +
+                "Depth:\t\t\t\t" + gipfBoardStateTreeTableView.getTreeItemLevel(gipfBoardStateTreeItem) + "\n" +
+                "Direct children:\t\t" + gipfBoardStateTreeItem.getChildren().size() + "\n" +
+                "Expanded nodes:\t\t" + gipfBoardStateTreeTableView.getExpandedItemCount();
 
-        whiteLabel.setText(whiteLabelText);
-        blackLabel.setText(blackLabelText);
-        boardDescriptionLabel.setText(boardLabelText);
+        boardDescriptionLabel.setText(whiteLabelText + blackLabelText + boardLabelText);
     }
 }

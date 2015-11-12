@@ -79,7 +79,7 @@ public class GipfWindow extends JFrame {
         JButton newPieceCoordinateEnterButton = new JButton("Enter");
         JButton previousStateButton = new JButton("Undo move");
         JLabel theGipfGameLabel = new JLabel("The GIPF game");
-        Game game = new BasicGame();
+        Game game = new BasicGame(true);
         gipfBoardComponent = new GipfBoardComponent(game, false);
         gameLogTextArea = new DebugTextArea();
         pieceTypeComboBox = new JComboBox<>(Piece.values());

@@ -22,15 +22,17 @@ import static java.util.stream.Collectors.*;
  * <p/>
  * Created by frans on 21-9-2015.
  */
-public abstract class Game implements Serializable{
-    private GameLogger gameLogger;
+public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     private final GameType gameType;                            // The game type (basic, standard, tournament)
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
+    private GameLogger gameLogger;
     private Set<Position> currentRemoveSelection = new HashSet<>();
+    private boolean isRanInteractively; // Can the game ask which line to remove or not?
 
-    Game(GameType gameType) {
+    Game(GameType gameType, boolean isRanInteractively) {
         this.gameType = gameType;
+        this.isRanInteractively = isRanInteractively;
 
         initializeBoard();
         initializePlayers();
@@ -168,13 +170,18 @@ public abstract class Game implements Serializable{
                 piecesBackTo.put(BLACK, new HashSet<>());
                 piecesBackTo.put(null, new HashSet<>());    // Hash maps can take null as a key, in this case used for pieces that are removed from the board
 
-                // Get the lines of the own color
-                removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
+                if (isRanInteractively) {
+                    // Get the lines of the own color
+                    removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
 
-                // Get lines of the opponent
-                PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
-                removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
-
+                    // Get lines of the opponent
+                    PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
+                    removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
+                } else {
+                    if (move.removedSegments != null) {
+                        move.removedSegments.stream().forEach(s -> removePiecesFromBoard(newGipfBoardState, s.getOccupiedPositions(newGipfBoardState)));
+                    }
+                }
                 // Get the line segments that
                 // Get the lines of the color of the other player
 
@@ -249,8 +256,7 @@ public abstract class Game implements Serializable{
                 Set<Line.Segment> removableLineSegments = getRemovableLineSegments(temporaryBoardState, (temporaryBoardState.players.current().pieceColor == WHITE) ? BLACK : WHITE);
                 if (removableLineSegments.size() == 0) {
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
-                }
-                else {
+                } else {
                     for (Line.Segment removedSegment : removableLineSegments) {
                         Set<Line.Segment> removedSegments = new HashSet<>();
                         removedSegments.add(removedSegment);    // Only remove one segment if possible for now. TODO
@@ -447,6 +453,7 @@ public abstract class Game implements Serializable{
             if (intersectingSegments.size() > 0) {
                 Line.Segment segment = intersectingSegments.iterator().next();
                 currentRemoveSelection = segment.getOccupiedPositions(gipfBoardState);
+
                 int dialogResult = GipfBoardComponent.showConfirmDialog(gipfBoardState.players.current().pieceColor + ", do you want to remove " + segment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
@@ -485,6 +492,8 @@ public abstract class Game implements Serializable{
                     .forEach(positionSet -> removePiecesFromBoard(gipfBoardState, positionSet));
         }
         while (intersectingSegments.size() > 0);
+
+
     }
 
     public Set<Position> getCurrentRemoveSelection() {
