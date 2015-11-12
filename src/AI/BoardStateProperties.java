@@ -13,7 +13,7 @@ public class BoardStateProperties {
     public int heuristicBlackMinusWhitePieces;
 
     public BoardStateProperties(GipfBoardState gipfBoardState) {
-        this.heuristicRandomValue = Math.random();
+        this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicBlackMinusWhitePieces = gipfBoardState.players.get(BLACK).reserve - gipfBoardState.players.get(WHITE).reserve;
     }
 }
