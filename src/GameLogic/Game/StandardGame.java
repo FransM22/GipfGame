@@ -2,6 +2,7 @@ package GameLogic.Game;
 
 import GameLogic.Piece;
 import GameLogic.PieceType;
+import GameLogic.PlayersInGame;
 import GameLogic.Position;
 
 /**
@@ -16,13 +17,12 @@ public class StandardGame extends Game {
     void initializePlayers() {
         super.initializePlayers();
 
-        gipfBoardState.players.values().stream()
-                .forEach(player -> {
-                    player.reserve = 12;
-                    player.setHasPlacedGipfPieces(true);
-                    player.setIsPlacingGipfPieces(false);
-                    player.setHasPlacedNormalPieces(true);
-                });
+        for (PlayersInGame.Player player : gipfBoardState.players) {
+            player.reserve = 12;
+            player.setHasPlacedGipfPieces(true);
+            player.setIsPlacingGipfPieces(false);
+            player.setHasPlacedNormalPieces(true);
+        }
     }
 
     @Override
@@ -51,8 +51,7 @@ public class StandardGame extends Game {
             if (gipfBoardState.players.current().reserve == 0 || currentPlayersGipfPiecesOnBoard == 0) {
                 gipfBoardState.players.makeCurrentPlayerWinner();
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }

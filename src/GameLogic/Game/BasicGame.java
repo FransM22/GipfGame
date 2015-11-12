@@ -1,6 +1,7 @@
 package GameLogic.Game;
 
 import GameLogic.Piece;
+import GameLogic.PlayersInGame;
 import GameLogic.Position;
 
 /**
@@ -15,12 +16,11 @@ public class BasicGame extends Game {
     void initializePlayers() {
         super.initializePlayers();
 
-        gipfBoardState.players.values().stream()
-                .forEach(player -> {
-                    player.reserve = 12;                  // Set the reserve of each player to 12
-                    player.setIsPlacingGipfPieces(false);
-                    player.setHasPlacedNormalPieces(true);
-                });
+        for (PlayersInGame.Player player : gipfBoardState.players) {
+            player.reserve = 12;                  // Set the reserve of each player to 12
+            player.setIsPlacingGipfPieces(false);
+            player.setHasPlacedNormalPieces(true);
+        }
     }
 
     @Override

@@ -45,7 +45,7 @@ public abstract class Game implements Serializable {
 
     void initializePlayers() {
         gipfBoardState.players = new PlayersInGame();
-        gipfBoardState.players.setStartingPlayer(gipfBoardState.players.get(WHITE));
+        gipfBoardState.players.setStartingPlayer(gipfBoardState.players.white);
     }
 
     void initializeBoard() {

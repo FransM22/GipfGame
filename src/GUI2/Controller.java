@@ -72,7 +72,7 @@ public class Controller implements Initializable {
 
         boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                TreeItem<GipfBoardState> selectedItem = (TreeItem<GipfBoardState>) newValue;
+                TreeItem<GipfBoardState> selectedItem = newValue;
                 smallVisualisationGame.loadState(selectedItem.getValue());
                 updateTreeTableViewSelection.updateDescriptionLabel();
                 smallVisualisationComponent.repaint();

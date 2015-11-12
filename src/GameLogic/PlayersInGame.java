@@ -1,33 +1,34 @@
 package GameLogic;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 11-10-2015.
  */
-public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> implements Serializable {
+public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Player> {
     // These two Players are pointers to the winning player and the current player
     private Player winningPlayer = null;
     private Player currentPlayer = null;
+    public Player white = new Player(PieceColor.WHITE);
+    private Player black = new Player(PieceColor.BLACK);
 
     public PlayersInGame() {
-        super();
+    }
 
-        put(PieceColor.WHITE, new Player(PieceColor.WHITE));
-        put(PieceColor.BLACK, new Player(PieceColor.BLACK));
+    public Player get(PieceColor pieceColor) {
+        if (pieceColor == WHITE) { return white; }
+        else return black;
     }
 
     public PlayersInGame(PlayersInGame other) {
-        super(other);
+        this.white = new Player(other.white);
+        this.black = new Player(other.black);
 
-        other.entrySet().stream()
-                .forEach(otherEntry -> put(otherEntry.getKey(), new Player(otherEntry.getValue())));
-
-        this.currentPlayer = other.currentPlayer == other.get(WHITE) ? get(WHITE) : get(BLACK);
+        this.currentPlayer = other.currentPlayer == other.white ? white : black;
         this.winningPlayer = null;
     }
 
@@ -36,7 +37,7 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
     }
 
     public void updateCurrent() {
-        currentPlayer = ((currentPlayer == get(WHITE)) ? get(BLACK) : get(WHITE));
+        currentPlayer = ((currentPlayer == white) ? black : white);
     }
 
     public void setCurrent(Player currentPlayer) {
@@ -53,6 +54,31 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
 
     public void makeCurrentPlayerWinner() {
         this.winningPlayer = current();
+    }
+
+    @Override
+    public Iterator<Player> iterator() {
+        return new PlayerIterator();
+    }
+
+    private class PlayerIterator implements Iterator<Player>{
+        private Player cursor = null;
+
+        @Override
+        public boolean hasNext() {
+            if (cursor == null || cursor == white) return true;
+            return false;
+        }
+
+        @Override
+        public Player next() {
+            if (cursor == black) throw new NoSuchElementException();
+
+            if (cursor == white) cursor = black;
+            else if (cursor == null) cursor = white;
+
+            return cursor;
+        }
     }
 
     /**
@@ -111,21 +137,24 @@ public class PlayersInGame extends HashMap<PieceColor, PlayersInGame.Player> imp
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PlayersInGame)) return false;
-        if (!(this.keySet().size() == ((PlayersInGame) o).keySet().size() && this.values().containsAll(((PlayersInGame) o).values()))) return false;
 
-        PlayersInGame that = (PlayersInGame) o;
+        PlayersInGame players = (PlayersInGame) o;
 
-        if (winningPlayer != null ? !winningPlayer.equals(that.winningPlayer) : that.winningPlayer != null)
+        if (winningPlayer != null ? !winningPlayer.equals(players.winningPlayer) : players.winningPlayer != null)
             return false;
-        return !(currentPlayer != null ? !currentPlayer.equals(that.currentPlayer) : that.currentPlayer != null);
+        if (currentPlayer != null ? !currentPlayer.equals(players.currentPlayer) : players.currentPlayer != null)
+            return false;
+        if (!white.equals(players.white)) return false;
+        return black.equals(players.black);
 
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (winningPlayer != null ? winningPlayer.hashCode() : 0);
+        int result = winningPlayer != null ? winningPlayer.hashCode() : 0;
         result = 31 * result + (currentPlayer != null ? currentPlayer.hashCode() : 0);
+        result = 31 * result + white.hashCode();
+        result = 31 * result + black.hashCode();
         return result;
     }
 }

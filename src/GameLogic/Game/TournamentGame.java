@@ -2,6 +2,7 @@ package GameLogic.Game;
 
 import GameLogic.Piece;
 import GameLogic.PieceType;
+import GameLogic.PlayersInGame;
 
 /**
  * Created by frans on 5-10-2015.
@@ -15,11 +16,10 @@ public class TournamentGame extends Game {
     void initializePlayers() {
         super.initializePlayers();
 
-        getGipfBoardState().players.values().stream()
-                .forEach(player -> {
-                    player.reserve = 18;
-                    player.setMustStartWithGipfPieces(true);
-                });
+        for (PlayersInGame.Player player : getGipfBoardState().players) {
+            player.reserve = 18;
+            player.setMustStartWithGipfPieces(true);
+        }
     }
 
     @Override
