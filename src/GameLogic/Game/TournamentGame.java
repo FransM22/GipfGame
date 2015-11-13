@@ -13,7 +13,7 @@ public class TournamentGame extends Game {
     }
 
     @Override
-    void initializePlayers() {
+    protected void initializePlayers() {
         super.initializePlayers();
 
         for (PlayersInGame.Player player : getGipfBoardState().players) {

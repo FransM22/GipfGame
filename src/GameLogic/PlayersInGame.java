@@ -10,18 +10,14 @@ import static GameLogic.PieceColor.WHITE;
  * Created by frans on 11-10-2015.
  */
 public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Player> {
-    // These two Players are pointers to the winning player and the current player
-    private Player winningPlayer = null;
-    private Player currentPlayer = null;
     public Player white = new Player(PieceColor.WHITE);
     public Player black = new Player(PieceColor.BLACK);
+    // The following two Players are pointers to the winning player and the current player
+    private Player winningPlayer = null;
+    private Player currentPlayer = null;
 
     public PlayersInGame() {
-    }
-
-    public Player get(PieceColor pieceColor) {
-        if (pieceColor == WHITE) { return white; }
-        else return black;
+        currentPlayer = white;
     }
 
     public PlayersInGame(PlayersInGame other) {
@@ -32,16 +28,14 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         this.winningPlayer = null;
     }
 
-    public void setStartingPlayer(Player startingPlayer) {
-        currentPlayer = startingPlayer;
+    public Player get(PieceColor pieceColor) {
+        if (pieceColor == WHITE) {
+            return white;
+        } else return black;
     }
 
     public void updateCurrent() {
         currentPlayer = ((currentPlayer == white) ? black : white);
-    }
-
-    public void setCurrent(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
     }
 
     public Player current() {
@@ -61,24 +55,29 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         return new PlayerIterator();
     }
 
-    private class PlayerIterator implements Iterator<Player>{
-        private Player cursor = null;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PlayersInGame)) return false;
 
-        @Override
-        public boolean hasNext() {
-            if (cursor == null || cursor == white) return true;
+        PlayersInGame players = (PlayersInGame) o;
+
+        if (winningPlayer != null ? !winningPlayer.equals(players.winningPlayer) : players.winningPlayer != null)
             return false;
-        }
+        if (currentPlayer != null ? !currentPlayer.equals(players.currentPlayer) : players.currentPlayer != null)
+            return false;
+        if (!white.equals(players.white)) return false;
+        return black.equals(players.black);
 
-        @Override
-        public Player next() {
-            if (cursor == black) throw new NoSuchElementException();
+    }
 
-            if (cursor == white) cursor = black;
-            else if (cursor == null) cursor = white;
-
-            return cursor;
-        }
+    @Override
+    public int hashCode() {
+        int result = winningPlayer != null ? winningPlayer.hashCode() : 0;
+        result = 31 * result + (currentPlayer != null ? currentPlayer.hashCode() : 0);
+        result = 31 * result + white.hashCode();
+        result = 31 * result + black.hashCode();
+        return result;
     }
 
     /**
@@ -91,6 +90,7 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         public boolean isPlacingGipfPieces = true;
         public boolean hasPlacedGipfPieces = false;
         public boolean mustStartWithGipfPieces = false;
+
         public Player(PieceColor pieceColor) {
             this.pieceColor = pieceColor;
         }
@@ -133,28 +133,22 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PlayersInGame)) return false;
+    private class PlayerIterator implements Iterator<Player> {
+        private Player cursor = null;
 
-        PlayersInGame players = (PlayersInGame) o;
+        @Override
+        public boolean hasNext() {
+            return cursor == null || cursor == white;
+        }
 
-        if (winningPlayer != null ? !winningPlayer.equals(players.winningPlayer) : players.winningPlayer != null)
-            return false;
-        if (currentPlayer != null ? !currentPlayer.equals(players.currentPlayer) : players.currentPlayer != null)
-            return false;
-        if (!white.equals(players.white)) return false;
-        return black.equals(players.black);
+        @Override
+        public Player next() {
+            if (cursor == black) throw new NoSuchElementException();
 
-    }
+            if (cursor == white) cursor = black;
+            else if (cursor == null) cursor = white;
 
-    @Override
-    public int hashCode() {
-        int result = winningPlayer != null ? winningPlayer.hashCode() : 0;
-        result = 31 * result + (currentPlayer != null ? currentPlayer.hashCode() : 0);
-        result = 31 * result + white.hashCode();
-        result = 31 * result + black.hashCode();
-        return result;
+            return cursor;
+        }
     }
 }

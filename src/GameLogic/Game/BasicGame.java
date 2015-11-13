@@ -13,7 +13,7 @@ public class BasicGame extends Game {
     }
 
     @Override
-    void initializePlayers() {
+    protected void initializePlayers() {
         super.initializePlayers();
 
         for (PlayersInGame.Player player : gipfBoardState.players) {
@@ -24,7 +24,7 @@ public class BasicGame extends Game {
     }
 
     @Override
-    void initializeBoard() {
+    protected void initializeBoard() {
         super.initializeBoard();
 
         gipfBoardState.getPieceMap().put(new Position('b', 5), Piece.WHITE_SINGLE);

@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toSet;
  * Created by frans on 5-10-2015.
  */
 public class Line implements Iterable<Position> {
-    final Game game;
+    private final Game game;
     private final Position startPosition;
     private final Direction direction;
 
@@ -28,7 +28,7 @@ public class Line implements Iterable<Position> {
 
         Position currentPosition = position;
         Position nextPosition = new Position(currentPosition.getPosId() + deltaPos);
-        for (; game.isPositionOnBigBoard(nextPosition); nextPosition = new Position(nextPosition.getPosId() + deltaPos)) {
+        for (; game.isPositionOnPlayAreaOrOuterDots(nextPosition); nextPosition = new Position(nextPosition.getPosId() + deltaPos)) {
             currentPosition = nextPosition;
         }
 
@@ -41,7 +41,7 @@ public class Line implements Iterable<Position> {
         Position currentPositionThisLine = new Position(startPosition);
         Position currentPositionOtherLine = new Position(other.startPosition);
 
-        while (game.isPositionOnBigBoard(currentPositionThisLine)) {
+        while (game.isPositionOnPlayAreaOrOuterDots(currentPositionThisLine)) {
             if (currentPositionThisLine.getPosId() == currentPositionOtherLine.getPosId()) {
                 return true;
             } else if (currentPositionThisLine.getPosId() < currentPositionOtherLine.getPosId()) {
@@ -54,11 +54,11 @@ public class Line implements Iterable<Position> {
         return false;
     }
 
-    public Set<Position> getPositions() {
+    public Set<Position> getPositionsOnLine() {
         Set<Position> positions = new HashSet<>();
 
         Position currentPosition = new Position(this.startPosition);
-        for (; game.isPositionOnBigBoard(currentPosition); currentPosition = new Position(currentPosition.posId + direction.getDeltaPos())) {
+        for (; game.isPositionOnPlayAreaOrOuterDots(currentPosition); currentPosition = new Position(currentPosition.posId + direction.getDeltaPos())) {
             positions.add(currentPosition);
         }
 
@@ -94,7 +94,7 @@ public class Line implements Iterable<Position> {
 
     @Override
     public Iterator<Position> iterator() {
-        return getPositions().iterator();
+        return getPositionsOnLine().iterator();
     }
 
     public Position getStartPosition() { return startPosition; }
@@ -181,7 +181,7 @@ public class Line implements Iterable<Position> {
         }
 
         public Set<Position> getAllPositions() {
-            return super.getPositions()
+            return super.getPositionsOnLine()
                     .stream()
                     .filter(
                             position -> startPosition.posId <= position.posId && position.posId <= endPosition.posId)

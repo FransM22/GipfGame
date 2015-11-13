@@ -26,7 +26,7 @@ public class GipfWindow extends JFrame {
     private final JLabel gameTypeLabel;
     private GameStateUpdater gameStateUpdater;
     private GipfBoardComponent gipfBoardComponent;
-    ActionListener openDialog = e -> {
+    private final ActionListener openDialog = e -> {
         JFileChooser fileChooser = new JFileChooser();
         int rval = fileChooser.showOpenDialog(this);
 
@@ -50,7 +50,7 @@ public class GipfWindow extends JFrame {
             }
         }
     };
-    ActionListener saveDialog = e -> {
+    private final ActionListener saveDialog = e -> {
         JFileChooser fileChooser = new JFileChooser();
         int rval = fileChooser.showSaveDialog(this);
 
@@ -173,7 +173,7 @@ public class GipfWindow extends JFrame {
             int rowNumber = Character.digit(newCoordinateText.charAt(1), 10);   // Convert the second character to a digit in base 10
             Position newPiecePosition = new Position(colName, rowNumber);
 
-            if (gipfBoardComponent.game.isPositionOnBigBoard(newPiecePosition)) {
+            if (gipfBoardComponent.game.isPositionOnPlayAreaOrOuterDots(newPiecePosition)) {
                 Piece pieceType = (Piece) pieceTypeComboBox.getModel().getSelectedItem();
 
                 gameLogTextArea.append("Placing new " + pieceType + " at " + newPiecePosition.getName());

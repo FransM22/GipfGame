@@ -12,9 +12,9 @@ import java.util.OptionalInt;
 /**
  * Created by frans on 9-11-2015.
  */
-public class GenerateNodes {
-    public TreeItem<GipfBoardState> root = new TreeItem<>();
-    public TreeTableView<GipfBoardState> treeTableView;
+class GenerateNodes {
+    public final TreeItem<GipfBoardState> root = new TreeItem<>();
+    private final TreeTableView<GipfBoardState> treeTableView;
 
     public GenerateNodes(Optional<GipfBoardState> start, OptionalInt depth, TreeTableView<GipfBoardState> boardStateTreeTableView) {
         this.treeTableView = boardStateTreeTableView;
@@ -38,7 +38,7 @@ public class GenerateNodes {
 
                     childGame.applyMove(move);
 
-                    TreeItem<GipfBoardState> childItem = new TreeItem<GipfBoardState>(childGame.getGipfBoardState());
+                    TreeItem<GipfBoardState> childItem = new TreeItem<>(childGame.getGipfBoardState());
 
 
                     treeItem.getChildren().add(childItem);

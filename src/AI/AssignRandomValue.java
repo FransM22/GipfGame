@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * Created by frans on 12-11-2015.
  */
-public class AssignRandomValue implements Function<GipfBoardState, Double> {
+class AssignRandomValue implements Function<GipfBoardState, Double> {
     @Override
     public Double apply(GipfBoardState gipfBoardState) {
         return Math.random();

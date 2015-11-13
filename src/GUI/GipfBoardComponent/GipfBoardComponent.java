@@ -25,11 +25,11 @@ public class GipfBoardComponent extends JComponent {
     public Position selectedStartPosition;                                                                              // The position that is currently selected as start of a new move
     public Position selectedMoveToPosition;                                                                             // Position that is selected as the end point of a move
     public Position currentHoverPosition = null;                                                                        // The position where the user of the UI is currently hovering over
-    private int pieceSize;
-    private int filledCircleSize;
-    private Stroke pieceStroke;
-    private Position[] namedPositions;
-    private Font gameOverFont;
+    private final int pieceSize;
+    private final int filledCircleSize;
+    private final Stroke pieceStroke;
+    private final Position[] namedPositions;
+    private final Font gameOverFont;
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards

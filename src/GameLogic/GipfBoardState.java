@@ -9,12 +9,10 @@ import java.util.Map;
 /**
  * Created by frans on 8-9-2015.
  * This class represents the board that is used in the game.
- *
  */
 public class GipfBoardState implements Serializable {
-    private HashMap<Position, Piece> pieceMap;
-    public BoardStateProperties boardStateProperties;
-
+    public final BoardStateProperties boardStateProperties;
+    private final HashMap<Position, Piece> pieceMap;
     public PlayersInGame players;
 
     /**
@@ -49,7 +47,8 @@ public class GipfBoardState implements Serializable {
 
         GipfBoardState that = (GipfBoardState) o;
 
-        if (!(pieceMap.keySet().size() == that.pieceMap.keySet().size() && pieceMap.values().containsAll(that.pieceMap.values()))) return false;
+        if (!(pieceMap.keySet().size() == that.pieceMap.keySet().size() && pieceMap.values().containsAll(that.pieceMap.values())))
+            return false;
         return players.equals(that.players);
 
     }

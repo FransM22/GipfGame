@@ -10,7 +10,7 @@ import java.awt.*;
  * Created by frans on 23-9-2015.
  */
 public class PositionNames extends DrawableObject {
-    Position[] namedPositions;
+    private final Position[] namedPositions;
     public PositionNames(Graphics2D g2, Position[] namedPositions, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent);
         this.namedPositions = namedPositions;

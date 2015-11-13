@@ -26,7 +26,7 @@ public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
-    private Set<Position> currentRemoveSelection = new HashSet<>();
+    private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
     Game() {
         initializeBoard();
@@ -38,22 +38,26 @@ public abstract class Game implements Serializable {
         gameLogger = new GameLogger(this);
     }
 
+    /**
+     * Can be modified by the extensions of the Game class (to change the default player setup)
+     */
     void initializePlayers() {
         gipfBoardState.players = new PlayersInGame();
-        gipfBoardState.players.setStartingPlayer(gipfBoardState.players.white);
     }
 
+    /**
+     * Can be modified by the extensions of the Game class (to change the default board)
+     */
     void initializeBoard() {
         this.gipfBoardState = new GipfBoardState();
     }
 
     /**
-     * Checks whether the position is located on the whole board. Either on the inner area or on the outer positions
-     * where pieces can start a move, but never end on it.
+     * Checks whether the position is located on the playing area or the outer dots.
      *
-     * @param p the position of which should be determined whether it is on the bigger board
+     * @param p the position of which should be determined whether it is on the board
      */
-    public boolean isPositionOnBigBoard(Position p) {
+    public boolean isPositionOnPlayAreaOrOuterDots(Position p) {
         int col = p.getColName() - 'a' + 1;
         int row = p.getRowNumber();
 
@@ -67,8 +71,8 @@ public abstract class Game implements Serializable {
     }
 
     /**
-     * Checks whether the position is located on the inner board. Returns false for positions on the outer positions, as well
-     * as positions that are not on the board.
+     * Checks whether the position is located on the inner board (the playing area). Returns false for positions on the
+     * outer positions, as well as positions that are not on the board.
      * <p/>
      * By Leroy
      *
@@ -87,10 +91,6 @@ public abstract class Game implements Serializable {
         );
     }
 
-    private boolean isPositionEmpty(GipfBoardState gipfBoardState, Position p) {
-        return !gipfBoardState.getPieceMap().containsKey(p);
-    }
-
     private void movePiece(GipfBoardState gipfBoardState, Position currentPosition, int deltaPos) throws InvalidMoveException {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
@@ -98,7 +98,7 @@ public abstract class Game implements Serializable {
             throw new InvalidMoveException();
         } else {
             try {
-                if (!isPositionEmpty(gipfBoardState, nextPosition)) {
+                if (gipfBoardState.getPieceMap().containsKey(nextPosition)) {
                     movePiece(gipfBoardState, nextPosition, deltaPos);
                 }
 
@@ -141,18 +141,15 @@ public abstract class Game implements Serializable {
         GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
 
         if (gipfBoardState.players.current().reserve >= move.addedPiece.getPieceValue()) {
-            setPiece(newGipfBoardState, move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
+            newGipfBoardState.getPieceMap().put(move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
 
             try {
-                boolean hasPlacedGipfPieces = gipfBoardState.players.current().hasPlacedGipfPieces;
-
                 movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
 
                 if (move.addedPiece.getPieceType() == PieceType.GIPF) {
                     gipfBoardState.players.current().hasPlacedGipfPieces = true;
                 }
 
-                storeState(gipfBoardState, hasPlacedGipfPieces);
                 boardHistory.add(gipfBoardState);
                 gipfBoardState = newGipfBoardState;
 
@@ -167,7 +164,6 @@ public abstract class Game implements Serializable {
 
                 if (!move.isCompleteMove) {
                     // Get the lines of the own color
-                    // TODO should gipfBoardState be replaced by newGipfBoardState?
                     removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
 
                     // Get lines of the opponent
@@ -217,10 +213,6 @@ public abstract class Game implements Serializable {
         }
 
         gipfBoardState.boardStateProperties.update();
-    }
-
-    public void setPiece(GipfBoardState gipfBoardState, Position pos, Piece piece) {
-        gipfBoardState.getPieceMap().put(pos, piece);
     }
 
     public GipfBoardState getGipfBoardState() {
@@ -276,9 +268,6 @@ public abstract class Game implements Serializable {
         }
 
         return potentialMovesIncludingLineSegmentRemoval;
-        /* TODO
-          * Determine the pieces which can be chosen to be removed
-         */
     }
 
     /**
@@ -289,13 +278,13 @@ public abstract class Game implements Serializable {
      */
     private Set<Position> getDots() {
         return Stream.concat(
-                new Line(this, new Position('a', 1), SOUTH_EAST).getPositions().stream(),
-                Stream.concat(new Line(this, new Position('e', 1), NORTH_EAST).getPositions().stream(),
-                        Stream.concat(new Line(this, new Position('i', 1), NORTH).getPositions().stream(),
-                                Stream.concat(new Line(this, new Position('i', 5), NORTH_WEST).getPositions().stream(),
+                new Line(this, new Position('a', 1), SOUTH_EAST).getPositionsOnLine().stream(),
+                Stream.concat(new Line(this, new Position('e', 1), NORTH_EAST).getPositionsOnLine().stream(),
+                        Stream.concat(new Line(this, new Position('i', 1), NORTH).getPositionsOnLine().stream(),
+                                Stream.concat(new Line(this, new Position('i', 5), NORTH_WEST).getPositionsOnLine().stream(),
                                         Stream.concat(
-                                                new Line(this, new Position('e', 9), SOUTH_WEST).getPositions().stream(),
-                                                new Line(this, new Position('a', 5), SOUTH).getPositions().stream()
+                                                new Line(this, new Position('e', 9), SOUTH_WEST).getPositionsOnLine().stream(),
+                                                new Line(this, new Position('a', 5), SOUTH).getPositionsOnLine().stream()
                                         )
                                 )
                         )
@@ -334,7 +323,7 @@ public abstract class Game implements Serializable {
 
             // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
             // can't be more than one set of four pieces of the same color (requiring at least 9 positions) on the board.
-            for (; isPositionOnBigBoard(currentPosition) && endOfSegment == null; currentPosition = currentPosition.next(direction)) {
+            for (; isPositionOnPlayAreaOrOuterDots(currentPosition) && endOfSegment == null; currentPosition = currentPosition.next(direction)) {
                 PieceColor currentPieceColor = gipfBoardState.getPieceMap().containsKey(currentPosition) ? gipfBoardState.getPieceMap().get(currentPosition).getPieceColor() : null;
 
                 // Update the consecutivePieces
@@ -353,7 +342,6 @@ public abstract class Game implements Serializable {
                         endOfSegment = currentPosition.previous(direction);
                     }
                 }
-
 
                 // Update the startOfSegment if necessary
                 if (startOfSegment == null) {
@@ -391,22 +379,14 @@ public abstract class Game implements Serializable {
                 .collect(toSet());
     }
 
-    public void storeState(GipfBoardState gipfBoardState, boolean hasPlacedGipfPieces) {
-        gipfBoardState.players.current().hasPlacedGipfPieces = hasPlacedGipfPieces;
-    }
-
     public void loadState(GipfBoardState gipfBoardState) {
         this.gipfBoardState = gipfBoardState;
     }
 
     public void returnToPreviousBoard() {
-
         if (boardHistory.size() > 1) {
-            gipfBoardState = boardHistory.get(boardHistory.size() - 1);
-            boardHistory.remove(boardHistory.size() - 1);
-
+            gipfBoardState = boardHistory.pop();
             loadState(gipfBoardState);
-
             gameLogger.log("Returned to previous game state");
         }
     }
@@ -415,7 +395,7 @@ public abstract class Game implements Serializable {
         return gameLogger;
     }
 
-    public void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
+    private void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
         for (Position position : positions) {
             gipfBoardState.getPieceMap().remove(position);
         }
@@ -506,13 +486,13 @@ public abstract class Game implements Serializable {
      *
      * @return true if the game over condition has been fulfilled, false otherwise.
      */
-    public abstract boolean getGameOverState();
+    protected abstract boolean getGameOverState();
 
     public void newGameLogger() {
         this.gameLogger = new GameLogger(this);
     }
 
-    public Set<Move> getPotentialStartMoves(Piece piece) {
+    private Set<Move> getPotentialStartMoves(Piece piece) {
         return new HashSet<>(Arrays.asList(
                 new Move(piece, new Position('a', 1), NORTH_EAST),
                 new Move(piece, new Position('a', 2), NORTH_EAST),

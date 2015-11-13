@@ -9,7 +9,7 @@ import java.awt.*;
  * Created by frans on 2-10-2015.
  */
 public class GameOverMessage extends DrawableObject {
-    Font gameOverFont;
+    private final Font gameOverFont;
 
     public GameOverMessage(Graphics2D g2, Font gameOverFont, GipfBoardComponent gipfBoardComponent) {
         super(g2, gipfBoardComponent);

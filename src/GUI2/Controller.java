@@ -27,8 +27,6 @@ import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
     @FXML
-    private TabPane tabPane;
-    @FXML
     private ComboBox<Class> whitePlayerCombobox;
     @FXML
     private ComboBox<Class> blackPlayerCombobox;
@@ -86,8 +84,7 @@ public class Controller implements Initializable {
 
         boardStateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                TreeItem<GipfBoardState> selectedItem = newValue;
-                smallVisualisationGame.loadState(selectedItem.getValue());
+                smallVisualisationGame.loadState(newValue.getValue());
                 updateTreeTableViewSelection.updateDescriptionLabel();
                 smallVisualisationComponent.repaint();
             }

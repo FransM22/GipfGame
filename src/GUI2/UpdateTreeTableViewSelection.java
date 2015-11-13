@@ -9,7 +9,7 @@ import javafx.scene.control.TreeTableView;
 /**
  * Created by frans on 10-11-2015.
  */
-public class UpdateTreeTableViewSelection {
+class UpdateTreeTableViewSelection {
     private final TreeTableView<GipfBoardState> gipfBoardStateTreeTableView;
     private Label boardDescriptionLabel;
 

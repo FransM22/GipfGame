@@ -6,95 +6,66 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI2.Controller">
-    <children>
-        <MenuBar>
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Open"/>
-                        <MenuItem mnemonicParsing="false" text="Save"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Open"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="New">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Basic"/>
-                        <MenuItem mnemonicParsing="false" text="Standard"/>
-                        <MenuItem mnemonicParsing="false" text="Tournament"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-                <Tab text="Game">
-                    <content>
-                        <HBox prefHeight="9999" prefWidth="9999">
-                            <children>
-                                <SwingNode fx:id="gipfGameNode"/>
-                                <VBox prefWidth="100.0"><!-- This is the right hand part of the window, with the settings about the algorithms -->
-                                    <children>
-                                        <TitledPane animated="false" collapsible="false" text="White">
-                                            <content>
-                                                <VBox>
-                                                    <children>
-                                                        <Label text="Select player"/>
-                                                        <ComboBox fx:id="whitePlayerCombobox" prefWidth="150.0"/>
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane animated="false" collapsible="false" text="Black">
-                                            <content>
-                                                <VBox>
-                                                    <children>
-                                                        <Label text="Select player"/>
-                                                        <ComboBox fx:id="blackPlayerCombobox" prefWidth="150.0"/>
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-                    </content>
-                </Tab>
-                <Tab fx:id="analyzeGameTab" text="Game Analysis">
-                    <content>
-                        <HBox>
-                            <children>
-                                <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
-                                               prefWidth="9999">
-                                    <columns>
-                                        <TreeTableColumn fx:id="columnBoardName" prefWidth="350.0" text="Board ID"/>
-                                        <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="W Reserve"/>
-                                        <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="B Reserve"/>
-                                        <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"
-                                                         visible="false"/>
-                                        <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG"
-                                                         visible="false"/>
-                                        <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0"
-                                                         text="Current player"/>
-                                        <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned"/>
-                                        <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax"/>
-                                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random"/>
-                                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0" text="H1: #white - #black"/>
-                                    </columns>
-                                </TreeTableView>
-                                <VBox>
-                                    <children>
-                                        <SwingNode fx:id="smallGipfGameVisualisationNode"/>
-                                        <Label id="boardDescriptionLabel" fx:id="boardDescriptionLabel"
-                                               wrapText="true"/>
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
-    </children>
+    <MenuBar>
+        <Menu mnemonicParsing="false" text="File">
+            <MenuItem mnemonicParsing="false" text="Open"/>
+            <MenuItem mnemonicParsing="false" text="Save"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" text="Open"/>
+        </Menu>
+        <Menu mnemonicParsing="false" text="New">
+            <MenuItem mnemonicParsing="false" text="Basic"/>
+            <MenuItem mnemonicParsing="false" text="Standard"/>
+            <MenuItem mnemonicParsing="false" text="Tournament"/>
+        </Menu>
+    </MenuBar>
+    <TabPane tabClosingPolicy="UNAVAILABLE">
+        <Tab text="Game">
+            <HBox prefHeight="9999" prefWidth="9999">
+                <SwingNode fx:id="gipfGameNode"/>
+                <VBox prefWidth="100.0"><!-- This is the right hand part of the window, with the settings about the algorithms -->
+                    <TitledPane animated="false" collapsible="false" text="White">
+                        <VBox>
+                            <Label text="Select player"/>
+                            <ComboBox fx:id="whitePlayerCombobox" prefWidth="150.0"/>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane animated="false" collapsible="false" text="Black">
+                        <VBox>
+                            <Label text="Select player"/>
+                            <ComboBox fx:id="blackPlayerCombobox" prefWidth="150.0"/>
+                        </VBox>
+                    </TitledPane>
+                </VBox>
+            </HBox>
+        </Tab>
+        <Tab fx:id="analyzeGameTab" text="Game Analysis">
+            <HBox>
+                <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
+                               prefWidth="9999">
+                    <columns>
+                        <TreeTableColumn fx:id="columnBoardName" prefWidth="350.0" text="Board ID"/>
+                        <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="W Reserve"/>
+                        <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="B Reserve"/>
+                        <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"
+                                         visible="false"/>
+                        <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG"
+                                         visible="false"/>
+                        <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0"
+                                         text="Current player"/>
+                        <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned"/>
+                        <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax"/>
+                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random"/>
+                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0"
+                                         text="H1: #white - #black"/>
+                    </columns>
+                </TreeTableView>
+                <VBox>
+                    <SwingNode fx:id="smallGipfGameVisualisationNode"/>
+                    <Label id="boardDescriptionLabel" fx:id="boardDescriptionLabel"
+                           wrapText="true"/>
+                </VBox>
+            </HBox>
+        </Tab>
+    </TabPane>
 </VBox>
