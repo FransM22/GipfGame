@@ -29,7 +29,8 @@ public class UIval {
     public final int filledCircleSizeSmallView = 7;
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
-    public final Font gameOverFont = new Font("default", Font.BOLD, 40);
+    public final Font gameOverFontNormalView = new Font("default", Font.BOLD, 40);
+    public final Font gameOverFontSmallView = new Font("default", Font.PLAIN, 20);
     public final Font largeLabelFont = new Font("default", Font.PLAIN, 14);
     public final Font buttonFont = new Font("default", Font.PLAIN, 14);
 

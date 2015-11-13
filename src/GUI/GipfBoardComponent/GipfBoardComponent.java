@@ -29,6 +29,7 @@ public class GipfBoardComponent extends JComponent {
     private int filledCircleSize;
     private Stroke pieceStroke;
     private Position[] namedPositions;
+    private Font gameOverFont;
 
     /**
      * Creates a component in which a Gipf board can be shown. Only works for standard sized boards
@@ -45,6 +46,7 @@ public class GipfBoardComponent extends JComponent {
             filledCircleSize = UIval.get().filledCircleSizeSmallView;
             pieceStroke = UIval.get().pieceStrokeSmallView;
             namedPositions = UIval.get().namedPositionsOnBoardSmallView;
+            gameOverFont = UIval.get().gameOverFontSmallView;
         }
         else {
             addMouseListener(new GipfBoardComponentMouseListener(this));
@@ -53,6 +55,7 @@ public class GipfBoardComponent extends JComponent {
             filledCircleSize = UIval.get().filledCircleSizeNormalView;
             pieceStroke = UIval.get().pieceStrokeNormalView;
             namedPositions = UIval.get().namedPositionsOnBoardNormalView;
+            gameOverFont = UIval.get().gameOverFontNormalView;
         }
 
     }
@@ -83,7 +86,7 @@ public class GipfBoardComponent extends JComponent {
                 new SelectedStartPosition(g2, pieceSize, this, Collections.singleton(selectedStartPosition)),
                 new SelectedRemovePositions(g2, this),
                 new PositionNames(g2, namedPositions, this),
-                new GameOverMessage(g2, this)
+                new GameOverMessage(g2, gameOverFont, this)
         );
 
         drawableObjects.stream().forEach(DrawableObject::draw);
