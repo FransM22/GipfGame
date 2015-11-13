@@ -179,9 +179,11 @@ public abstract class Game implements Serializable {
                     PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
                     removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
                 } else {
-                    move.piecesToWhite.ifPresent((ptw) -> piecesBackTo.get(WHITE).addAll(ptw));
-                    move.piecesToBlack.ifPresent((ptb) -> piecesBackTo.get(BLACK).addAll(ptb));
-                    move.piecesRemoved.ifPresent((pr) -> piecesBackTo.get(null).addAll(pr));
+                    if (move.isCompleteMove) {
+                        piecesBackTo.get(WHITE).addAll(move.piecesToWhite);
+                        piecesBackTo.get(BLACK).addAll(move.piecesToBlack);
+                        piecesBackTo.get(null).addAll(move.piecesRemoved);
+                    }
                 }
                 // Get the line segments that
                 // Get the lines of the color of the other player
@@ -267,9 +269,9 @@ public abstract class Game implements Serializable {
 
                         Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(temporaryBoardState);
                         if (temporaryBoardState.players.current().pieceColor == WHITE)
-                            moveWithRemovedLineSegment.piecesToWhite = Optional.of(piecesToCurrentPlayer);
+                            moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
                         if (temporaryBoardState.players.current().pieceColor == BLACK)
-                            moveWithRemovedLineSegment.piecesToBlack = Optional.of(piecesToCurrentPlayer);
+                            moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
                 }
@@ -522,48 +524,48 @@ public abstract class Game implements Serializable {
 
     public Set<Move> getPotentialStartMoves(Piece piece) {
         return new HashSet<Move>(Arrays.asList(
-                new Move(piece, new Position('a', 1), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 2), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 2), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 3), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 3), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 4), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 4), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('a', 5), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('b', 6), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('b', 6), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('c', 7), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('c', 7), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('d', 8), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('d', 8), SOUTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('e', 9), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('f', 8), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('f', 8), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('g', 7), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('g', 7), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('h', 6), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('h', 6), SOUTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 5), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 4), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 4), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 3), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 3), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 2), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 2), SOUTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('i', 1), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('h', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('h', 1), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('g', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('g', 1), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('f', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('f', 1), NORTH_WEST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('e', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('d', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('d', 1), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('c', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('c', 1), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('b', 1), NORTH, Optional.empty(), Optional.empty(), Optional.empty()),
-                new Move(piece, new Position('b', 1), NORTH_EAST, Optional.empty(), Optional.empty(), Optional.empty())
+                new Move(piece, new Position('a', 1), NORTH_EAST),
+                new Move(piece, new Position('a', 2), NORTH_EAST),
+                new Move(piece, new Position('a', 2), SOUTH_EAST),
+                new Move(piece, new Position('a', 3), NORTH_EAST),
+                new Move(piece, new Position('a', 3), SOUTH_EAST),
+                new Move(piece, new Position('a', 4), NORTH_EAST),
+                new Move(piece, new Position('a', 4), SOUTH_EAST),
+                new Move(piece, new Position('a', 5), SOUTH_EAST),
+                new Move(piece, new Position('b', 6), SOUTH),
+                new Move(piece, new Position('b', 6), SOUTH_EAST),
+                new Move(piece, new Position('c', 7), SOUTH),
+                new Move(piece, new Position('c', 7), SOUTH_EAST),
+                new Move(piece, new Position('d', 8), SOUTH),
+                new Move(piece, new Position('d', 8), SOUTH_EAST),
+                new Move(piece, new Position('e', 9), SOUTH),
+                new Move(piece, new Position('f', 8), SOUTH_WEST),
+                new Move(piece, new Position('f', 8), SOUTH),
+                new Move(piece, new Position('g', 7), SOUTH_WEST),
+                new Move(piece, new Position('g', 7), SOUTH),
+                new Move(piece, new Position('h', 6), SOUTH_WEST),
+                new Move(piece, new Position('h', 6), SOUTH),
+                new Move(piece, new Position('i', 5), SOUTH_WEST),
+                new Move(piece, new Position('i', 4), NORTH_WEST),
+                new Move(piece, new Position('i', 4), SOUTH_WEST),
+                new Move(piece, new Position('i', 3), NORTH_WEST),
+                new Move(piece, new Position('i', 3), SOUTH_WEST),
+                new Move(piece, new Position('i', 2), NORTH_WEST),
+                new Move(piece, new Position('i', 2), SOUTH_WEST),
+                new Move(piece, new Position('i', 1), NORTH_WEST),
+                new Move(piece, new Position('h', 1), NORTH),
+                new Move(piece, new Position('h', 1), NORTH_WEST),
+                new Move(piece, new Position('g', 1), NORTH),
+                new Move(piece, new Position('g', 1), NORTH_WEST),
+                new Move(piece, new Position('f', 1), NORTH),
+                new Move(piece, new Position('f', 1), NORTH_WEST),
+                new Move(piece, new Position('e', 1), NORTH),
+                new Move(piece, new Position('d', 1), NORTH),
+                new Move(piece, new Position('d', 1), NORTH_EAST),
+                new Move(piece, new Position('c', 1), NORTH),
+                new Move(piece, new Position('c', 1), NORTH_EAST),
+                new Move(piece, new Position('b', 1), NORTH),
+                new Move(piece, new Position('b', 1), NORTH_EAST)
         ));
     }
 }

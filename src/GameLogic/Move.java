@@ -1,6 +1,6 @@
 package GameLogic;
 
-import java.util.Optional;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -9,40 +9,63 @@ import java.util.Set;
  * <p/>
  * Created by frans on 9-9-2015.
  */
-public class Move implements Comparable<Move>{
+public class Move implements Comparable<Move> {
     public final Piece addedPiece;             // The piece that is added to the board
     public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     public final Direction direction;                    // The direction in which the piece moves
-    public Optional<Set<Position>> piecesToWhite;
-    public Optional<Set<Position>> piecesToBlack;
-    public Optional<Set<Position>> piecesRemoved;    // Pieces that are removed during this move
+    public boolean isCompleteMove;                      // Contains all information about the move (don't have to ask the player whether he wants to remove a line / gipf piece)
+    public Set<Position> piecesToWhite;
+    public Set<Position> piecesToBlack;
+    public Set<Position> piecesRemoved;    // Pieces that are removed during this move
 
     /**
      * Constructor, creates a Move with the following properties
      *
-     * @param addedPiece            the piece that is added to the board
-     * @param startPos              the position where the piece is added
-     * @param direction             the direction in which the newly added piece is moved
+     * @param addedPiece    the piece that is added to the board
+     * @param startPos      the position where the piece is added
+     * @param direction     the direction in which the newly added piece is moved
      * @param piecesRemoved the pieces that are removed
      */
     public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction,
-                Optional<Set<Position>> piecesToWhite,
-                Optional<Set<Position>> piecesToBlack,
-                Optional<Set<Position>> piecesRemoved) {
+                Set<Position> piecesToWhite,
+                Set<Position> piecesToBlack,
+                Set<Position> piecesRemoved) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
         this.direction = direction;
+        this.isCompleteMove = true;
         this.piecesToWhite = piecesToWhite;
         this.piecesToBlack = piecesToBlack;
         this.piecesRemoved = piecesRemoved;
     }
 
+    /**
+     * Constructor, creates a Move with the following properties
+     *
+     * @param addedPiece    the piece that is added to the board
+     * @param startPos      the position where the piece is added
+     * @param direction     the direction in which the newly added piece is moved
+     */
+    public Move(Piece addedPiece,
+                Position startPos,
+                Direction direction) {
+        this.addedPiece = addedPiece;
+        this.startPos = startPos;
+        this.direction = direction;
+        this.isCompleteMove = false;
+        this.piecesToWhite = new HashSet<>();
+        this.piecesToBlack = new HashSet<>();
+        this.piecesRemoved = new HashSet<>();
+    }
+
+
     public Move(Move otherMove) {
         this.addedPiece = otherMove.addedPiece;
         this.startPos = otherMove.startPos;
         this.direction = otherMove.direction;
+        this.isCompleteMove = otherMove.isCompleteMove;
         this.piecesToWhite = otherMove.piecesToWhite;
         this.piecesToBlack = otherMove.piecesToBlack;
         this.piecesRemoved = otherMove.piecesRemoved;
@@ -52,20 +75,27 @@ public class Move implements Comparable<Move>{
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
-        String returnString =  "" + addedPiece.getPieceColor() + ": "
+        String returnString = "" + addedPiece.getPieceColor() + ": "
                 + (addedPiece.getPieceType() == PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
                 "-" + toPos.getName();
 
-        if (piecesToWhite.isPresent()) returnString += " white: " + piecesToWhite.get();
-        if (piecesToBlack.isPresent()) returnString += " white: " + piecesToBlack.get();
-        if (piecesRemoved.isPresent()) returnString += " white: " + piecesRemoved.get();
+        if (isCompleteMove) {
+            returnString += " white: " + piecesToWhite
+                    + " black: " + piecesToBlack
+                    + " removed: " + piecesRemoved;
+        }
 
         return returnString;
     }
 
-    public Position getStartingPosition() { return startPos; }
-    public Direction getDirection() { return direction; }
+    public Position getStartingPosition() {
+        return startPos;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
 
     @Override
     public int compareTo(Move o) {
