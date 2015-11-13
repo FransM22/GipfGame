@@ -30,7 +30,7 @@ public class UIval {
     public final Stroke moveToArrowStroke = new BasicStroke(4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{6f, 6f}, 0.0f);
     public final Font positionNameFont = new Font("default", Font.BOLD, 14);
     public final Font gameOverFontNormalView = new Font("default", Font.BOLD, 40);
-    public final Font gameOverFontSmallView = new Font("default", Font.PLAIN, 20);
+    public final Font gameOverFontSmallView = new Font("default", Font.BOLD, 20);
     public final Font largeLabelFont = new Font("default", Font.PLAIN, 14);
     public final Font buttonFont = new Font("default", Font.PLAIN, 14);
 
@@ -98,6 +98,7 @@ public class UIval {
     // Code concatenates two arrays via streams, see http://stackoverflow.com/a/23188881
     public final Position[] filledCirclePositions = Stream.concat(Arrays.stream(topAndBottomPositions), Arrays.stream(sidePositions)).toArray(Position[]::new);
     public final Color gameOverTextColor = new Color(0xFF0000);
+    public final Color gameOverTextOutlineColor = new Color(0);
     public final Color removedPieceSelectionColor = new Color(0xFF0000);
     public final Stroke pieceStrokeNormalView = new BasicStroke(4.0f);
     public final Stroke pieceStrokeSmallView = new BasicStroke(2f);

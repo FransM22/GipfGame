@@ -20,6 +20,8 @@ public class GameOverMessage extends DrawableObject {
     public void draw() {
         if (gipfBoardComponent.game.getGipfBoardState().players.winner() != null) {
             g2.setFont(gameOverFont);
+            g2.setColor(UIval.get().gameOverTextOutlineColor);
+            g2.drawString(gipfBoardComponent.game.getGipfBoardState().players.winner().pieceColor + " won!", 52, 102);
             g2.setColor(UIval.get().gameOverTextColor);
             g2.drawString(gipfBoardComponent.game.getGipfBoardState().players.winner().pieceColor + " won!", 50, 100);
         }

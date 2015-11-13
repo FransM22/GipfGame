@@ -44,9 +44,9 @@ public class Move implements Comparable<Move> {
     /**
      * Constructor, creates a Move with the following properties
      *
-     * @param addedPiece    the piece that is added to the board
-     * @param startPos      the position where the piece is added
-     * @param direction     the direction in which the newly added piece is moved
+     * @param addedPiece the piece that is added to the board
+     * @param startPos   the position where the piece is added
+     * @param direction  the direction in which the newly added piece is moved
      */
     public Move(Piece addedPiece,
                 Position startPos,

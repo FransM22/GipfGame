@@ -2,16 +2,13 @@ package AI;
 
 import GameLogic.GipfBoardState;
 
-import static GameLogic.PieceColor.BLACK;
-import static GameLogic.PieceColor.WHITE;
-
 /**
  * Created by frans on 12-11-2015.
  */
 public class BoardStateProperties {
     private GipfBoardState gipfBoardState;
     public double heuristicRandomValue;
-    public int heuristicBlackMinusWhitePieces;
+    public int heuristicWhiteMinusBlack;
     public int minMaxValue;
 
     public BoardStateProperties(GipfBoardState gipfBoardState) {
@@ -20,7 +17,7 @@ public class BoardStateProperties {
 
     public void update() {
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
-        this.heuristicBlackMinusWhitePieces = gipfBoardState.players.get(BLACK).reserve - gipfBoardState.players.get(WHITE).reserve;
+        this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
 
         this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
     }

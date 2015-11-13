@@ -40,7 +40,7 @@
                                                 <VBox>
                                                     <children>
                                                         <Label text="Select player"/>
-                                                        <ComboBox prefWidth="150.0"/>
+                                                        <ComboBox fx:id="whitePlayerCombobox" prefWidth="150.0"/>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -50,7 +50,7 @@
                                                 <VBox>
                                                     <children>
                                                         <Label text="Select player"/>
-                                                        <ComboBox prefWidth="150.0"/>
+                                                        <ComboBox fx:id="blackPlayerCombobox" prefWidth="150.0"/>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -71,21 +71,23 @@
                                         <TreeTableColumn fx:id="columnBoardName" prefWidth="350.0" text="Board ID"/>
                                         <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="W Reserve"/>
                                         <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="B Reserve"/>
-                                        <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"/>
+                                        <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"
+                                                         visible="false"/>
                                         <TreeTableColumn fx:id="columnBlackGipf" prefWidth="32.5" text="BG"
                                                          visible="false"/>
                                         <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0"
                                                          text="Current player"/>
                                         <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned"/>
-                                        <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax" />
-                                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0" />
-                                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0" text="H1"/>
+                                        <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax"/>
+                                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random"/>
+                                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0" text="H1: #white - #black"/>
                                     </columns>
                                 </TreeTableView>
                                 <VBox>
                                     <children>
                                         <SwingNode fx:id="smallGipfGameVisualisationNode"/>
-                                        <Label id="boardDescriptionLabel" fx:id="boardDescriptionLabel" />
+                                        <Label id="boardDescriptionLabel" fx:id="boardDescriptionLabel"
+                                               wrapText="true"/>
                                     </children>
                                 </VBox>
                             </children>

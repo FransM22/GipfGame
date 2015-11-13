@@ -125,13 +125,13 @@ public class GipfBoardComponent extends JComponent {
     public void newGame(GameType gameType) {
         switch (gameType) {
             case basic:
-                game = new BasicGame(true);
+                game = new BasicGame();
                 break;
             case standard:
-                game = new StandardGame(true);
+                game = new StandardGame();
                 break;
             case tournament:
-                game = new TournamentGame(true);
+                game = new TournamentGame();
         }
         clearSelectedPositions();
     }

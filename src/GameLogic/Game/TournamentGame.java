@@ -8,8 +8,8 @@ import GameLogic.PlayersInGame;
  * Created by frans on 5-10-2015.
  */
 public class TournamentGame extends Game {
-    public TournamentGame(boolean isRanInteractively) {
-        super(GameType.tournament, isRanInteractively);
+    public TournamentGame() {
+        super();
     }
 
     @Override

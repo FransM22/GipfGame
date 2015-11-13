@@ -1,6 +1,6 @@
 package GameLogic;
 
-import GameLogic.Game.GameType;
+import GameLogic.Game.Game;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -13,13 +13,13 @@ import java.util.LinkedList;
  * Created by frans on 5-10-2015.
  */
 public class GameLogger implements Serializable {
-    private final Instant gameStartedTime;
     public final LinkedList<String> logMessages;                // Messages displayed in the log in the window (if there is a GipfWindow instance connected to this game)
+    private final Instant gameStartedTime;
 
-    public GameLogger(GameType gameType) {
+    public GameLogger(Game game) {
         logMessages = new LinkedList<>();
         gameStartedTime = Instant.now();
-        log("Started a new " + gameType + " GIPF game.");
+        log("Started a new " + game.getClass() + " GIPF game.");
     }
 
     public void log(String debug) {
@@ -29,5 +29,7 @@ public class GameLogger implements Serializable {
         logMessages.add(timeString + ": " + debug);
     }
 
-    public boolean isEmpty() { return logMessages.isEmpty(); }
+    public boolean isEmpty() {
+        return logMessages.isEmpty();
+    }
 }

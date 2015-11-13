@@ -1,5 +1,7 @@
 package GUI2;
 
+import AI.Players.HumanPlayer;
+import AI.Players.RandomPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
@@ -8,12 +10,14 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.ResourceBundle;
@@ -24,6 +28,10 @@ import static GameLogic.PieceColor.WHITE;
 public class Controller implements Initializable {
     @FXML
     private TabPane tabPane;
+    @FXML
+    private ComboBox<Class> whitePlayerCombobox;
+    @FXML
+    private ComboBox<Class> blackPlayerCombobox;
     @FXML
     private SwingNode gipfGameNode;
     @FXML
@@ -61,10 +69,14 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        game = new BasicGame(false);
+
+        whitePlayerCombobox.setItems(FXCollections.observableList(Arrays.asList(HumanPlayer.class, RandomPlayer.class)));
+        blackPlayerCombobox.setItems(FXCollections.observableList(Arrays.asList(HumanPlayer.class, RandomPlayer.class)));
+
+        game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game, false);
         gipfGameNode.setContent(gipfBoardComponent);
-        Game smallVisualisationGame = new BasicGame(false);
+        Game smallVisualisationGame = new BasicGame();
         smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, true);
         smallGipfGameVisualisationNode.setContent(smallVisualisationComponent);
 
@@ -119,6 +131,6 @@ public class Controller implements Initializable {
                 p.getValue().getValue().boardStateProperties.heuristicRandomValue).asObject());
 
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.heuristicBlackMinusWhitePieces).asObject());
+                p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
     }
 }

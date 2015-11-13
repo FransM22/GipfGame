@@ -24,23 +24,18 @@ import static java.util.stream.Collectors.*;
  */
 public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
-    private final GameType gameType;                            // The game type (basic, standard, tournament)
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
     private Set<Position> currentRemoveSelection = new HashSet<>();
-    private boolean isRanInteractively; // Can the game ask which line to remove or not?
 
-    Game(GameType gameType, boolean isRanInteractively) {
-        this.gameType = gameType;
-        this.isRanInteractively = isRanInteractively;
-
+    Game() {
         initializeBoard();
         initializePlayers();
 
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
 
-        gameLogger = new GameLogger(gameType);
+        gameLogger = new GameLogger(this);
     }
 
     void initializePlayers() {
@@ -170,7 +165,7 @@ public abstract class Game implements Serializable {
                 piecesBackTo.put(BLACK, new HashSet<>());
                 piecesBackTo.put(null, new HashSet<>());    // Hash maps can take null as a key, in this case used for pieces that are removed from the board
 
-                if (isRanInteractively) {
+                if (!move.isCompleteMove) {
                     // Get the lines of the own color
                     // TODO should gipfBoardState be replaced by newGipfBoardState?
                     removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
@@ -179,11 +174,10 @@ public abstract class Game implements Serializable {
                     PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
                     removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
                 } else {
-                    if (move.isCompleteMove) {
-                        piecesBackTo.get(WHITE).addAll(move.piecesToWhite);
-                        piecesBackTo.get(BLACK).addAll(move.piecesToBlack);
-                        piecesBackTo.get(null).addAll(move.piecesRemoved);
-                    }
+                    piecesBackTo.get(WHITE).addAll(move.piecesToWhite);
+                    piecesBackTo.get(BLACK).addAll(move.piecesToBlack);
+                    piecesBackTo.get(null).addAll(move.piecesRemoved);
+
                 }
                 // Get the line segments that
                 // Get the lines of the color of the other player
@@ -252,25 +246,25 @@ public abstract class Game implements Serializable {
                 piece -> getPotentialStartMoves(piece).stream()
         ).collect(toSet());
 
+        potentialMoves.stream().forEach(m -> m.isCompleteMove = true);
+
         Set<Move> potentialMovesIncludingLineSegmentRemoval = new HashSet<>();
         for (Move potentialMove : potentialMoves) {
             GipfBoardState temporaryBoardState = new GipfBoardState(getGipfBoardState());
             try {
                 movePiece(temporaryBoardState, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
 
-                Set<Line.Segment> removableLineSegments = getRemovableLineSegments(temporaryBoardState, (temporaryBoardState.players.current().pieceColor == WHITE) ? BLACK : WHITE);
-                if (removableLineSegments.size() == 0) {
+                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(temporaryBoardState, (gipfBoardState.players.current().pieceColor));
+                if (removableLineSegmentsByCurrentPlayer.size() == 0) {
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
                 } else {
-                    for (Line.Segment removedSegment : removableLineSegments) {
-                        Set<Line.Segment> removedSegments = new HashSet<>();
-                        removedSegments.add(removedSegment);    // Only remove one segment if possible for now. TODO
+                    for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
                         Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(temporaryBoardState);
-                        if (temporaryBoardState.players.current().pieceColor == WHITE)
+                        if (gipfBoardState.players.current().pieceColor == WHITE)
                             moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
-                        if (temporaryBoardState.players.current().pieceColor == BLACK)
+                        if (gipfBoardState.players.current().pieceColor == BLACK)
                             moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
@@ -421,10 +415,6 @@ public abstract class Game implements Serializable {
         return gameLogger;
     }
 
-    public GameType getGameType() {
-        return gameType;
-    }
-
     public void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
         for (Position position : positions) {
             gipfBoardState.getPieceMap().remove(position);
@@ -519,11 +509,11 @@ public abstract class Game implements Serializable {
     public abstract boolean getGameOverState();
 
     public void newGameLogger() {
-        this.gameLogger = new GameLogger(gameType);
+        this.gameLogger = new GameLogger(this);
     }
 
     public Set<Move> getPotentialStartMoves(Piece piece) {
-        return new HashSet<Move>(Arrays.asList(
+        return new HashSet<>(Arrays.asList(
                 new Move(piece, new Position('a', 1), NORTH_EAST),
                 new Move(piece, new Position('a', 2), NORTH_EAST),
                 new Move(piece, new Position('a', 2), SOUTH_EAST),

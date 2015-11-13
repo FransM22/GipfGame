@@ -41,8 +41,10 @@ public class UpdateTreeTableViewSelection {
                 "BOARD:\n" +
                         "Depth:\t\t\t\t" + gipfBoardStateTreeTableView.getTreeItemLevel(gipfBoardStateTreeItem) + "\n" +
                         "Direct children:\t\t" + gipfBoardStateTreeItem.getChildren().size() + "\n" +
-                        "Visible nodes:\t\t\t" + gipfBoardStateTreeTableView.getExpandedItemCount();
+                        "Visible nodes:\t\t\t" + gipfBoardStateTreeTableView.getExpandedItemCount() + "\n\n";
 
-        boardDescriptionLabel.setText(whiteLabelText + blackLabelText + boardLabelText);
+        String heurisiticDescription = "Low values for heuristics lead to player black winning, high values to player white.";
+
+        boardDescriptionLabel.setText(whiteLabelText + blackLabelText + boardLabelText + heurisiticDescription);
     }
 }

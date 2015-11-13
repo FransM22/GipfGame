@@ -28,12 +28,12 @@ public class GenerateNodes {
     private void setChildNodes(TreeItem<GipfBoardState> treeItem, OptionalInt depth) {
         if (depth.isPresent() && depth.getAsInt() < 1) return;
 
-        Game game = new BasicGame(false);
+        Game game = new BasicGame();
         game.loadState(treeItem.getValue());
 
         game.getAllowedMoves().stream().forEach(
                 move -> {
-                    Game childGame = new BasicGame(false);
+                    Game childGame = new BasicGame();
                     childGame.loadState(treeItem.getValue());
 
                     childGame.applyMove(move);
