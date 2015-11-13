@@ -68,7 +68,7 @@
                                 <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
                                                prefWidth="9999">
                                     <columns>
-                                        <TreeTableColumn fx:id="columnBoardName" prefWidth="200.0" text="Board ID"/>
+                                        <TreeTableColumn fx:id="columnBoardName" prefWidth="350.0" text="Board ID"/>
                                         <TreeTableColumn fx:id="columnWhiteReserve" prefWidth="75.0" text="W Reserve"/>
                                         <TreeTableColumn fx:id="columnBlackReserve" prefWidth="75.0" text="B Reserve"/>
                                         <TreeTableColumn fx:id="columnWhiteGipf" prefWidth="32.5" text="WG"/>
@@ -77,8 +77,9 @@
                                         <TreeTableColumn fx:id="columnCurrentPlayer" prefWidth="75.0"
                                                          text="Current player"/>
                                         <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned"/>
+                                        <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax" />
                                         <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0" />
-                                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0" text="Heuristic #1"/>
+                                        <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0" text="H1"/>
                                     </columns>
                                 </TreeTableView>
                                 <VBox>

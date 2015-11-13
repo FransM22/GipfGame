@@ -3,8 +3,6 @@ package GameLogic;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-
 /**
  * Stores all information related to a move operation. Can be used to track back to a previous state on the board, or to
  * determine which possible moves there are from a given board state.
@@ -15,8 +13,9 @@ public class Move implements Comparable<Move>{
     public final Piece addedPiece;             // The piece that is added to the board
     public final Position startPos;                      // A newly added piece moves from the startPos to the endPos
     public final Direction direction;                    // The direction in which the piece moves
-    public Set<Line.Segment> removedSegments;
-    public Set<Position> removedPiecePositions;    // Pieces that are removed during this move
+    public Optional<Set<Position>> piecesToWhite;
+    public Optional<Set<Position>> piecesToBlack;
+    public Optional<Set<Position>> piecesRemoved;    // Pieces that are removed during this move
 
     /**
      * Constructor, creates a Move with the following properties
@@ -24,41 +23,45 @@ public class Move implements Comparable<Move>{
      * @param addedPiece            the piece that is added to the board
      * @param startPos              the position where the piece is added
      * @param direction             the direction in which the newly added piece is moved
-     * @param removedPiecePositions the pieces that are removed
+     * @param piecesRemoved the pieces that are removed
      */
     public Move(Piece addedPiece,
                 Position startPos,
                 Direction direction,
-                Optional<Set<Position>> removedPiecePositions,
-                Optional<Set<Line.Segment>> removedSegments) {
+                Optional<Set<Position>> piecesToWhite,
+                Optional<Set<Position>> piecesToBlack,
+                Optional<Set<Position>> piecesRemoved) {
         this.addedPiece = addedPiece;
         this.startPos = startPos;
         this.direction = direction;
-        removedSegments.ifPresent(rs -> this.removedSegments = rs);
-        removedPiecePositions.ifPresent(rpp -> this.removedPiecePositions = rpp);
+        this.piecesToWhite = piecesToWhite;
+        this.piecesToBlack = piecesToBlack;
+        this.piecesRemoved = piecesRemoved;
     }
 
     public Move(Move otherMove) {
         this.addedPiece = otherMove.addedPiece;
         this.startPos = otherMove.startPos;
         this.direction = otherMove.direction;
-        this.removedSegments = otherMove.removedSegments;
-        this.removedPiecePositions = otherMove.removedPiecePositions;
-    }
-
-    public void setRemovedLineSegments(Set<Line.Segment> removedSegments) {
-        this.removedSegments = removedSegments;
+        this.piecesToWhite = otherMove.piecesToWhite;
+        this.piecesToBlack = otherMove.piecesToBlack;
+        this.piecesRemoved = otherMove.piecesRemoved;
     }
 
     @Override
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());
 
-        return "" + addedPiece.getPieceColor() + ": "
+        String returnString =  "" + addedPiece.getPieceColor() + ": "
                 + (addedPiece.getPieceType() == PieceType.GIPF ? "G" : "")
                 + startPos.getName() +
-                "-" + toPos.getName() +
-                (removedPiecePositions == null ? "" : ", removed=" + removedPiecePositions.stream().map(Position::getName).collect(toSet()));
+                "-" + toPos.getName();
+
+        if (piecesToWhite.isPresent()) returnString += " white: " + piecesToWhite.get();
+        if (piecesToBlack.isPresent()) returnString += " white: " + piecesToBlack.get();
+        if (piecesRemoved.isPresent()) returnString += " white: " + piecesRemoved.get();
+
+        return returnString;
     }
 
     public Position getStartingPosition() { return startPos; }

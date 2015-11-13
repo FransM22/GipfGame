@@ -43,7 +43,9 @@ public class GenerateNodes {
 
                     treeItem.getChildren().add(childItem);
                     treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-                        this.setChildNodes(childItem, OptionalInt.of(1));
+                        if (childItem.getChildren().size() == 0) {  // Calculate the children if it doesn't have any yet
+                            this.setChildNodes(childItem, OptionalInt.of(1));
+                        }
                     });
                 }
         );

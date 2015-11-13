@@ -43,6 +43,8 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
     @FXML
+    private TreeTableColumn<GipfBoardState, Integer> columnMinMax;
+    @FXML
     private TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
     @FXML
     private TreeTableColumn<GipfBoardState, Integer> columnHeuristic1;
@@ -109,6 +111,9 @@ public class Controller implements Initializable {
                         p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject());
 
         columnIsPruned.setCellValueFactory((p) -> new ReadOnlyBooleanWrapper(false).asObject());
+
+        columnMinMax.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().boardStateProperties.minMaxValue).asObject());
 
         columnHeuristic0.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicRandomValue).asObject());

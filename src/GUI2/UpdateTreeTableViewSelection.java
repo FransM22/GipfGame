@@ -6,9 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
-import static GameLogic.PieceColor.BLACK;
-import static GameLogic.PieceColor.WHITE;
-
 /**
  * Created by frans on 10-11-2015.
  */
@@ -28,21 +25,23 @@ public class UpdateTreeTableViewSelection {
 
         String whiteLabelText =
                 "WHITE player:\n" +
-                "Placing GIPF pieces?\t" + players.get(WHITE).isPlacingGipfPieces + "\n" +
-                "Pieces left:\t\t\t" + players.get(WHITE).reserve + "\n" +
-                "On turn:\t\t\t\t" + (players.current() == players.get(WHITE)) + "\n\n";
+                        "Placing GIPF pieces?\t" + players.white.isPlacingGipfPieces + "\n" +
+                        "Pieces left:\t\t\t" + players.white.reserve + "\n" +
+                        "On turn:\t\t\t\t" + (players.current() == players.white) + "\n" +
+                        "Is winner: \t\t\t" + (players.winner() == players.white) + "\n\n";
 
         String blackLabelText =
                 "BLACK player:\n" +
-                "Placing GIPF pieces?\t" + players.get(BLACK).isPlacingGipfPieces + "\n" +
-                "Pieces left:\t\t\t" + players.get(BLACK).reserve + "\n" +
-                "On turn:\t\t\t\t" + (players.current() == players.get(BLACK)) + "\n\n";
+                        "Placing GIPF pieces?\t" + players.black.isPlacingGipfPieces + "\n" +
+                        "Pieces left:\t\t\t" + players.black.reserve + "\n" +
+                        "On turn:\t\t\t\t" + (players.current() == players.black) + "\n" +
+                        "Is winner: \t\t\t" + (players.winner() == players.black) + "\n\n";
 
         String boardLabelText =
                 "BOARD:\n" +
-                "Depth:\t\t\t\t" + gipfBoardStateTreeTableView.getTreeItemLevel(gipfBoardStateTreeItem) + "\n" +
-                "Direct children:\t\t" + gipfBoardStateTreeItem.getChildren().size() + "\n" +
-                "Expanded nodes:\t\t" + gipfBoardStateTreeTableView.getExpandedItemCount();
+                        "Depth:\t\t\t\t" + gipfBoardStateTreeTableView.getTreeItemLevel(gipfBoardStateTreeItem) + "\n" +
+                        "Direct children:\t\t" + gipfBoardStateTreeItem.getChildren().size() + "\n" +
+                        "Visible nodes:\t\t\t" + gipfBoardStateTreeTableView.getExpandedItemCount();
 
         boardDescriptionLabel.setText(whiteLabelText + blackLabelText + boardLabelText);
     }

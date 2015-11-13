@@ -14,7 +14,7 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
     private Player winningPlayer = null;
     private Player currentPlayer = null;
     public Player white = new Player(PieceColor.WHITE);
-    private Player black = new Player(PieceColor.BLACK);
+    public Player black = new Player(PieceColor.BLACK);
 
     public PlayersInGame() {
     }
