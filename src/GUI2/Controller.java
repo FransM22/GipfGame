@@ -6,6 +6,7 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
+import GameLogic.Move;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -17,19 +18,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.function.Function;
 
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
     @FXML
-    private ComboBox<Class> whitePlayerCombobox;
+    private ComboBox<Class<? extends Function<GipfBoardState, Move>>> whitePlayerCombobox;
     @FXML
-    private ComboBox<Class> blackPlayerCombobox;
+    private ComboBox<Class<? extends Function<GipfBoardState, Move>>> blackPlayerCombobox;
     @FXML
     private SwingNode gipfGameNode;
     @FXML
@@ -57,6 +56,8 @@ public class Controller implements Initializable {
     @FXML
     private Label boardDescriptionLabel;
     @FXML
+    private Button playButton;
+    @FXML
     private TreeTableView<GipfBoardState> boardStateTreeTableView;
     @FXML
     private Tab analyzeGameTab;
@@ -67,9 +68,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        whitePlayerCombobox.setItems(FXCollections.observableList(Arrays.asList(HumanPlayer.class, RandomPlayer.class)));
-        blackPlayerCombobox.setItems(FXCollections.observableList(Arrays.asList(HumanPlayer.class, RandomPlayer.class)));
+        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class);
+        whitePlayerCombobox.setItems(FXCollections.observableList(playerList));
+        blackPlayerCombobox.setItems(FXCollections.observableList(playerList));
 
         game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game, false);
@@ -93,6 +94,13 @@ public class Controller implements Initializable {
         analyzeGameTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
+        });
+
+        whitePlayerCombobox.valueProperty().addListener((observable, oldValue, newValue) -> game.setPlayer(WHITE, newValue));
+        blackPlayerCombobox.valueProperty().addListener((observable, oldValue, newValue) -> game.setPlayer(BLACK, newValue));
+
+        playButton.setOnAction(e -> {
+            gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
         });
     }
 

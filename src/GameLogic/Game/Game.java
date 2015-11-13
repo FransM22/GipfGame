@@ -1,11 +1,13 @@
 package GameLogic.Game;
 
+import AI.Players.HumanPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.*;
 
 import javax.swing.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -26,11 +28,17 @@ public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
+    private Function<GipfBoardState, Move> whitePlayer;
+    private Function<GipfBoardState, Move> blackPlayer;
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
+    private Thread automaticPlayThread;
 
     Game() {
         initializeBoard();
         initializePlayers();
+
+        whitePlayer = new HumanPlayer();
+        blackPlayer = new HumanPlayer();
 
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
@@ -217,6 +225,16 @@ public abstract class Game implements Serializable {
 
     public GipfBoardState getGipfBoardState() {
         return gipfBoardState;
+    }
+
+    public void setPlayer(PieceColor color, Class<? extends Function<GipfBoardState, Move>> player) {
+        try {
+            if (color == WHITE) whitePlayer = player.newInstance();
+            if (color == BLACK) blackPlayer = player.newInstance();
+        } catch (Exception e) {
+            System.err.println("Could not instantiate player.");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -537,5 +555,42 @@ public abstract class Game implements Serializable {
                 new Move(piece, new Position('b', 1), NORTH),
                 new Move(piece, new Position('b', 1), NORTH_EAST)
         ));
+    }
+
+    public void startGameCycle(Runnable finalAction) {
+        if (automaticPlayThread == null || !automaticPlayThread.isAlive()) {
+            GameLoopRunnable gameLoopRunnable = new GameLoopRunnable();
+            gameLoopRunnable.finalAction = finalAction;
+            automaticPlayThread = new Thread(gameLoopRunnable);
+        }
+
+        automaticPlayThread.start();
+    }
+
+    public void startGameCycle() {
+        startGameCycle(null);
+    }
+
+    private class GameLoopRunnable implements Runnable {
+        public Runnable finalAction;
+
+        @Override
+        public void run() {
+            Move move;
+            if (gipfBoardState.players.current() == gipfBoardState.players.white) {
+                move = whitePlayer.apply(gipfBoardState);
+            } else {
+                move = blackPlayer.apply(gipfBoardState);
+            }
+
+            if (move != null) {
+                applyMove(move);
+            }
+
+            // A final action to be executed (for example repainting the component)
+            if (finalAction != null) {
+                finalAction.run();
+            }
+        }
     }
 }
