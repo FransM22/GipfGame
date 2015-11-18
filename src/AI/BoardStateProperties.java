@@ -22,7 +22,7 @@ public class BoardStateProperties {
     public void update() {
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
-        this.mctsDouble = Math.random();    // TODO update with real value
+        this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);
         this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
     }
 }
