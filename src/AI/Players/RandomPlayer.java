@@ -19,6 +19,7 @@ public class RandomPlayer implements Function<GipfBoardState, Move> {
         game.loadState(gipfBoardState);
 
 
+        // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
         TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
         for (Move move : game.getAllowedMoves()) {
             Game temporaryGame = new BasicGame();
@@ -28,6 +29,9 @@ public class RandomPlayer implements Function<GipfBoardState, Move> {
             moveGipfBoardStateMap.put(temporaryGame.getGipfBoardState().boardStateProperties.heuristicRandomValue, move);
         }
 
-        return moveGipfBoardStateMap.firstEntry().getValue();
+        if (moveGipfBoardStateMap.size() > 1) {
+            return moveGipfBoardStateMap.firstEntry().getValue();
+        }
+        return null;
     }
 }

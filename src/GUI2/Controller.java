@@ -68,9 +68,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class);
-        whitePlayerCombobox.setItems(FXCollections.observableList(playerList));
-        blackPlayerCombobox.setItems(FXCollections.observableList(playerList));
+        setupPlayerCombobox();
 
         game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game, false);
@@ -102,6 +100,14 @@ public class Controller implements Initializable {
         playButton.setOnAction(e -> {
             gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
         });
+    }
+
+    private void setupPlayerCombobox() {
+        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class);
+        whitePlayerCombobox.setItems(FXCollections.observableList(playerList));
+        blackPlayerCombobox.setItems(FXCollections.observableList(playerList));
+        whitePlayerCombobox.setValue(HumanPlayer.class);
+        blackPlayerCombobox.setValue(HumanPlayer.class);
     }
 
     public void repaintGipfBoards() {

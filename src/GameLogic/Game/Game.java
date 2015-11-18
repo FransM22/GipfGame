@@ -567,29 +567,34 @@ public abstract class Game implements Serializable {
         automaticPlayThread.start();
     }
 
-    public void startGameCycle() {
-        startGameCycle(null);
-    }
-
     private class GameLoopRunnable implements Runnable {
         public Runnable finalAction;
 
         @Override
         public void run() {
             Move move;
-            if (gipfBoardState.players.current() == gipfBoardState.players.white) {
-                move = whitePlayer.apply(gipfBoardState);
-            } else {
-                move = blackPlayer.apply(gipfBoardState);
-            }
+            while (true) {
+                try {
+                    // The waiting time is artificial, it makes the difference between two moves clearer
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    break;
+                }
 
-            if (move != null) {
-                applyMove(move);
-            }
+                if (gipfBoardState.players.current() == gipfBoardState.players.white) {
+                    move = whitePlayer.apply(gipfBoardState);
+                } else {
+                    move = blackPlayer.apply(gipfBoardState);
+                }
 
-            // A final action to be executed (for example repainting the component)
-            if (finalAction != null) {
-                finalAction.run();
+                if (move != null) {
+                    applyMove(move);
+                }
+
+                // A final action to be executed (for example repainting the component)
+                if (finalAction != null) {
+                    finalAction.run();
+                }
             }
         }
     }
