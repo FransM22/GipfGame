@@ -1,6 +1,7 @@
 package GUI2;
 
 import AI.Players.HumanPlayer;
+import AI.Players.MCTSPlayer;
 import AI.Players.RandomPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.Game.BasicGame;
@@ -103,7 +104,7 @@ public class Controller implements Initializable {
     }
 
     private void setupPlayerCombobox() {
-        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class);
+        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class, MCTSPlayer.class);
         whitePlayerCombobox.setItems(FXCollections.observableList(playerList));
         blackPlayerCombobox.setItems(FXCollections.observableList(playerList));
         whitePlayerCombobox.setValue(HumanPlayer.class);

@@ -11,8 +11,11 @@ import java.util.function.Function;
 /**
  * Created by frans on 13-11-2015.
  */
-public class RandomPlayer implements Function<GipfBoardState, Move> {
+public class MCTSPlayer implements Function<GipfBoardState, Move> {
 
+    /*
+     TODO: Update BoardStaeProperties class with heuristic code
+     */
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
         Game game = new BasicGame();
