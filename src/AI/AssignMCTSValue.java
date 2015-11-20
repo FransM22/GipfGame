@@ -17,7 +17,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
         int w = 0; //wi,  Number wins after current move
         int n = 0; //ni, Number plays/simulations after current move
         double c = Math.sqrt(2); // Exploration parameter
-        double MCTSValue = (w / n) + c * Math.sqrt(n / t);
+        // double MCTSValue = (w / n) + c * Math.sqrt(n / t); // This line gives a division by 0 error
 
         for (int number_simulations_left = 100; number_simulations_left > 0; number_simulations_left--) {
             // Create a temporary game
@@ -29,7 +29,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
             // game.getAllowedMoves();
             // is allowed
         }
-        return MCTSValue;
+        return 0.; //MCTSValue;
     }
 }
 

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.embed.swing.SwingNode?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI2.Controller">
@@ -23,7 +25,27 @@
         <Tab text="Game">
             <HBox prefHeight="9999" prefWidth="9999">
                 <SwingNode fx:id="gipfGameNode"/>
-                <VBox prefWidth="350.0"><!-- This is the right hand part of the window, with the settings about the algorithms -->
+                <VBox prefWidth="350.0"><!-- This is the right hand part of the window, with the settings for the algorithms -->
+                    <TitledPane animated="false" collapsible="false" text="Game settings">
+                        <VBox>
+                            <Label text="Minimum time (ms)"/>
+                            <Spinner fx:id="minThinkingTimeSpinner"/>
+                            <Label text="Maximum time (ms)"/>
+                            <Spinner fx:id="maxThinkingTimeSpinner"/>
+                            <Separator>
+                                <VBox.margin>
+                                    <Insets top="10.0" bottom="10.0" />
+                                </VBox.margin>
+                            </Separator>
+                            <HBox alignment="CENTER">
+                            <ToggleButton fx:id="playButton" text="Play">
+                                <font>
+                                    <Font size="30.0" />
+                                </font>
+                            </ToggleButton>
+                            </HBox>
+                        </VBox>
+                    </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="White">
                         <VBox>
                             <Label text="Select player"/>
@@ -40,7 +62,6 @@
                             <ComboBox fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
                         </VBox>
                     </TitledPane>
-                    <Button fx:id="playButton" text="Play" />
                 </VBox>
             </HBox>
         </Tab>

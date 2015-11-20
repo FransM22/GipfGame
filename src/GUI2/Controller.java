@@ -25,16 +25,17 @@ import javafx.scene.control.*;
 
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Function;
 
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
+    @FXML
+    private Spinner<Integer> maxThinkingTimeSpinner;
+    @FXML
+    private Spinner<Integer> minThinkingTimeSpinner;
     @FXML
     private ComboBox<Class<? extends Function<GipfBoardState, Move>>> whitePlayerCombobox;
     @FXML
@@ -66,7 +67,7 @@ public class Controller implements Initializable {
     @FXML
     private Label boardDescriptionLabel;
     @FXML
-    private Button playButton;
+    private ToggleButton playButton;
     @FXML
     private TreeTableView<GipfBoardState> boardStateTreeTableView;
     @FXML
@@ -79,6 +80,7 @@ public class Controller implements Initializable {
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
     private GipfBoardComponent smallVisualisationComponent;
+    private List<Control> controlsToBeInactiveDuringPlay;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -90,6 +92,13 @@ public class Controller implements Initializable {
         Game smallVisualisationGame = new BasicGame();
         smallVisualisationComponent = new GipfBoardComponent(smallVisualisationGame, true);
         smallGipfGameVisualisationNode.setContent(smallVisualisationComponent);
+
+        controlsToBeInactiveDuringPlay = Arrays.asList(
+                whiteHeuristicCombobox,
+                blackHeuristicCombobox,
+                whitePlayerCombobox,
+                blackPlayerCombobox
+        );
 
         initializeColumns();
 
@@ -108,12 +117,36 @@ public class Controller implements Initializable {
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
 
-        whitePlayerCombobox.valueProperty().addListener((observable, oldValue, newValue) -> game.setPlayer(WHITE, newValue));
-        blackPlayerCombobox.valueProperty().addListener((observable, oldValue, newValue) -> game.setPlayer(BLACK, newValue));
+        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 500, 100));
+        maxThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 5000, 100));
 
-        playButton.setOnAction(e -> {
-            gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
+
+        /*
+        The listener of the play button
+         */
+        playButton.selectedProperty().addListener((observable, oldValue, isSelected) -> {
+            // the minThinkingTimeSPinner must be initialized before this call.
+            gipfBoardComponent.game.minWaitTime = minThinkingTimeSpinner.getValue();
+
+            // If the button is not selected
+            if (isSelected) {
+                setActivatedStateDuringPlay(false);
+
+                try {
+                    gipfBoardComponent.game.whitePlayer = whitePlayerCombobox.getValue().newInstance();
+                    gipfBoardComponent.game.blackPlayer = blackPlayerCombobox.getValue().newInstance();
+                } catch (Exception e) {
+                    System.err.println("Could not instantiate player.");
+                    e.printStackTrace();
+                }
+                gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
+            } else {
+                setActivatedStateDuringPlay(true);
+                gipfBoardComponent.game.automaticPlayThread.interrupt();
+            }
         });
+
+        minThinkingTimeSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> gipfBoardComponent.game.minWaitTime = newValue));
     }
 
     /**
@@ -124,8 +157,8 @@ public class Controller implements Initializable {
         // Java (without extra libraries) doesn't allow for querying which classes are inside a package, so all players have to be added
         // manually here
         ObservableList<Class<? extends Function<GipfBoardState, Move>>> playerOList = FXCollections.observableList(Arrays.asList(
-                HumanPlayer.class,
                 RandomPlayer.class,
+                HumanPlayer.class,
                 MCTSPlayer.class,
                 DecisionTreePlayer.class
         ));
@@ -133,7 +166,7 @@ public class Controller implements Initializable {
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
         ObservableList<Field> heuristicOList = FXCollections.observableList(Arrays.asList(BoardStateProperties.class.getFields()));
         HeuristicStringConverter heuristicStringConverter = new HeuristicStringConverter();
-        AlgorithmStringConverter algorithmStringConverter = new AlgorithmStringConverter();
+        AlgorithmStringConverter algorithmStringConverter = new AlgorithmStringConverter(playerOList);
 
         whitePlayerCombobox.setItems(playerOList);
         blackPlayerCombobox.setItems(playerOList);
@@ -144,10 +177,11 @@ public class Controller implements Initializable {
         whiteHeuristicCombobox.setConverter(heuristicStringConverter);
         blackHeuristicCombobox.setConverter(heuristicStringConverter);
 
-        whitePlayerCombobox.setValue(HumanPlayer.class);
-        blackPlayerCombobox.setValue(HumanPlayer.class);
-        whiteHeuristicCombobox.setValue(BoardStateProperties.class.getFields()[0]);
-        blackHeuristicCombobox.setValue(BoardStateProperties.class.getFields()[0]);
+        whitePlayerCombobox.setValue(playerOList.get(0));
+        whitePlayerCombobox.setValue(playerOList.get(0));
+        blackPlayerCombobox.setValue(playerOList.get(0));
+        whiteHeuristicCombobox.setValue(heuristicOList.get(0));
+        blackHeuristicCombobox.setValue(heuristicOList.get(0));
     }
 
     public void repaintGipfBoards() {
@@ -183,5 +217,11 @@ public class Controller implements Initializable {
 
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
+    }
+
+    private void setActivatedStateDuringPlay(boolean setActive) {
+        for (Control control : controlsToBeInactiveDuringPlay) {
+            control.setDisable(!setActive);
+        }
     }
 }

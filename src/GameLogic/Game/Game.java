@@ -28,10 +28,11 @@ public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
-    private Function<GipfBoardState, Move> whitePlayer;
-    private Function<GipfBoardState, Move> blackPlayer;
+    public Function<GipfBoardState, Move> whitePlayer;
+    public Function<GipfBoardState, Move> blackPlayer;
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
-    private Thread automaticPlayThread;
+    public Thread automaticPlayThread;
+    public int minWaitTime;
 
     Game() {
         initializeBoard();
@@ -225,16 +226,6 @@ public abstract class Game implements Serializable {
 
     public GipfBoardState getGipfBoardState() {
         return gipfBoardState;
-    }
-
-    public void setPlayer(PieceColor color, Class<? extends Function<GipfBoardState, Move>> player) {
-        try {
-            if (color == WHITE) whitePlayer = player.newInstance();
-            if (color == BLACK) blackPlayer = player.newInstance();
-        } catch (Exception e) {
-            System.err.println("Could not instantiate player.");
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -576,7 +567,7 @@ public abstract class Game implements Serializable {
             while (true) {
                 try {
                     // The waiting time is artificial, it makes the difference between two moves clearer
-                    Thread.sleep(500);
+                    Thread.sleep(Game.this.minWaitTime);
                 } catch (InterruptedException e) {
                     break;
                 }
