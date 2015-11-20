@@ -28,12 +28,16 @@
                         <VBox>
                             <Label text="Select player"/>
                             <ComboBox fx:id="whitePlayerCombobox" prefWidth="350.0"/>
+                            <Label text="Select heuristic"/>
+                            <ComboBox fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
                         </VBox>
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="Black">
                         <VBox>
                             <Label text="Select player"/>
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
+                            <Label text="Select heuristic"/>
+                            <ComboBox fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
                         </VBox>
                     </TitledPane>
                     <Button fx:id="playButton" text="Play" />

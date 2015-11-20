@@ -1,9 +1,13 @@
 package GUI2;
 
+import AI.BoardStateProperties;
+import AI.Players.DecisionTreePlayer;
 import AI.Players.HumanPlayer;
 import AI.Players.MCTSPlayer;
 import AI.Players.RandomPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
+import GUI2.StringConverters.AlgorithmStringConverter;
+import GUI2.StringConverters.HeuristicStringConverter;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
@@ -13,13 +17,18 @@ import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static GameLogic.PieceColor.BLACK;
@@ -62,6 +71,10 @@ public class Controller implements Initializable {
     private TreeTableView<GipfBoardState> boardStateTreeTableView;
     @FXML
     private Tab analyzeGameTab;
+    @FXML
+    private ComboBox<Field> whiteHeuristicCombobox;
+    @FXML
+    private ComboBox<Field> blackHeuristicCombobox;
 
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
@@ -104,11 +117,31 @@ public class Controller implements Initializable {
     }
 
     private void setupPlayerCombobox() {
-        List<Class<? extends  Function<GipfBoardState, Move>>> playerList = Arrays.asList(HumanPlayer.class, RandomPlayer.class, MCTSPlayer.class);
-        whitePlayerCombobox.setItems(FXCollections.observableList(playerList));
-        blackPlayerCombobox.setItems(FXCollections.observableList(playerList));
+        // Add the classes that represent the players (those classes must implement the Function<GipfBoardState, Move> interface.
+        ObservableList<Class<? extends Function<GipfBoardState, Move>>> playerOList = FXCollections.observableList(Arrays.asList(
+                HumanPlayer.class,
+                RandomPlayer.class,
+                MCTSPlayer.class,
+                DecisionTreePlayer.class
+        ));
+
+        ObservableList<Field> heuristicOList = FXCollections.observableList(Arrays.asList(BoardStateProperties.class.getFields()));
+        HeuristicStringConverter heuristicStringConverter = new HeuristicStringConverter();
+        AlgorithmStringConverter algorithmStringConverter = new AlgorithmStringConverter();
+
+        whitePlayerCombobox.setItems(playerOList);
+        blackPlayerCombobox.setItems(playerOList);
+        whiteHeuristicCombobox.setItems(heuristicOList);
+        blackHeuristicCombobox.setItems(heuristicOList);
+        whitePlayerCombobox.setConverter(algorithmStringConverter);
+        blackPlayerCombobox.setConverter(algorithmStringConverter);
+        whiteHeuristicCombobox.setConverter(heuristicStringConverter);
+        blackHeuristicCombobox.setConverter(heuristicStringConverter);
+
         whitePlayerCombobox.setValue(HumanPlayer.class);
         blackPlayerCombobox.setValue(HumanPlayer.class);
+        whiteHeuristicCombobox.setValue(BoardStateProperties.class.getFields()[0]);
+        blackHeuristicCombobox.setValue(BoardStateProperties.class.getFields()[0]);
     }
 
     public void repaintGipfBoards() {
@@ -118,7 +151,7 @@ public class Controller implements Initializable {
 
     private void initializeColumns() {
         columnBoardName.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
-                        Integer.toHexString(p.getValue().getValue().hashCode())));
+                Integer.toHexString(p.getValue().getValue().hashCode())));
 
         columnWhiteReserve.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().players.get(WHITE).reserve).asObject());
@@ -126,13 +159,13 @@ public class Controller implements Initializable {
                 p.getValue().getValue().players.get(BLACK).reserve).asObject());
 
         columnCurrentPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
-                        p.getValue().getValue().players.current().pieceColor.toString()));
+                p.getValue().getValue().players.current().pieceColor.toString()));
 
         columnWhiteGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
-                        p.getValue().getValue().players.get(WHITE).hasPlacedNormalPieces).asObject());
+                p.getValue().getValue().players.get(WHITE).hasPlacedNormalPieces).asObject());
 
         columnBlackGipf.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Boolean> p) -> new ReadOnlyBooleanWrapper(
-                        p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject());
+                p.getValue().getValue().players.get(BLACK).hasPlacedNormalPieces).asObject());
 
         columnIsPruned.setCellValueFactory((p) -> new ReadOnlyBooleanWrapper(false).asObject());
 
