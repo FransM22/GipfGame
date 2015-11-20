@@ -7,12 +7,17 @@ import GameLogic.GipfBoardState;
 import java.util.function.Function;
 
 /**
- * Created by frans on 18-11-2015.
+ * Created by Dingding
  */
 public class AssignMCTSValue implements Function<GipfBoardState, Double> {
+    private int t = 0; //Total number simulations hence private
+
     @Override
     public Double apply(GipfBoardState gipfBoardState) {
-        double var4 = 0;
+        int w = 0; //wi,  Number wins after current move
+        int n = 0; //ni, Number plays/simulations after current move
+        double c = Math.sqrt(2); // Exploration parameter
+        double MCTSValue = (w / n) + c * Math.sqrt(n / t);
 
         for (int number_simulations_left = 100; number_simulations_left > 0; number_simulations_left--) {
             // Create a temporary game
@@ -24,8 +29,9 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
             // game.getAllowedMoves();
             // is allowed
         }
-
-
-        return  var4;    // TODO update with real value
+        return MCTSValue;
     }
 }
+
+
+

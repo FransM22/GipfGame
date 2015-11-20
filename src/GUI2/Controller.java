@@ -82,7 +82,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setupPlayerCombobox();
+        setupComboboxes();
 
         game = new BasicGame();
         gipfBoardComponent = new GipfBoardComponent(game, false);
@@ -116,8 +116,13 @@ public class Controller implements Initializable {
         });
     }
 
-    private void setupPlayerCombobox() {
+    /**
+     * Sets up both the player selection comboboxes and the heuristic selection comboboxes
+     */
+    private void setupComboboxes() {
         // Add the classes that represent the players (those classes must implement the Function<GipfBoardState, Move> interface.
+        // Java (without extra libraries) doesn't allow for querying which classes are inside a package, so all players have to be added
+        // manually here
         ObservableList<Class<? extends Function<GipfBoardState, Move>>> playerOList = FXCollections.observableList(Arrays.asList(
                 HumanPlayer.class,
                 RandomPlayer.class,
@@ -125,6 +130,7 @@ public class Controller implements Initializable {
                 DecisionTreePlayer.class
         ));
 
+        // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
         ObservableList<Field> heuristicOList = FXCollections.observableList(Arrays.asList(BoardStateProperties.class.getFields()));
         HeuristicStringConverter heuristicStringConverter = new HeuristicStringConverter();
         AlgorithmStringConverter algorithmStringConverter = new AlgorithmStringConverter();

@@ -3,6 +3,10 @@ package AI;
 import GameLogic.GipfBoardState;
 
 /**
+ * This class stores different values assigned to a board state. (Evaluatged boards have a 1-1 relation with BoardStateProperties
+ * objects.
+ *
+ * All fields in this class are automatically added to the heuristic selection combo box in GUI2.
  * Created by frans on 12-11-2015.
  */
 public class BoardStateProperties {
