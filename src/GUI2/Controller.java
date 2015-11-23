@@ -33,6 +33,10 @@ import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
     @FXML
+    private ProgressBar blackProgressBar;
+    @FXML
+    private ProgressBar whiteProgressBar;
+    @FXML
     private Spinner<Integer> maxThinkingTimeSpinner;
     @FXML
     private Spinner<Integer> minThinkingTimeSpinner;
