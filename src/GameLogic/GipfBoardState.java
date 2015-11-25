@@ -77,6 +77,7 @@ public class GipfBoardState implements Serializable {
             Game temporaryGame = new BasicGame();
             temporaryGame.loadState(this);
             temporaryGame.applyMove(move);
+
             exploredChildren.put(move, temporaryGame.getGipfBoardState());
         });
     }
@@ -94,7 +95,9 @@ public class GipfBoardState implements Serializable {
         game.loadState(this);
         return game.getAllowedMoves()
                 .stream()
-                .filter(move -> {return !exploredChildren.keySet().contains(move);})
+                .filter(move -> {
+                    return !exploredChildren.keySet().contains(move);
+                })
                 .collect(toList());
     }
 }

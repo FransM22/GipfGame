@@ -33,6 +33,11 @@ public class BoardStateProperties {
         this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
         if (mcts_depth > 0) {
             this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);    // Don't update it again for every move
+
+            gipfBoardState.exploreAllChildren();
+            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.mcts_depth = mcts_depth - 1);
+            // TODO this runs way too many times now
+            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.update());
         }
     }
 }

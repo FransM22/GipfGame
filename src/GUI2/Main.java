@@ -18,7 +18,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainGui.fxml"));
         String css = this.getClass().getResource("treeTableView.css").toExternalForm();
 
-        Parent root = loader.load();
+         Parent root = loader.load();
         Scene scene = new Scene(root, 1200, 800);
         scene.getStylesheets().add(css);
 
