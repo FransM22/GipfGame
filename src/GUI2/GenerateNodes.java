@@ -19,8 +19,14 @@ class GenerateNodes {
     public GenerateNodes(Optional<GipfBoardState> start, OptionalInt depth, TreeTableView<GipfBoardState> boardStateTreeTableView) {
         this.treeTableView = boardStateTreeTableView;
 
-        if (start.isPresent()) root.setValue(start.get());
-        else root.setValue(new GipfBoardState());
+
+        if (start.isPresent()) {
+            root.setValue(start.get());
+        }
+        else {
+            root.setValue(new GipfBoardState());
+        }
+        root.getValue().boardStateProperties.update();
 
         setChildNodes(root, depth);
     }
@@ -31,24 +37,20 @@ class GenerateNodes {
         Game game = new BasicGame();
         game.loadState(treeItem.getValue());
 
-        game.getAllowedMoves().stream().forEach(
-                move -> {
-                    Game childGame = new BasicGame();
-                    childGame.loadState(treeItem.getValue());
+        game.getGipfBoardState().exploreAllChildren();
 
-                    childGame.applyMove(move);
+        for (GipfBoardState gipfBoardState : game.getGipfBoardState().exploredChildren.values()) {
+            if (!treeItem.getChildren().contains(gipfBoardState)) {
+                TreeItem<GipfBoardState> childItem = new TreeItem<>(gipfBoardState);
+                treeItem.getChildren().add(childItem);
 
-                    TreeItem<GipfBoardState> childItem = new TreeItem<>(childGame.getGipfBoardState());
-
-
-                    treeItem.getChildren().add(childItem);
-                    treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-                        if (childItem.getChildren().size() == 0) {  // Calculate the children if it doesn't have any yet
-                            this.setChildNodes(childItem, OptionalInt.of(1));
-                        }
-                    });
-                }
-        );
+                treeItem.expandedProperty().addListener(((observable, oldValue, newValue) -> {
+                    if (childItem.getChildren().size() == 0) {
+                        this.setChildNodes(childItem, OptionalInt.of(1));
+                    }
+                }));
+            }
+        }
 
         if (treeTableView.getComparator() != null) {
             treeItem.getChildren().sort(treeTableView.getComparator());

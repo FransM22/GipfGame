@@ -81,9 +81,12 @@
                                          text="Current player"/>
                         <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned"/>
                         <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax"/>
-                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random"/>
+                        <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random" visible="false"/>
                         <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0"
-                                         text="H1: #white - #black"/>
+                                         text="H1: #white - #black" visible="false"/>
+                        <TreeTableColumn fx:id="columnMctsW" prefWidth="75.0" text="MctsW"/>
+                        <TreeTableColumn fx:id="columnMctsN" prefWidth="75.0" text="MctsN"/>
+                        <TreeTableColumn fx:id="columnMctsDepth" prefWidth="75.0" text="MctsDepth"/>
                     </columns>
                 </TreeTableView>
                 <VBox>

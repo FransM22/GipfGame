@@ -101,4 +101,33 @@ public class Move implements Comparable<Move> {
     public int compareTo(Move o) {
         return this.startPos.getPosId() - o.startPos.getPosId();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Move)) return false;
+
+        Move move = (Move) o;
+
+        if (isCompleteMove != move.isCompleteMove) return false;
+        if (addedPiece != move.addedPiece) return false;
+        if (!startPos.equals(move.startPos)) return false;
+        if (direction != move.direction) return false;
+        if (!piecesToWhite.equals(move.piecesToWhite)) return false;
+        if (!piecesToBlack.equals(move.piecesToBlack)) return false;
+        return piecesRemoved.equals(move.piecesRemoved);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = addedPiece.hashCode();
+        result = 31 * result + startPos.hashCode();
+        result = 31 * result + direction.hashCode();
+        result = 31 * result + (isCompleteMove ? 1 : 0);
+        result = 31 * result + piecesToWhite.hashCode();
+        result = 31 * result + piecesToBlack.hashCode();
+        result = 31 * result + piecesRemoved.hashCode();
+        return result;
+    }
 }

@@ -1,10 +1,15 @@
 package GameLogic;
 
 import AI.BoardStateProperties;
+import GameLogic.Game.BasicGame;
+import GameLogic.Game.Game;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by frans on 8-9-2015.
@@ -14,6 +19,7 @@ public class GipfBoardState implements Serializable {
     public final BoardStateProperties boardStateProperties;
     private final HashMap<Position, Piece> pieceMap;
     public PlayersInGame players;
+    public Map<Move, GipfBoardState> exploredChildren;
 
     /**
      * Initialize an empty Gipf board
@@ -22,6 +28,8 @@ public class GipfBoardState implements Serializable {
         // Initialize the lists
         this.pieceMap = new HashMap<>();
         this.players = new PlayersInGame();
+        exploredChildren = new HashMap<>();
+
         this.boardStateProperties = new BoardStateProperties(this);
     }
 
@@ -33,6 +41,8 @@ public class GipfBoardState implements Serializable {
     public GipfBoardState(GipfBoardState old) {
         this.pieceMap = new HashMap<>(old.pieceMap);
         this.players = new PlayersInGame(old.players);
+        exploredChildren = new HashMap<>();
+
         this.boardStateProperties = new BoardStateProperties(this);
     }
 
@@ -58,5 +68,33 @@ public class GipfBoardState implements Serializable {
         int result = pieceMap.hashCode();
         result = 31 * result + players.hashCode();
         return result;
+    }
+
+    public void exploreAllChildren() {
+        List<Move> unexploredChildren = getUnexploredChildren();
+
+        unexploredChildren.stream().forEach(move -> {
+            Game temporaryGame = new BasicGame();
+            temporaryGame.loadState(this);
+            temporaryGame.applyMove(move);
+            exploredChildren.put(move, temporaryGame.getGipfBoardState());
+        });
+    }
+
+    public void exploreChild(Move m) {
+        Game temporaryGame = new BasicGame();
+        temporaryGame.loadState(this);
+        temporaryGame.applyMove(m);
+
+        exploredChildren.put(m, temporaryGame.getGipfBoardState());
+    }
+
+    public List<Move> getUnexploredChildren() {
+        Game game = new BasicGame();
+        game.loadState(this);
+        return game.getAllowedMoves()
+                .stream()
+                .filter(move -> {return !exploredChildren.keySet().contains(move);})
+                .collect(toList());
     }
 }
