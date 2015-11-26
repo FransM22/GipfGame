@@ -6,7 +6,6 @@ import GameLogic.GipfBoardState;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -18,7 +17,6 @@ class GenerateNodes {
     private final TreeTableView<GipfBoardState> treeTableView;
 
     public GenerateNodes(Optional<GipfBoardState> start, OptionalInt depth, TreeTableView<GipfBoardState> boardStateTreeTableView) {
-        Instant startNodeGeneration = Instant.now();
         this.treeTableView = boardStateTreeTableView;
 
 

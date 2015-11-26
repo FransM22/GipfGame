@@ -121,7 +121,7 @@ public class Controller implements Initializable {
         });
 
         analyzeGameTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            game.getGipfBoardState().boardStateProperties.mcts_depth = 3;
+            game.getGipfBoardState().boardStateProperties.mcts_depth = 2;
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
@@ -232,6 +232,17 @@ public class Controller implements Initializable {
                 p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
         columnMctsDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_depth).asObject());
+
+        new Thread(() -> {
+            while (true) {
+                boardStateTreeTableView.refresh();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void setActivatedStateDuringPlay(boolean setActive) {

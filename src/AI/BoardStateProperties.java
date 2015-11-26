@@ -37,7 +37,7 @@ public class BoardStateProperties {
             gipfBoardState.exploreAllChildren();
             gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.mcts_depth = mcts_depth - 1);
             // TODO this runs way too many times now
-            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.update());
+            gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.update());
         }
     }
 
