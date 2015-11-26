@@ -11,7 +11,6 @@ import java.util.function.Function;
  */
 public class AssignMCTSValue implements Function<GipfBoardState, Double> {
     private int t = 0; //Total number simulations hence private
-    private static long nrOfInstances = 0;
 
     @Override
     public Double apply(GipfBoardState startNodeBoardState) {
@@ -23,7 +22,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
             game.getGipfBoardState().exploreAllChildren();
             game.getGipfBoardState().exploredChildren.values().forEach(temporaryBoardState -> {
                 try {
-                    for (int current_n = 0; current_n <= 3; current_n++) {
+                    for (int current_n = 1; current_n <= 5; current_n++) {
                         int w = 0; //wi,  Number wins after current move
                         double c = Math.sqrt(2); // Exploration parameter
                         //double MCTSValue = (current_w / current_n) + c * Math.sqrt(current_n / t); // This line gives a division by 0 error
@@ -36,14 +35,20 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
                         temporaryGame.getGipfBoardState().boardStateProperties.mcts_depth = startNodeBoardState.boardStateProperties.mcts_depth - 1;
                         temporaryGame.getGipfBoardState().boardStateProperties.mcts_n = current_n;
                         temporaryGame.getGipfBoardState().boardStateProperties.mcts_w += w;
+
+                        // update the parents recursively
+                        GipfBoardState currentParent = temporaryGame.getGipfBoardState().parent;
+                        while (currentParent != null) {
+                            currentParent.boardStateProperties.mcts_n += 1;
+                            currentParent.boardStateProperties.mcts_w += w;
+                            currentParent = currentParent.parent;
+                        }
                     }
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             });
         }
-        System.out.println("AssignMCTSValue ran for the " + ++nrOfInstances +  "th time");
-
 
         return 0.; //MCTSValue;
     }

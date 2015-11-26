@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
  * This class represents the board that is used in the game.
  */
 public class GipfBoardState implements Serializable {
+    public GipfBoardState parent;
     public final BoardStateProperties boardStateProperties;
     private final HashMap<Position, Piece> pieceMap;
     public PlayersInGame players;
@@ -73,12 +74,8 @@ public class GipfBoardState implements Serializable {
     public void exploreAllChildren() {
         List<Move> unexploredChildren = getUnexploredChildren();
 
-        unexploredChildren.stream().forEach(move -> {
-            Game temporaryGame = new BasicGame();
-            temporaryGame.loadState(this);
-            temporaryGame.applyMove(move);
-
-            exploredChildren.put(move, temporaryGame.getGipfBoardState());
+        unexploredChildren.parallelStream().forEach(move -> {
+            exploreChild(move);
         });
     }
 
@@ -86,6 +83,7 @@ public class GipfBoardState implements Serializable {
         Game temporaryGame = new BasicGame();
         temporaryGame.loadState(this);
         temporaryGame.applyMove(m);
+        temporaryGame.getGipfBoardState().parent = this;
 
         exploredChildren.put(m, temporaryGame.getGipfBoardState());
     }

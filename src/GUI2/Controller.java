@@ -69,9 +69,7 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Integer> columnHeuristic1;
     @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnMctsN;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnMctsW;
+    private TreeTableColumn<GipfBoardState, String> columnMctsWN;
     @FXML
     private TreeTableColumn<GipfBoardState, Integer> columnMctsDepth;
     @FXML
@@ -230,10 +228,8 @@ public class Controller implements Initializable {
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
         // MCTS VALUES
-        columnMctsN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.mcts_n).asObject());
-        columnMctsW.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.mcts_w).asObject());
+        columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
+                p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
         columnMctsDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_depth).asObject());
     }

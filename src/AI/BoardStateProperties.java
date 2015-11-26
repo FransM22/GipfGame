@@ -40,4 +40,6 @@ public class BoardStateProperties {
             gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.update());
         }
     }
+
+
 }
