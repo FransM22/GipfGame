@@ -12,6 +12,7 @@ import java.util.function.Function;
  * Created by Dingding.
  */
 public class MCTSPlayer implements Function<GipfBoardState, Move> {
+    public static int MCTSDepth = 2;
 
     /* 
      TODO: Update BoardStaeProperties class with heuristic code

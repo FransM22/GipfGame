@@ -1,5 +1,6 @@
 package AI;
 
+import AI.Players.MCTSPlayer;
 import GameLogic.GipfBoardState;
 
 /**
@@ -16,7 +17,7 @@ public class BoardStateProperties {
     public int minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
-    public int mcts_depth;
+    public int depth;
     private GipfBoardState gipfBoardState;
 
 
@@ -24,20 +25,29 @@ public class BoardStateProperties {
         this.gipfBoardState = gipfBoardState;
     }
 
-    /**
-     * Updates all values for the board state
-     */
-    public void update() {
+    public void updateBoardState() {
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
         this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
-        if (mcts_depth > 0) {
-            this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);    // Don't update it again for every move
+    }
 
+    /**
+     * Updates all values for the board state
+     */
+    public void updateChildren() {
+        updateBoardState();
+
+        // The maximum depth required
+        if (depth <= MCTSPlayer.MCTSDepth) {
             gipfBoardState.exploreAllChildren();
-            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.mcts_depth = mcts_depth - 1);
-            // TODO this runs way too many times now
-            gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.update());
+            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
+            gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
+        }
+
+        if (depth == MCTSPlayer.MCTSDepth) {
+            // Only calculate the mcts value for the nodes at the given depth (the cost of also calculating their parents is negligible,
+            // but this looks neater
+            this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);
         }
     }
 

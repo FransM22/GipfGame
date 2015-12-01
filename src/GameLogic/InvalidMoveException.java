@@ -7,4 +7,12 @@ package GameLogic;
  */
 public class InvalidMoveException extends Exception {
 
+    /**
+     * Overriding method so that it won't fill in the stack trace (= very expensive operation)
+     * @return
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }

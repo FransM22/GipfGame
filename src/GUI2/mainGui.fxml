@@ -85,7 +85,7 @@
                         <TreeTableColumn fx:id="columnHeuristic1" prefWidth="75.0"
                                          text="H1: #white - #black" visible="false"/>
                         <TreeTableColumn fx:id="columnMctsWN" prefWidth="75.0" text="Mcts W/N"/>
-                        <TreeTableColumn fx:id="columnMctsDepth" prefWidth="75.0" text="MctsDepth"/>
+                        <TreeTableColumn fx:id="columnDepth" prefWidth="75.0" text="Depth"/>
                     </columns>
                 </TreeTableView>
                 <VBox>

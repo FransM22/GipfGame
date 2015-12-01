@@ -1,10 +1,7 @@
 package GUI2;
 
 import AI.BoardStateProperties;
-import AI.Players.DecisionTreePlayer;
-import AI.Players.HumanPlayer;
-import AI.Players.MCTSPlayer;
-import AI.Players.RandomPlayer;
+import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.StringConverters.AlgorithmStringConverter;
 import GUI2.StringConverters.HeuristicStringConverter;
@@ -32,10 +29,6 @@ import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
-    @FXML
-    private ProgressBar blackProgressBar;
-    @FXML
-    private ProgressBar whiteProgressBar;
     @FXML
     private Spinner<Integer> maxThinkingTimeSpinner;
     @FXML
@@ -71,7 +64,7 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, String> columnMctsWN;
     @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnMctsDepth;
+    private TreeTableColumn<GipfBoardState, Integer> columnDepth;
     @FXML
     private Label boardDescriptionLabel;
     @FXML
@@ -121,7 +114,7 @@ public class Controller implements Initializable {
         });
 
         analyzeGameTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            game.getGipfBoardState().boardStateProperties.mcts_depth = 2;
+            game.getGipfBoardState().boardStateProperties.depth = 0;
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
@@ -169,7 +162,8 @@ public class Controller implements Initializable {
                 RandomPlayer.class,
                 HumanPlayer.class,
                 MCTSPlayer.class,
-                DecisionTreePlayer.class
+                DecisionTreePlayer.class,
+                MinimaxPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -230,8 +224,8 @@ public class Controller implements Initializable {
         // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
-        columnMctsDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.mcts_depth).asObject());
+        columnDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().boardStateProperties.depth).asObject());
 
         new Thread(() -> {
             while (true) {

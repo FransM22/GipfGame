@@ -26,13 +26,13 @@ import static java.util.stream.Collectors.*;
  */
 public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
-    GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
-    private GameLogger gameLogger;
     public Function<GipfBoardState, Move> whitePlayer;
     public Function<GipfBoardState, Move> blackPlayer;
-    private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
     public Thread automaticPlayThread;
     public int minWaitTime;
+    GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
+    private GameLogger gameLogger;
+    private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
     Game() {
         initializeBoard();
@@ -44,7 +44,7 @@ public abstract class Game implements Serializable {
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
 
-        gameLogger = new GameLogger(this);
+        gameLogger = new EmptyLogger(this);
     }
 
     /**
@@ -77,6 +77,15 @@ public abstract class Game implements Serializable {
                 col - row <= -5 ||
                 col <= 0
         );
+    }
+
+    /**
+     * Accessing this method is much faster than accessing getDots()
+     * @param p
+     * @return
+     */
+    public boolean isDotPosition(Position p) {
+        return isPositionOnPlayAreaOrOuterDots(p) && !isOnInnerBoard(p);
     }
 
     /**
@@ -221,7 +230,7 @@ public abstract class Game implements Serializable {
             gameLogger.log("No pieces left");
         }
 
-        gipfBoardState.boardStateProperties.update();
+        gipfBoardState.boardStateProperties.updateBoardState();
     }
 
     public GipfBoardState getGipfBoardState() {
@@ -330,10 +339,12 @@ public abstract class Game implements Serializable {
             int consecutivePieces = 0;
             boolean isInLineSegment = false;
 
+            Map<Position, Piece> pieceMap = gipfBoardState.getPieceMap();
+
             // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
             // can't be more than one set of four pieces of the same color (requiring at least 9 positions) on the board.
-            for (; isPositionOnPlayAreaOrOuterDots(currentPosition) && endOfSegment == null; currentPosition = currentPosition.next(direction)) {
-                PieceColor currentPieceColor = gipfBoardState.getPieceMap().containsKey(currentPosition) ? gipfBoardState.getPieceMap().get(currentPosition).getPieceColor() : null;
+            for (; endOfSegment == null && isPositionOnPlayAreaOrOuterDots(currentPosition); currentPosition = currentPosition.next(direction)) {
+                PieceColor currentPieceColor = pieceMap.containsKey(currentPosition) ? pieceMap.get(currentPosition).getPieceColor() : null;
 
                 // Update the consecutivePieces
                 if (currentPieceColor == pieceColor) {
@@ -347,7 +358,7 @@ public abstract class Game implements Serializable {
                 }
 
                 if (isInLineSegment) {
-                    if (getDots().contains(currentPosition) || currentPieceColor == null) {
+                    if (isDotPosition(currentPosition) || currentPieceColor == null) {
                         endOfSegment = currentPosition.previous(direction);
                     }
                 }

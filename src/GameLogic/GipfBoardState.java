@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -18,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 public class GipfBoardState implements Serializable {
     public GipfBoardState parent;
     public final BoardStateProperties boardStateProperties;
-    private final HashMap<Position, Piece> pieceMap;
+    private final Map<Position, Piece> pieceMap;
     public PlayersInGame players;
     public Map<Move, GipfBoardState> exploredChildren;
 
@@ -27,9 +28,9 @@ public class GipfBoardState implements Serializable {
      */
     public GipfBoardState() {
         // Initialize the lists
-        this.pieceMap = new HashMap<>();
+        this.pieceMap = new TreeMap<>();  // A treemap appears to be a little bit faster than a hashmap
         this.players = new PlayersInGame();
-        exploredChildren = new HashMap<>();
+        exploredChildren = new HashMap<>(50);
 
         this.boardStateProperties = new BoardStateProperties(this);
     }
@@ -42,7 +43,7 @@ public class GipfBoardState implements Serializable {
     public GipfBoardState(GipfBoardState old) {
         this.pieceMap = new HashMap<>(old.pieceMap);
         this.players = new PlayersInGame(old.players);
-        exploredChildren = new HashMap<>();
+        exploredChildren = new HashMap<>(50);
 
         this.boardStateProperties = new BoardStateProperties(this);
     }
