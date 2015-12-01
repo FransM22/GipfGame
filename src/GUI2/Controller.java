@@ -66,6 +66,8 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Integer> columnDepth;
     @FXML
+    private TreeTableColumn<GipfBoardState, Double> columnMctsWNDiscrete;
+    @FXML
     private Label boardDescriptionLabel;
     @FXML
     private ToggleButton playButton;
@@ -114,7 +116,6 @@ public class Controller implements Initializable {
         });
 
         analyzeGameTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            game.getGipfBoardState().boardStateProperties.depth = 0;
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
@@ -149,6 +150,21 @@ public class Controller implements Initializable {
         });
 
         minThinkingTimeSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> gipfBoardComponent.game.minWaitTime = newValue));
+
+        new Thread(() -> {
+            try {
+                while (true) {
+                    if (analyzeGameTab.selectedProperty().getValue() && game.automaticPlayThread != null && !game.automaticPlayThread.isAlive()) {
+                        boardStateTreeTableView.refresh();
+
+                        Thread.sleep(500);
+
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /**
@@ -221,22 +237,14 @@ public class Controller implements Initializable {
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
+        columnMctsWNDiscrete.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
+                p.getValue().getValue().boardStateProperties.mcts_w / (p.getValue().getValue().boardStateProperties.mcts_n + 0.00001)).asObject());
+
         // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
         columnDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.depth).asObject());
-
-        new Thread(() -> {
-            while (true) {
-                boardStateTreeTableView.refresh();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     private void setActivatedStateDuringPlay(boolean setActive) {

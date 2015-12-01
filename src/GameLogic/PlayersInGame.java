@@ -25,7 +25,7 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         this.black = new Player(other.black);
 
         this.currentPlayer = other.currentPlayer == other.white ? white : black;
-        this.winningPlayer = null;
+        this.winningPlayer = other.winningPlayer;
     }
 
     public Player get(PieceColor pieceColor) {

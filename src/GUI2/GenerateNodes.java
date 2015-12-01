@@ -6,7 +6,6 @@ import GameLogic.GipfBoardState;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -30,9 +29,7 @@ class GenerateNodes {
 
         // Update the board state in another thread (so the GUI will stay responding)
         new Thread(() -> {
-            Instant nodeGenerationStart = Instant.now();
             setChildNodes(root, depth);
-            root.getValue().boardStateProperties.updateChildren();
         }).start();
     }
 
@@ -51,6 +48,7 @@ class GenerateNodes {
 
                 treeItem.expandedProperty().addListener(((observable, oldValue, newValue) -> {
                     if (childItem.getChildren().size() == 0) {
+                        childItem.getValue().boardStateProperties.updateBoardState();
                         this.setChildNodes(childItem, OptionalInt.of(1));
                     }
                 }));

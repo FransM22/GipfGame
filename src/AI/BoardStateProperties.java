@@ -1,6 +1,7 @@
 package AI;
 
 import AI.Players.MCTSPlayer;
+import AI.Players.MinimaxPlayer;
 import GameLogic.GipfBoardState;
 
 /**
@@ -17,7 +18,7 @@ public class BoardStateProperties {
     public int minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
-    public int depth;
+    public int depth = 0;
     private GipfBoardState gipfBoardState;
 
 
@@ -26,28 +27,33 @@ public class BoardStateProperties {
     }
 
     public void updateBoardState() {
+        if (gipfBoardState.parent != null) {
+            this.depth = gipfBoardState.parent.boardStateProperties.depth + 1;
+        }
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
-        this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
     }
 
     /**
      * Updates all values for the board state
+     * Should preferably be run in a separate thread
      */
     public void updateChildren() {
         updateBoardState();
 
-        // The maximum depth required
-        if (depth <= MCTSPlayer.MCTSDepth) {
+        // The maximum depth required. Can be updated if a different algorithm requires a deeper traversal of the tree.
+        if (depth <= Math.max(MCTSPlayer.MCTSDepth, MinimaxPlayer.MaxminmaxDepth)) {
             gipfBoardState.exploreAllChildren();
-            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
+//            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
             gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
         }
 
-        if (depth == MCTSPlayer.MCTSDepth) {
-            // Only calculate the mcts value for the nodes at the given depth (the cost of also calculating their parents is negligible,
-            // but this looks neater
+        if (depth <= MCTSPlayer.MCTSDepth) {
             this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);
+        }
+
+        if (depth <= MinimaxPlayer.MaxminmaxDepth) {
+            this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
         }
     }
 

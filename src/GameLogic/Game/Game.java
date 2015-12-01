@@ -583,6 +583,7 @@ public abstract class Game implements Serializable {
                     break;
                 }
 
+
                 if (gipfBoardState.players.current() == gipfBoardState.players.white) {
                     move = whitePlayer.apply(gipfBoardState);
                 } else {
