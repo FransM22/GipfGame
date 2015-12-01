@@ -20,6 +20,7 @@ public class BoardStateProperties {
     public int mcts_w; // The number of wins (including the current move)
     public int depth = 0;
     private GipfBoardState gipfBoardState;
+    private boolean isExploringChildren = false;
 
 
     public BoardStateProperties(GipfBoardState gipfBoardState) {
@@ -45,7 +46,11 @@ public class BoardStateProperties {
         if (depth <= Math.max(MCTSPlayer.MCTSDepth, MinimaxPlayer.MaxminmaxDepth)) {
             gipfBoardState.exploreAllChildren();
 //            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
-            gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
+            if (!isExploringChildren) {
+                isExploringChildren = true;
+                gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
+            }
+            isExploringChildren = false;
         }
 
         if (depth <= MCTSPlayer.MCTSDepth) {

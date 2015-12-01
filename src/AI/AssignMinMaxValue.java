@@ -16,7 +16,7 @@ class AssignMinMaxValue implements Function<GipfBoardState, Integer> {
         game.loadState(gipfBoardState);
 
         if (game.getGipfBoardState().players.winner() == null) return 0;
-        if (game.getGipfBoardState().players.winner() == game.getGipfBoardState().players.white) return 1;
-        return -1;
+        if (game.getGipfBoardState().players.winner() == game.getGipfBoardState().players.white) return -1;
+        return 1;
     }
 }

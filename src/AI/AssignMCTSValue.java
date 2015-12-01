@@ -39,7 +39,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
                 w = 1;
             }
 
-            temporaryGame.getGipfBoardState().boardStateProperties.mcts_n = current_n;
+            temporaryGame.getGipfBoardState().boardStateProperties.mcts_n++;
             temporaryGame.getGipfBoardState().boardStateProperties.mcts_w += w;
 
             // update the parents recursively
@@ -61,7 +61,6 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
         while (randomGame.getGipfBoardState().players.winner() == null) {
             Set<Move> allowedMoves = randomGame.getAllowedMoves();
             int randomMoveId = random.nextInt(allowedMoves.size());
-
             randomGame.applyMove(allowedMoves.stream().collect(toList()).get(randomMoveId));
         }
 

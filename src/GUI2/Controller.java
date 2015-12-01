@@ -9,6 +9,7 @@ import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -76,9 +77,15 @@ public class Controller implements Initializable {
     @FXML
     private Tab analyzeGameTab;
     @FXML
+    private Tab gameTab;
+    @FXML
     private ComboBox<Field> whiteHeuristicCombobox;
     @FXML
     private ComboBox<Field> blackHeuristicCombobox;
+    @FXML
+    private Label whiteInfoLabel;
+    @FXML
+    private Label blackInfoLabel;
 
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
@@ -151,19 +158,36 @@ public class Controller implements Initializable {
 
         minThinkingTimeSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> gipfBoardComponent.game.minWaitTime = newValue));
 
+        startWindowUpdateThread();
+    }
+
+    private void startWindowUpdateThread() {
         new Thread(() -> {
-            try {
-                while (true) {
-                    if (analyzeGameTab.selectedProperty().getValue() && game.automaticPlayThread != null && !game.automaticPlayThread.isAlive()) {
-                        boardStateTreeTableView.refresh();
+            while (true) {
+                try {
+                    // If the analyze game tab is selected
+                    if (gameTab.selectedProperty().getValue()) {
+                        // Update player stats
 
-                        Thread.sleep(500);
-
+                        // The label update should happen in the FX application thread:
+                        Platform.runLater(() -> {
+                            whiteInfoLabel.setText("Reserve: " + game.getGipfBoardState().players.white.reserve);
+                            blackInfoLabel.setText("Reserve: " + game.getGipfBoardState().players.black.reserve);
+                        });
                     }
+                    else if (analyzeGameTab.selectedProperty().getValue()) {
+                        if (game.automaticPlayThread != null && !game.automaticPlayThread.isAlive()) {
+                            boardStateTreeTableView.refresh();
+
+
+                        }
+                    }
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    break;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+
         }).start();
     }
 

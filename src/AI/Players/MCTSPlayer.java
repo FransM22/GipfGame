@@ -6,6 +6,7 @@ import GameLogic.GipfBoardState;
 import GameLogic.Move;
 import GameLogic.PieceColor;
 
+import java.time.Instant;
 import java.util.TreeMap;
 import java.util.function.Function;
 
@@ -73,12 +74,13 @@ public class MCTSPlayer implements Function<GipfBoardState, Move> {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
+        Instant startGenerateChildren = Instant.now();
         gipfBoardState.boardStateProperties.updateChildren();
 
         Game game = new BasicGame();
         game.loadState(gipfBoardState);
 
-
+        Instant startSortingChildren = Instant.now();
         // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
         TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
         for (Move move : game.getAllowedMoves()) {

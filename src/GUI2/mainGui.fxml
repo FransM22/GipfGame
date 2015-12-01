@@ -22,7 +22,7 @@
         </Menu>
     </MenuBar>
     <TabPane tabClosingPolicy="UNAVAILABLE">
-        <Tab text="Game">
+        <Tab fx:id="gameTab" text="Game">
             <HBox prefHeight="9999" prefWidth="9999">
                 <SwingNode fx:id="gipfGameNode"/>
                 <VBox prefWidth="350.0"><!-- This is the right hand part of the window, with the settings for the algorithms -->
@@ -48,6 +48,7 @@
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="White">
                         <VBox>
+                            <Label fx:id="whiteInfoLabel" text="" />
                             <Label text="Select player"/>
                             <ComboBox fx:id="whitePlayerCombobox" prefWidth="350.0"/>
                             <Label text="Select heuristic"/>
@@ -56,6 +57,7 @@
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="Black">
                         <VBox>
+                            <Label fx:id="blackInfoLabel" text="" />
                             <Label text="Select player"/>
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
                             <Label text="Select heuristic"/>
