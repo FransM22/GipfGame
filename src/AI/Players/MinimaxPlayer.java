@@ -12,7 +12,7 @@ import java.util.TreeMap;
 /**
  * Created by frans on 1-12-2015.
  */
-public class MinimaxPlayer extends ComputerPlayer {
+public class MinimaxPlayer extends ComputerPlayer<Integer> {
 
     public MinimaxPlayer() {
         maxDepth = Optional.of(2);

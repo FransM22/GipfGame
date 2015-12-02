@@ -37,7 +37,7 @@ public class Main extends Application {
          */
         new Thread(() -> {
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
                 ((Controller) loader.getController()).repaintGipfBoards();
             } catch (InterruptedException e) {
                 e.printStackTrace();

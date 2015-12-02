@@ -84,6 +84,8 @@ public class Controller implements Initializable {
     private Label whiteInfoLabel;
     @FXML
     private Label blackInfoLabel;
+    @FXML
+    private MenuItem menuItemNewBasicGame;
 
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
@@ -163,7 +165,17 @@ public class Controller implements Initializable {
 
         minThinkingTimeSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> gipfBoardComponent.game.minWaitTime = newValue));
 
+        setupMenu();
         startWindowUpdateThread();
+    }
+
+    private void setupMenu() {
+        menuItemNewBasicGame.setOnAction((p) -> {
+                    game = new BasicGame();
+                    gipfBoardComponent.game = game;
+                    repaintGipfBoards();
+                }
+        );
     }
 
     private void startWindowUpdateThread() {
@@ -184,7 +196,7 @@ public class Controller implements Initializable {
                                 whiteInfoLabelText += "Max depth: " + game.whitePlayer.maxDepth.get() + "\n";
                             }
                             if (game.whitePlayer.heuristic.isPresent()) {
-                                whiteInfoLabelText += "Heuristic:  " + game.whitePlayer.heuristic.get().getName() + "\n";
+                                whiteInfoLabelText += "Heuristic:  " + ((Field) game.whitePlayer.heuristic.get()).getName() + "\n";
                             }
                             whiteInfoLabelText += "Reserve: " + game.getGipfBoardState().players.white.reserve;
                             whiteInfoLabel.setText(whiteInfoLabelText);
@@ -193,7 +205,7 @@ public class Controller implements Initializable {
                                 blackInfoLabelText += "Max depth: " + game.blackPlayer.maxDepth.get() + "\n";
                             }
                             if (game.blackPlayer.heuristic.isPresent()) {
-                                blackInfoLabelText += "Heuristic:  " + game.blackPlayer.heuristic.get().getName() + "\n";
+                                blackInfoLabelText += "Heuristic:  " + ((Field) game.blackPlayer.heuristic.get()).getName() + "\n";
                             }
                             blackInfoLabelText += "Reserve: " + game.getGipfBoardState().players.black.reserve;
                             blackInfoLabel.setText(blackInfoLabelText);
@@ -225,7 +237,8 @@ public class Controller implements Initializable {
                 HumanPlayer.class,
                 MCTSPlayer.class,
                 DecisionTreePlayer.class,
-                MinimaxPlayer.class
+                MinimaxPlayer.class,
+                WhiteMinusBlackPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -284,7 +297,7 @@ public class Controller implements Initializable {
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
         columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
-                p.getValue().getValue().boardStateProperties.mctsDouble).asObject());
+                p.getValue().getValue().boardStateProperties.mctsValue).asObject());
 
         // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(

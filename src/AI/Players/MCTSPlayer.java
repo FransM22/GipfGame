@@ -10,11 +10,11 @@ import java.util.Optional;
 /**
  * Created by Dingding.
  */
-public class MCTSPlayer extends ComputerPlayer {
+public class MCTSPlayer extends ComputerPlayer<Double> {
     public MCTSPlayer() {
         this.maxDepth = Optional.of(2);
         try {
-            this.heuristic = Optional.of(BoardStateProperties.class.getField("mctsDouble"));
+            this.heuristic = Optional.of(BoardStateProperties.class.getField("mctsValue"));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -43,9 +43,9 @@ public class MCTSPlayer extends ComputerPlayer {
 //                temporaryGame.loadState(gipfBoardState);
 //                temporaryGame.applyMove(move);
 //
-//                // Sorts all board states based on mctsDouble
+//                // Sorts all board states based on mctsValue
 //                //TO DO Has to pick highest value, not lowest
-//                //moveGipfBoardStateMap.put(temporaryGame.getGipfBoardState().boardStateProperties.mctsDouble, move);
+//                //moveGipfBoardStateMap.put(temporaryGame.getGipfBoardState().boardStateProperties.mctsValue, move);
 //            }
 //
 //            if (moveGipfBoardStateMap.size() >= 1) {
@@ -78,6 +78,8 @@ public class MCTSPlayer extends ComputerPlayer {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
+        gipfBoardState.boardStateProperties.updateChildren();
+
         if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
             return getMoveWithHighestHeuristicValue(gipfBoardState, false);
         }

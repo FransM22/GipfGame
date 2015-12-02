@@ -12,13 +12,11 @@
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" text="Open"/>
             <MenuItem mnemonicParsing="false" text="Save"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" text="Open"/>
         </Menu>
         <Menu mnemonicParsing="false" text="New">
-            <MenuItem mnemonicParsing="false" text="Basic"/>
-            <MenuItem mnemonicParsing="false" text="Standard"/>
-            <MenuItem mnemonicParsing="false" text="Tournament"/>
+            <MenuItem fx:id="menuItemNewBasicGame" mnemonicParsing="false" text="Basic"/>
+            <MenuItem visible="false" mnemonicParsing="false" text="Standard"/>
+            <MenuItem visible="false" mnemonicParsing="false" text="Tournament"/>
         </Menu>
     </MenuBar>
     <TabPane tabClosingPolicy="UNAVAILABLE">
@@ -48,20 +46,22 @@
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="White">
                         <VBox>
-                            <Label fx:id="whiteInfoLabel" text="" />
                             <Label text="Select player"/>
                             <ComboBox fx:id="whitePlayerCombobox" prefWidth="350.0"/>
-                            <Label text="Select heuristic"/>
-                            <ComboBox fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
+                            <Label visible="false" text="Select heuristic"/>
+                            <ComboBox visible="false" fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
+                            <Separator />
+                            <Label fx:id="whiteInfoLabel" text="" />
                         </VBox>
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="Black">
                         <VBox>
-                            <Label fx:id="blackInfoLabel" text="" />
                             <Label text="Select player"/>
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
-                            <Label text="Select heuristic"/>
-                            <ComboBox fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
+                            <Label visible="false" text="Select heuristic"/>
+                            <ComboBox visible="false" fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
+                            <Separator />
+                            <Label fx:id="blackInfoLabel" text="" />
                         </VBox>
                     </TitledPane>
                 </VBox>

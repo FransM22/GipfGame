@@ -40,14 +40,14 @@ class AssignMCTSValue implements Function<GipfBoardState, Double> {
 
             temporaryGame.getGipfBoardState().boardStateProperties.mcts_n++;
             temporaryGame.getGipfBoardState().boardStateProperties.mcts_w += w;
-            temporaryGame.getGipfBoardState().boardStateProperties.mctsDouble = temporaryGame.getGipfBoardState().boardStateProperties.mcts_w / (temporaryGame.getGipfBoardState().boardStateProperties.mcts_n + 0.00001);
+            temporaryGame.getGipfBoardState().boardStateProperties.mctsValue = temporaryGame.getGipfBoardState().boardStateProperties.mcts_w / (temporaryGame.getGipfBoardState().boardStateProperties.mcts_n + 0.00001);
 
             // update the parents recursively
             GipfBoardState currentParent = startNodeBoardState.parent;
             while (currentParent != null) {
                 currentParent.boardStateProperties.mcts_n++;
                 currentParent.boardStateProperties.mcts_w += w;
-                currentParent.boardStateProperties.mctsDouble = currentParent.boardStateProperties.mcts_w / (currentParent.boardStateProperties.mcts_n + 0.00001);
+                currentParent.boardStateProperties.mctsValue = currentParent.boardStateProperties.mcts_w / (currentParent.boardStateProperties.mcts_n + 0.00001);
                 currentParent = currentParent.parent;
             }
         }

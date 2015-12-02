@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Created by frans on 2-12-2015.
  */
-public abstract class ComputerPlayer implements Function<GipfBoardState, Move> {
+public abstract class ComputerPlayer<T> implements Function<GipfBoardState, Move> {
     public Optional<Integer> maxDepth = Optional.empty();
     public Optional<Field> heuristic = Optional.empty();
 
@@ -22,7 +22,7 @@ public abstract class ComputerPlayer implements Function<GipfBoardState, Move> {
         game.loadState(gipfBoardState);
 
         // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
-        TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
+        TreeMap<T, Move> moveGipfBoardStateMap = new TreeMap<>();
         for (Move move : game.getAllowedMoves()) {
             Game temporaryGame = new BasicGame();
             temporaryGame.loadState(gipfBoardState);
@@ -31,11 +31,7 @@ public abstract class ComputerPlayer implements Function<GipfBoardState, Move> {
             // Sorts all board states based on heuristicRandomValue
 
             try {
-                double heuristicValue = (Double) heuristic.get().get(temporaryGame.getGipfBoardState().boardStateProperties);
-                if (reverseOrder) {
-                    heuristicValue *= -1;
-                }
-
+                T heuristicValue = (T) heuristic.get().get(temporaryGame.getGipfBoardState().boardStateProperties);
                 moveGipfBoardStateMap.put(heuristicValue, move);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -43,7 +39,10 @@ public abstract class ComputerPlayer implements Function<GipfBoardState, Move> {
         }
 
         if (moveGipfBoardStateMap.size() >= 1) {
-            return moveGipfBoardStateMap.firstEntry().getValue();
+            if (reverseOrder)
+                return moveGipfBoardStateMap.lastEntry().getValue();
+            else
+                return moveGipfBoardStateMap.firstEntry().getValue();
         }
         return null;
     }

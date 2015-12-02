@@ -14,7 +14,7 @@ import GameLogic.GipfBoardState;
 public class BoardStateProperties {
     public double heuristicRandomValue;
     public int heuristicWhiteMinusBlack;
-    public double mctsDouble;
+    public double mctsValue;
     public int minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
