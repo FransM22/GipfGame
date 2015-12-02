@@ -7,14 +7,16 @@ import GameLogic.Move;
 import GameLogic.PieceColor;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 /**
  * Created by Dingding.
  */
-public class MCTSPlayer implements Function<GipfBoardState, Move> {
-    public static int MCTSDepth = 1;
+public class MCTSPlayer extends ComputerPlayer {
+    public MCTSPlayer() {
+        this.maxDepth = Optional.of(2);
+    }
 
 //    /*
 //     TODO: Update BoardStaeProperties class with heuristic code

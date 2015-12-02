@@ -8,7 +8,6 @@ import GUI2.StringConverters.HeuristicStringConverter;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
-import GameLogic.Move;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
@@ -24,7 +23,6 @@ import javafx.scene.control.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Function;
 
 import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
@@ -35,9 +33,9 @@ public class Controller implements Initializable {
     @FXML
     private Spinner<Integer> minThinkingTimeSpinner;
     @FXML
-    private ComboBox<Class<? extends Function<GipfBoardState, Move>>> whitePlayerCombobox;
+    private ComboBox<Class<? extends ComputerPlayer>> whitePlayerCombobox;
     @FXML
-    private ComboBox<Class<? extends Function<GipfBoardState, Move>>> blackPlayerCombobox;
+    private ComboBox<Class<? extends ComputerPlayer>> blackPlayerCombobox;
     @FXML
     private SwingNode gipfGameNode;
     @FXML
@@ -123,11 +121,18 @@ public class Controller implements Initializable {
         });
 
         analyzeGameTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            GenerateNodes generateNodes = new GenerateNodes(Optional.of(game.getGipfBoardState()), OptionalInt.of(1), boardStateTreeTableView);
+            GipfBoardState gipfBoardState = game.getGipfBoardState();
+            // If no game is running, assign values to the nodes
+            new Thread(() -> {
+                if (!game.automaticPlayThread.isAlive()) {
+                    gipfBoardState.boardStateProperties.updateChildren();
+                }
+            }).start();
+            GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
 
-        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 500, 100));
+        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 100, 100));
         maxThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 5000, 100));
 
 
@@ -171,15 +176,26 @@ public class Controller implements Initializable {
 
                         // The label update should happen in the FX application thread:
                         Platform.runLater(() -> {
-                            whiteInfoLabel.setText("Reserve: " + game.getGipfBoardState().players.white.reserve);
-                            blackInfoLabel.setText("Reserve: " + game.getGipfBoardState().players.black.reserve);
+
+                            String whiteInfoLabelText = "";
+                            String blackInfoLabelText = "";
+
+                            if (game.whitePlayer.maxDepth.isPresent()) {
+                                whiteInfoLabelText += "Max depth: " + game.whitePlayer.maxDepth.get() + "\n";
+                            }
+                            whiteInfoLabelText += "Reserve: " + game.getGipfBoardState().players.white.reserve;
+                            whiteInfoLabel.setText(whiteInfoLabelText);
+
+                            if (game.blackPlayer.maxDepth.isPresent()) {
+                                blackInfoLabelText += "Max depth: " + game.blackPlayer.maxDepth.get() + "\n";
+                            }
+                            blackInfoLabelText += "Reserve: " + game.getGipfBoardState().players.black.reserve;
+                            blackInfoLabel.setText(blackInfoLabelText);
+
                         });
-                    }
-                    else if (analyzeGameTab.selectedProperty().getValue()) {
-                        if (game.automaticPlayThread != null && !game.automaticPlayThread.isAlive()) {
+                    } else if (analyzeGameTab.selectedProperty().getValue()) {
+                        if (game.automaticPlayThread.isAlive() || game.getGipfBoardState().boardStateProperties.isExploringChildren) {
                             boardStateTreeTableView.refresh();
-
-
                         }
                     }
                     Thread.sleep(200);
@@ -198,7 +214,7 @@ public class Controller implements Initializable {
         // Add the classes that represent the players (those classes must implement the Function<GipfBoardState, Move> interface.
         // Java (without extra libraries) doesn't allow for querying which classes are inside a package, so all players have to be added
         // manually here
-        ObservableList<Class<? extends Function<GipfBoardState, Move>>> playerOList = FXCollections.observableList(Arrays.asList(
+        ObservableList<Class<? extends ComputerPlayer>> playerOList = FXCollections.observableList(Arrays.asList(
                 RandomPlayer.class,
                 HumanPlayer.class,
                 MCTSPlayer.class,
@@ -262,7 +278,7 @@ public class Controller implements Initializable {
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
         columnMctsWNDiscrete.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
-                p.getValue().getValue().boardStateProperties.mcts_w / (p.getValue().getValue().boardStateProperties.mcts_n + 0.00001)).asObject());
+                p.getValue().getValue().boardStateProperties.mcts_w / (p.getValue().getValue().boardStateProperties.mcts_n + 0.000000001)).asObject());
 
         // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(

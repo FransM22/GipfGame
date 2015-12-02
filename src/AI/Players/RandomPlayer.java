@@ -6,12 +6,11 @@ import GameLogic.GipfBoardState;
 import GameLogic.Move;
 
 import java.util.TreeMap;
-import java.util.function.Function;
 
 /**
  * Created by frans on 13-11-2015.
  */
-public class RandomPlayer implements Function<GipfBoardState, Move> {
+public class RandomPlayer extends ComputerPlayer {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {

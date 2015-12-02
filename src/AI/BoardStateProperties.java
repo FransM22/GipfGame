@@ -1,7 +1,5 @@
 package AI;
 
-import AI.Players.MCTSPlayer;
-import AI.Players.MinimaxPlayer;
 import GameLogic.GipfBoardState;
 
 /**
@@ -20,7 +18,7 @@ public class BoardStateProperties {
     public int mcts_w; // The number of wins (including the current move)
     public int depth = 0;
     private GipfBoardState gipfBoardState;
-    private boolean isExploringChildren = false;
+    public boolean isExploringChildren = false;
 
 
     public BoardStateProperties(GipfBoardState gipfBoardState) {
@@ -43,7 +41,7 @@ public class BoardStateProperties {
         updateBoardState();
 
         // The maximum depth required. Can be updated if a different algorithm requires a deeper traversal of the tree.
-        if (depth <= Math.max(MCTSPlayer.MCTSDepth, MinimaxPlayer.MaxminmaxDepth)) {
+        if (depth <= 2) {
             gipfBoardState.exploreAllChildren();
 //            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
             if (!isExploringChildren) {
@@ -53,11 +51,11 @@ public class BoardStateProperties {
             isExploringChildren = false;
         }
 
-        if (depth <= MCTSPlayer.MCTSDepth) {
+        if (depth <= 2) {
             this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);
         }
 
-        if (depth <= MinimaxPlayer.MaxminmaxDepth) {
+        if (depth <= 2) {
             this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
         }
     }

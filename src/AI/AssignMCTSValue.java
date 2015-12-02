@@ -26,10 +26,9 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
         Game game = new BasicGame();
         game.loadState(startNodeBoardState);
 
-        for (int current_n = 1; current_n <= 2; current_n++) {
+        for (int current_n = 1; current_n <= 5; current_n++) {
             int w = 0; //wi,  Number wins after current move
             double c = Math.sqrt(2); // Exploration parameter
-            //double MCTSValue = (current_w / current_n) + c * Math.sqrt(current_n / t); // This line gives a division by 0 error
 
             Game temporaryGame = new BasicGame();
             temporaryGame.loadState(startNodeBoardState);
@@ -51,7 +50,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
             }
         }
 
-        return 0.; //MCTSValue;
+        return 0.0; // MCTSValue (current_w / current_n) + c * Math.sqrt(current_n / t); // This line gives a division by 0 error
     }
 
     public PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {

@@ -1,5 +1,6 @@
 package GameLogic.Game;
 
+import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.*;
@@ -7,7 +8,6 @@ import GameLogic.*;
 import javax.swing.*;
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -26,9 +26,9 @@ import static java.util.stream.Collectors.*;
  */
 public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
-    public Function<GipfBoardState, Move> whitePlayer;
-    public Function<GipfBoardState, Move> blackPlayer;
-    public Thread automaticPlayThread;
+    public ComputerPlayer whitePlayer;
+    public ComputerPlayer blackPlayer;
+    public Thread automaticPlayThread = new Thread();
     public int minWaitTime;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
@@ -81,6 +81,7 @@ public abstract class Game implements Serializable {
 
     /**
      * Accessing this method is much faster than accessing getDots()
+     *
      * @param p
      * @return
      */
@@ -560,11 +561,9 @@ public abstract class Game implements Serializable {
     }
 
     public void startGameCycle(Runnable finalAction) {
-        if (automaticPlayThread == null || !automaticPlayThread.isAlive()) {
-            GameLoopRunnable gameLoopRunnable = new GameLoopRunnable();
-            gameLoopRunnable.finalAction = finalAction;
-            automaticPlayThread = new Thread(gameLoopRunnable);
-        }
+        GameLoopRunnable gameLoopRunnable = new GameLoopRunnable();
+        gameLoopRunnable.finalAction = finalAction;
+        automaticPlayThread = new Thread(gameLoopRunnable);
 
         automaticPlayThread.start();
     }
