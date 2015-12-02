@@ -1,14 +1,11 @@
 package AI.Players;
 
-import GameLogic.Game.BasicGame;
-import GameLogic.Game.Game;
+import AI.BoardStateProperties;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
 import GameLogic.PieceColor;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.TreeMap;
 
 /**
  * Created by Dingding.
@@ -16,6 +13,11 @@ import java.util.TreeMap;
 public class MCTSPlayer extends ComputerPlayer {
     public MCTSPlayer() {
         this.maxDepth = Optional.of(2);
+        try {
+            this.heuristic = Optional.of(BoardStateProperties.class.getField("mctsDouble"));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
 //    /*
@@ -76,34 +78,11 @@ public class MCTSPlayer extends ComputerPlayer {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
-        Instant startGenerateChildren = Instant.now();
-        gipfBoardState.boardStateProperties.updateChildren();
-
-        Game game = new BasicGame();
-        game.loadState(gipfBoardState);
-
-        Instant startSortingChildren = Instant.now();
-        // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
-        TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
-        for (Move move : game.getAllowedMoves()) {
-            Game temporaryGame = new BasicGame();
-            temporaryGame.loadState(gipfBoardState);
-            temporaryGame.applyMove(move);
-
-            // Sorts all board states based on heuristicRandomValue
-            double wDivn = temporaryGame.getGipfBoardState().boardStateProperties.mcts_w /
-                    (temporaryGame.getGipfBoardState().boardStateProperties.mcts_n + 0.0001);
-
-            if (gipfBoardState.players.current().pieceColor == PieceColor.BLACK) {
-                wDivn *= -1;
-            }
-
-            moveGipfBoardStateMap.put(wDivn, move);
+        if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
+            return getMoveWithHighestHeuristicValue(gipfBoardState, false);
         }
-
-        if (moveGipfBoardStateMap.size() >= 1) {
-            return moveGipfBoardStateMap.firstEntry().getValue();
+        else {
+            return getMoveWithHighestHeuristicValue(gipfBoardState, true);
         }
-        return null;
     }
 }

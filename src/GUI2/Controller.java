@@ -65,7 +65,7 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Integer> columnDepth;
     @FXML
-    private TreeTableColumn<GipfBoardState, Double> columnMctsWNDiscrete;
+    private TreeTableColumn<GipfBoardState, Double> columnMctsValue;
     @FXML
     private Label boardDescriptionLabel;
     @FXML
@@ -183,11 +183,17 @@ public class Controller implements Initializable {
                             if (game.whitePlayer.maxDepth.isPresent()) {
                                 whiteInfoLabelText += "Max depth: " + game.whitePlayer.maxDepth.get() + "\n";
                             }
+                            if (game.whitePlayer.heuristic.isPresent()) {
+                                whiteInfoLabelText += "Heuristic:  " + game.whitePlayer.heuristic.get().getName() + "\n";
+                            }
                             whiteInfoLabelText += "Reserve: " + game.getGipfBoardState().players.white.reserve;
                             whiteInfoLabel.setText(whiteInfoLabelText);
 
                             if (game.blackPlayer.maxDepth.isPresent()) {
                                 blackInfoLabelText += "Max depth: " + game.blackPlayer.maxDepth.get() + "\n";
+                            }
+                            if (game.blackPlayer.heuristic.isPresent()) {
+                                blackInfoLabelText += "Heuristic:  " + game.blackPlayer.heuristic.get().getName() + "\n";
                             }
                             blackInfoLabelText += "Reserve: " + game.getGipfBoardState().players.black.reserve;
                             blackInfoLabel.setText(blackInfoLabelText);
@@ -277,8 +283,8 @@ public class Controller implements Initializable {
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
-        columnMctsWNDiscrete.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
-                p.getValue().getValue().boardStateProperties.mcts_w / (p.getValue().getValue().boardStateProperties.mcts_n + 0.000000001)).asObject());
+        columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
+                p.getValue().getValue().boardStateProperties.mctsDouble).asObject());
 
         // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(

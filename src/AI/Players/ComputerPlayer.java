@@ -1,10 +1,13 @@
 package AI.Players;
 
+import GameLogic.Game.BasicGame;
+import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /**
@@ -12,5 +15,40 @@ import java.util.function.Function;
  */
 public abstract class ComputerPlayer implements Function<GipfBoardState, Move> {
     public Optional<Integer> maxDepth = Optional.empty();
-    Optional<Field> heuristic = Optional.empty();
+    public Optional<Field> heuristic = Optional.empty();
+
+    public Move getMoveWithHighestHeuristicValue(GipfBoardState gipfBoardState, boolean reverseOrder) {
+        Game game = new BasicGame();
+        game.loadState(gipfBoardState);
+
+        // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
+        TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
+        for (Move move : game.getAllowedMoves()) {
+            Game temporaryGame = new BasicGame();
+            temporaryGame.loadState(gipfBoardState);
+            temporaryGame.applyMove(move);
+
+            // Sorts all board states based on heuristicRandomValue
+
+            try {
+                double heuristicValue = (Double) heuristic.get().get(temporaryGame.getGipfBoardState().boardStateProperties);
+                if (reverseOrder) {
+                    heuristicValue *= -1;
+                }
+
+                moveGipfBoardStateMap.put(heuristicValue, move);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (moveGipfBoardStateMap.size() >= 1) {
+            return moveGipfBoardStateMap.firstEntry().getValue();
+        }
+        return null;
+    }
+
+    public Move apply(GipfBoardState gipfBoardState) {
+        return getMoveWithHighestHeuristicValue(gipfBoardState, false);
+    }
 }

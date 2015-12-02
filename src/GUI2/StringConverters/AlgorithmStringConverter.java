@@ -8,7 +8,7 @@ import javafx.util.StringConverter;
  * Created by frans on 20-11-2015.
  */
 public class AlgorithmStringConverter extends StringConverter<Class<? extends ComputerPlayer>> {
-    ObservableList<Class<? extends ComputerPlayer>> playerClassList;
+    private ObservableList<Class<? extends ComputerPlayer>> playerClassList;
 
     public AlgorithmStringConverter(ObservableList<Class<? extends ComputerPlayer>> playerOList) {
         this.playerClassList = playerOList;

@@ -1,5 +1,7 @@
 package AI;
 
+import GameLogic.Game.BasicGame;
+import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 
 /**
@@ -35,15 +37,17 @@ public class BoardStateProperties {
 
     /**
      * Updates all values for the board state
-     * Should preferably be run in a separate thread
+     * Should preferably be ran in a separate thread
      */
     public void updateChildren() {
         updateBoardState();
 
         // The maximum depth required. Can be updated if a different algorithm requires a deeper traversal of the tree.
+        Game game = new BasicGame();
+        game.loadState(gipfBoardState);
+
         if (depth <= 2) {
             gipfBoardState.exploreAllChildren();
-//            gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.depth = depth + 1);
             if (!isExploringChildren) {
                 isExploringChildren = true;
                 gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
@@ -52,7 +56,7 @@ public class BoardStateProperties {
         }
 
         if (depth <= 2) {
-            this.mctsDouble = new AssignMCTSValue().apply(gipfBoardState);
+            new AssignMCTSValue().apply(gipfBoardState);
         }
 
         if (depth <= 2) {

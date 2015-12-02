@@ -16,8 +16,8 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by Dingding
  */
-public class AssignMCTSValue implements Function<GipfBoardState, Double> {
-    Random random = new Random();
+class AssignMCTSValue implements Function<GipfBoardState, Double> {
+    private Random random = new Random();
     private int t = 0; //Total number simulations hence private
 
     @Override
@@ -26,7 +26,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
         Game game = new BasicGame();
         game.loadState(startNodeBoardState);
 
-        for (int current_n = 1; current_n <= 5; current_n++) {
+        for (int current_n = 1; current_n <= 3; current_n++) {
             int w = 0; //wi,  Number wins after current move
             double c = Math.sqrt(2); // Exploration parameter
 
@@ -40,12 +40,14 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
 
             temporaryGame.getGipfBoardState().boardStateProperties.mcts_n++;
             temporaryGame.getGipfBoardState().boardStateProperties.mcts_w += w;
+            temporaryGame.getGipfBoardState().boardStateProperties.mctsDouble = temporaryGame.getGipfBoardState().boardStateProperties.mcts_w / (temporaryGame.getGipfBoardState().boardStateProperties.mcts_n + 0.00001);
 
             // update the parents recursively
             GipfBoardState currentParent = startNodeBoardState.parent;
             while (currentParent != null) {
                 currentParent.boardStateProperties.mcts_n++;
                 currentParent.boardStateProperties.mcts_w += w;
+                currentParent.boardStateProperties.mctsDouble = currentParent.boardStateProperties.mcts_w / (currentParent.boardStateProperties.mcts_n + 0.00001);
                 currentParent = currentParent.parent;
             }
         }
@@ -53,7 +55,7 @@ public class AssignMCTSValue implements Function<GipfBoardState, Double> {
         return 0.0; // MCTSValue (current_w / current_n) + c * Math.sqrt(current_n / t); // This line gives a division by 0 error
     }
 
-    public PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {
+    private PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {
         Game randomGame = new BasicGame();
         randomGame.loadState(gipfBoardState);
 
