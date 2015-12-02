@@ -12,6 +12,7 @@ import GameLogic.GipfBoardState;
  * Created by frans on 12-11-2015.
  */
 public class BoardStateProperties {
+    public static long run_counter = 0;
     public double heuristicRandomValue;
     public int heuristicWhiteMinusBlack;
     public double mctsValue;
@@ -19,8 +20,8 @@ public class BoardStateProperties {
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
     public int depth = 0;
-    private GipfBoardState gipfBoardState;
     public boolean isExploringChildren = false;
+    private GipfBoardState gipfBoardState;
 
 
     public BoardStateProperties(GipfBoardState gipfBoardState) {
@@ -41,21 +42,26 @@ public class BoardStateProperties {
      */
     public void updateChildren() {
         updateBoardState();
+        run_counter++;
+        if (run_counter % 100 == 0)
+            Thread.yield(); // Don't consume everything on the thread
 
         // The maximum depth required. Can be updated if a different algorithm requires a deeper traversal of the tree.
         Game game = new BasicGame();
         game.loadState(gipfBoardState);
 
-        if (depth <= 2) {
+        if (depth <= Math.max(2, 2)) {
             gipfBoardState.exploreAllChildren();
             if (!isExploringChildren) {
                 isExploringChildren = true;
-                gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
+                new Thread(() -> {
+                    gipfBoardState.exploredChildren.values().parallelStream().forEach(childState -> childState.boardStateProperties.updateChildren());
+                    isExploringChildren = false;
+                }).start();
             }
-            isExploringChildren = false;
         }
 
-        if (depth <= 2) {
+        if (depth <= 1) {
             new AssignMCTSValue().apply(gipfBoardState);
         }
 

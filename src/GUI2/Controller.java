@@ -180,10 +180,12 @@ public class Controller implements Initializable {
 
     private void startWindowUpdateThread() {
         new Thread(() -> {
+            boolean fastUpdateRate = true;
             while (true) {
                 try {
                     // If the analyze game tab is selected
                     if (gameTab.selectedProperty().getValue()) {
+                        fastUpdateRate = true;
                         // Update player stats
 
                         // The label update should happen in the FX application thread:
@@ -213,10 +215,17 @@ public class Controller implements Initializable {
                         });
                     } else if (analyzeGameTab.selectedProperty().getValue()) {
                         if (game.automaticPlayThread.isAlive() || game.getGipfBoardState().boardStateProperties.isExploringChildren) {
+                            fastUpdateRate = true;
                             boardStateTreeTableView.refresh();
                         }
+                        else {
+                            fastUpdateRate = false;
+                        }
                     }
-                    Thread.sleep(200);
+                    else {
+                        fastUpdateRate = false;
+                    }
+                    Thread.sleep((fastUpdateRate ? 200 : 1000));
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -296,10 +305,9 @@ public class Controller implements Initializable {
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
 
+        // MCTS VALUES
         columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
                 p.getValue().getValue().boardStateProperties.mctsValue).asObject());
-
-        // MCTS VALUES
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
         columnDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
