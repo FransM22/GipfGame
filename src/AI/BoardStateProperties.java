@@ -16,6 +16,7 @@ public class BoardStateProperties {
     public double heuristicRandomValue;
     public int heuristicWhiteMinusBlack;
     public double mctsValue;
+    public long ringValue;
     public int minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
@@ -34,6 +35,7 @@ public class BoardStateProperties {
         }
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
+        this.ringValue = new AssignRingValue().apply(gipfBoardState);
     }
 
     /**

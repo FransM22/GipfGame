@@ -249,7 +249,8 @@ public class Controller implements Initializable {
                 MCTSPlayer.class,
                 DecisionTreePlayer.class,
                 MinimaxPlayer.class,
-                WhiteMinusBlackPlayer.class
+                WhiteMinusBlackPlayer.class,
+                RingPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
