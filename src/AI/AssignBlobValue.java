@@ -1,15 +1,13 @@
 package AI;
 
-import GameLogic.GipfBoardState;
-import GameLogic.Piece;
-import GameLogic.PlayersInGame;
-import GameLogic.Position;
+import GameLogic.*;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import static GameLogic.PieceColor.WHITE;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -25,6 +23,8 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
         for (Map.Entry<Position, Piece> pieceEntry : pieceMap.entrySet()) {
             Position position = pieceEntry.getKey();
             Piece piece = pieceEntry.getValue();
+            PieceColor opponentColor;
+            opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? PieceColor.BLACK : WHITE;
 
             // Only consider the current player's pieces for addition
             if (piece.getPieceColor() == gipfBoardState.players.current().pieceColor) {
@@ -40,6 +40,11 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
                         .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() != gipfBoardState.players.current().pieceColor)
                         .count();
             }
+
+
+            // We don't want to empty the reserve, so we add it, combined with a high coefficient
+            value += gipfBoardState.players.current().reserve * 500;
+            value -= gipfBoardState.players.get(opponentColor).reserve * 100;
         }
 
         return value;
