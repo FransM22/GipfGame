@@ -12,11 +12,12 @@ import GameLogic.GipfBoardState;
  * Created by frans on 12-11-2015.
  */
 public class BoardStateProperties {
-    public static long run_counter = 0;
+    public static long run_counter = 0;     // For yielding to other processes
     public double heuristicRandomValue;
     public int heuristicWhiteMinusBlack;
     public double mctsValue;
     public long ringValue;
+    public long blobValue;
     public int minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
@@ -36,6 +37,7 @@ public class BoardStateProperties {
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
         this.ringValue = new AssignRingValue().apply(gipfBoardState);
+        this.blobValue = new AssignBlobValue().apply(gipfBoardState);
     }
 
     /**

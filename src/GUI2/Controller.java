@@ -10,10 +10,7 @@ import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.ReadOnlyDoubleWrapper;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
@@ -67,6 +64,10 @@ public class Controller implements Initializable {
     private TreeTableColumn<GipfBoardState, Integer> columnDepth;
     @FXML
     private TreeTableColumn<GipfBoardState, Double> columnMctsValue;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Long> columnRingValue;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Long> blobPlayer;
     @FXML
     private Label boardDescriptionLabel;
     @FXML
@@ -250,7 +251,8 @@ public class Controller implements Initializable {
                 DecisionTreePlayer.class,
                 MinimaxPlayer.class,
                 WhiteMinusBlackPlayer.class,
-                RingPlayer.class
+                RingPlayer.class,
+                BlobPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -307,6 +309,12 @@ public class Controller implements Initializable {
 
         columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
+
+        columnRingValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
+                p.getValue().getValue().boardStateProperties.ringValue).asObject());
+
+        blobPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
+                p.getValue().getValue().boardStateProperties.blobValue).asObject());
 
         // MCTS VALUES
         columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(

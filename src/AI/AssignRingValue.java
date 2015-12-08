@@ -61,8 +61,7 @@ public class AssignRingValue implements Function<GipfBoardState, Long> {
             return 4;
         }
 
-        System.err.println("ERROR!!!!!!");
-        return -100000;
+        return 0;   // Won't happen
     }
 
     int getColorValue(Piece p) {
