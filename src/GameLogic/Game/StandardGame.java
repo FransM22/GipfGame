@@ -1,9 +1,8 @@
 package GameLogic.Game;
 
-import GameLogic.Piece;
-import GameLogic.PieceType;
-import GameLogic.PlayersInGame;
-import GameLogic.Position;
+import GameLogic.*;
+
+import java.util.TreeMap;
 
 /**
  * Created by frans on 5-10-2015.
@@ -14,32 +13,35 @@ public class StandardGame extends Game {
     }
 
     @Override
-    protected void initializePlayers() {
-        super.initializePlayers();
+    protected PlayersInGame initializePlayers() {
+        PlayersInGame playersInGame = super.initializePlayers();
 
-        for (PlayersInGame.Player player : gipfBoardState.players) {
+        for (PlayersInGame.Player player : playersInGame) {
             player.reserve = 12;
             player.setHasPlacedGipfPieces(true);
             player.setIsPlacingGipfPieces(false);
             player.setHasPlacedNormalPieces(true);
         }
+        return playersInGame;
     }
 
     @Override
-    protected void initializeBoard() {
-        super.initializeBoard();
+    protected TreeMap<Position, Piece> initializePieceMap() {
+        TreeMap<Position, Piece> piecemap = super.initializePieceMap();
 
-        gipfBoardState.getPieceMap().put(new Position('b', 5), Piece.WHITE_GIPF);
-        gipfBoardState.getPieceMap().put(new Position('e', 2), Piece.WHITE_GIPF);
-        gipfBoardState.getPieceMap().put(new Position('h', 5), Piece.WHITE_GIPF);
+        piecemap.put(new Position('b', 5), Piece.WHITE_GIPF);
+        piecemap.put(new Position('e', 2), Piece.WHITE_GIPF);
+        piecemap.put(new Position('h', 5), Piece.WHITE_GIPF);
 
-        gipfBoardState.getPieceMap().put(new Position('b', 2), Piece.BLACK_GIPF);
-        gipfBoardState.getPieceMap().put(new Position('e', 8), Piece.BLACK_GIPF);
-        gipfBoardState.getPieceMap().put(new Position('h', 2), Piece.BLACK_GIPF);
+        piecemap.put(new Position('b', 2), Piece.BLACK_GIPF);
+        piecemap.put(new Position('e', 8), Piece.BLACK_GIPF);
+        piecemap.put(new Position('h', 2), Piece.BLACK_GIPF);
+
+        return piecemap;
     }
 
     @Override
-    public boolean getGameOverState() {
+    public boolean getGameOverState(GipfBoardState gipfBoardState) {
         long currentPlayersGipfPiecesOnBoard = gipfBoardState.getPieceMap()
                 .values()
                 .stream()

@@ -4,6 +4,7 @@ import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GameLogic.*;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.io.Serializable;
@@ -35,30 +36,38 @@ public abstract class Game implements Serializable {
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
     Game() {
-        initializeBoard();
-        initializePlayers();
-
-        whitePlayer = new HumanPlayer();
-        blackPlayer = new HumanPlayer();
+        /*
+         * Initialize a new starting GipfBoardState object for this game. The initializePieceMap() and initializePlayers()
+         * methods are meant to be overridden by the classes extending the game class.
+         */
+        this.gipfBoardState = new GipfBoardState(null, initializePieceMap(), initializePlayers());
 
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
 
+        // Set pointers to the algorithms used for each player
+        whitePlayer = new HumanPlayer();
+        blackPlayer = new HumanPlayer();
+
+        /*
+         * Empty logger, for now it makes no sense to store all the log data in all generated games. String concatenations
+         * are relatively expensive and the output is shown nowhere.
+         */
         gameLogger = new EmptyLogger(this);
     }
 
     /**
      * Can be modified by the extensions of the Game class (to change the default player setup)
      */
-    void initializePlayers() {
-        gipfBoardState.players = new PlayersInGame();
+    PlayersInGame initializePlayers() {
+        return new PlayersInGame();
     }
 
     /**
      * Can be modified by the extensions of the Game class (to change the default board)
      */
-    void initializeBoard() {
-        this.gipfBoardState = new GipfBoardState();
+    TreeMap<Position, Piece> initializePieceMap() {
+        return new TreeMap<>();
     }
 
     /**
@@ -110,37 +119,34 @@ public abstract class Game implements Serializable {
         );
     }
 
-    private void movePiece(GipfBoardState gipfBoardState, Position currentPosition, int deltaPos) throws InvalidMoveException {
+    private void movePiece(Map<Position, Piece> pieceMap, Position currentPosition, int deltaPos) throws InvalidMoveException {
         Position nextPosition = new Position(currentPosition.posId + deltaPos);
 
         if (!isOnInnerBoard(nextPosition)) {
             throw new InvalidMoveException();
         } else {
             try {
-                if (gipfBoardState.getPieceMap().containsKey(nextPosition)) {
-                    movePiece(gipfBoardState, nextPosition, deltaPos);
+                if (pieceMap.containsKey(nextPosition)) {
+                    movePiece(pieceMap, nextPosition, deltaPos);
                 }
 
                 // Don't copy over null values, instead remove the value from the hashmap
-                if (gipfBoardState.getPieceMap().containsKey(currentPosition)) {
-                    gipfBoardState.getPieceMap().put(nextPosition, gipfBoardState.getPieceMap().remove(currentPosition));
+                if (pieceMap.containsKey(currentPosition)) {
+                    pieceMap.put(nextPosition, pieceMap.remove(currentPosition));
                 }
             } catch (InvalidMoveException e) {
-                if (gipfBoardState == getGipfBoardState()) {
-                    gameLogger.log("Moving to " + nextPosition.getName() + " is not allowed");
-                }
                 throw new InvalidMoveException();
             }
         }
     }
 
-    private void movePiecesTowards(GipfBoardState gipfBoardState, Position startPos, Direction direction) throws InvalidMoveException {
+    private void movePiecesTowards(Map<Position, Piece> pieceMap, Position startPos, Direction direction) throws InvalidMoveException {
         int deltaPos = direction.getDeltaPos();
 
         Position currentPosition = new Position(startPos);
 
         try {
-            movePiece(gipfBoardState, currentPosition, deltaPos);
+            movePiece(pieceMap, currentPosition, deltaPos);
         } catch (Exception e) {
             throw new InvalidMoveException();
         }
@@ -155,83 +161,153 @@ public abstract class Game implements Serializable {
      * @param move the move that is applied
      */
     public void applyMove(Move move) {
-        if (gipfBoardState.players.winner() != null) return;
+        // An invalidMoveException can be thrown if applying that move would mean to place pieces on an illegal position.
+        try {
+            // If there's already a winner, the move won't be applied
+            if (gipfBoardState.players.winner() != null) return;
 
-        GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState);  // If the move succeeds, newGipfBoardState will be the new gipfBoardState
+            /*
+             * Prepare for creating a new child GipfBoardState. The pieceMap and playersInGame objects of the current
+             * gipfBoardState are unmodifiable, so we have to create modifiable copies.
+             * If the move turns out to be legal, a new child GipfBoardState will be generated, based on the modified
+             * copies of the PieceMap and the PlayersInGame objects.
+             */
+            // The piece map returned by getPieceMap() is unmodifiable, so it has to be converted to a new (hash) map
+            // the newPieceMap can be modified, after that a new GipfBoardState can be generated.
+            Map<Position, Piece> newPieceMap = new HashMap<>(gipfBoardState.getPieceMap());
 
-        if (gipfBoardState.players.current().reserve >= move.addedPiece.getPieceValue()) {
-            newGipfBoardState.getPieceMap().put(move.startPos, move.addedPiece);   // Add the piece to the board on the starting position
+            // The same is true for the PlayersInGame object. It is unmodifiable, so a new instance has to be created
+            // for the new board state.
+            PlayersInGame newPlayers = new PlayersInGame(gipfBoardState.players);
 
-            try {
-                movePiecesTowards(newGipfBoardState, move.startPos, move.direction);
+            // If the current player has enough pieces left in the reserve to perform the move (1 for a normal move, 2 for
+            // a Gipf move.)
+            if (newPlayers.current().reserve >= move.addedPiece.getPieceValue()) {
+                /*
+                 * Move the piece
+                 */
+                // Each move adds a new piece to the board
+                newPieceMap.put(move.startPos, move.addedPiece);
 
-                if (move.addedPiece.getPieceType() == PieceType.GIPF) {
-                    gipfBoardState.players.current().hasPlacedGipfPieces = true;
-                }
+                // Move it into the direction determined by the move
+                movePiecesTowards(newPieceMap, move.startPos, move.direction);
 
-                boardHistory.add(gipfBoardState);
-                gipfBoardState = newGipfBoardState;
-
-                HashMap<PieceColor, Set<Line.Segment>> linesTakenBy = new HashMap<>();
+                /*
+                 * Remove the lines and pieces that can be removed from the board
+                 */
+                // Create an object that keeps track of which piece is taken by whom. An EnumMap instead of a HashMap is
+                // used, because all keys correspond with values from the PieceColor enum.
+                Map<PieceColor, Set<Line.Segment>> linesTakenBy = new EnumMap<>(PieceColor.class);
                 linesTakenBy.put(WHITE, new HashSet<>());
                 linesTakenBy.put(BLACK, new HashSet<>());
 
-                HashMap<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
+                // Create an object that keeps track of which individual pieces are taken by whom.
+                // A HashMap is used because it can handle null keys, in contrast with EnumMaps.
+                Map<PieceColor, Set<Position>> piecesBackTo = new HashMap<>();
                 piecesBackTo.put(WHITE, new HashSet<>());
                 piecesBackTo.put(BLACK, new HashSet<>());
-                piecesBackTo.put(null, new HashSet<>());    // Hash maps can take null as a key, in this case used for pieces that are removed from the board
+                piecesBackTo.put(null, new HashSet<>());    // Used for pieces that are removed from the board
 
-                if (!move.isCompleteMove) {
-                    // Get the lines of the own color
-                    removeLines(newGipfBoardState, gipfBoardState.players.current().pieceColor, linesTakenBy, piecesBackTo);
-
-                    // Get lines of the opponent
-                    PieceColor opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
-                    removeLines(newGipfBoardState, opponentColor, linesTakenBy, piecesBackTo);
-                } else {
+                /*
+                 * Distinguish between complete and incomplete moves.
+                 *  - Complete moves:
+                 *    are generated by the getAllowedMoves() method and contain all information about that move,
+                 *    including a choice for which lines or gipf pieces will be removed.
+                 *  - Incomplete moves:
+                 *    are performed by human players. These moves don't contain the information of which pieces are
+                 *    removed. This means that there may be user interaction required if the player must choose between
+                 *    multiple lines or gipf pieces that can be removed.
+                 */
+                if (move.isCompleteMove) {
+                    // Complete moves are the easiest to handle, the positions of pieces that are removed are already
+                    // determined.
+                    // This means that we only have to read the values for the pieces that are returned to each player
+                    // into the piecesBackTo map.
                     piecesBackTo.get(WHITE).addAll(move.piecesToWhite);
                     piecesBackTo.get(BLACK).addAll(move.piecesToBlack);
                     piecesBackTo.get(null).addAll(move.piecesRemoved);
-
-                }
-                // Get the line segments that
-                // Get the lines of the color of the other player
-
-                gameLogger.log(move.toString());
-                piecesBackTo.entrySet().forEach(e -> removePiecesFromBoard(newGipfBoardState, e.getValue()));
-
-                for (PieceColor pieceColor : PieceColor.values()) {
-                    if (piecesBackTo.get(pieceColor).size() != 0) {
-                        gipfBoardState.players.get(pieceColor).reserve += piecesBackTo.get(pieceColor).size();
-
-                        gameLogger.log(pieceColor + " retrieved " + piecesBackTo.get(pieceColor).size() + " pieces");
-                    }
-                }
-
-                // Update for the last added piece
-                gipfBoardState.players.current().reserve -= move.addedPiece.getPieceValue();
-
-                if (getGameOverState()) {
-                    gipfBoardState.players.updateCurrent();
-                    gipfBoardState.players.makeCurrentPlayerWinner();
-
-                    gameLogger.log("Game over! " + gipfBoardState.players.winner().pieceColor + " won!");
                 } else {
-                    gipfBoardState.players.updateCurrent();
+                    // Now we have incomplete moves. This means that we have to remove the pieces that are required to
+                    // be removed. If the player must choose between different pieces / lines, the removeLines method
+                    // will ask the player to make a choice.
+
+                    // Get the lines that are taken by the current player (retrieved from linesTakenBy) and store them
+                    // in the piecesBackTo map. The opponent's pieces are stored in piecesBackTo.get(null), because they
+                    // are removed from the board.
+                    removeLines(newPieceMap, newPlayers.current().pieceColor, linesTakenBy, piecesBackTo);
+
+                    // Get the lines that are taken by the opponent (retrieved from the linesTakenBy map), and store
+                    // them in the piecesBackTo map. The current player's pieces are stored in piecesBackTO.get(null),
+                    // because they are removed from the board.
+                    PieceColor opponentColor = newPlayers.current().pieceColor == WHITE ? BLACK : WHITE;
+                    removeLines(newPieceMap, opponentColor, linesTakenBy, piecesBackTo);
+                }
+                gameLogger.log(move.toString());
+
+                // Each value in the piecesBackTo map is a set, and each element (position) of the sets of all values
+                // is removed from the pieceMap.
+                // The number of the returned pieces for each player are added to their reserve.
+                for (Map.Entry<PieceColor, Set<Position>> removedPieces : piecesBackTo.entrySet()) {
+                    if (removedPieces.getKey() != null) {
+                        // Calculate the sum for the pieces returned to this player. Normal pieces have a value of 1,
+                        // gipf pieces a value of 2 determined in Piece.getPieceValue().
+                        int returnedPiecesSum = removedPieces.getValue().stream().mapToInt(position -> {
+                            return newPieceMap.get(position).getPieceValue();
+                        }).sum();
+
+                        newPlayers.get(removedPieces.getKey()).reserve += returnedPiecesSum;
+                        gameLogger.log(removedPieces.getKey() + " retrieved " + returnedPiecesSum + " pieces");
+                    }
+
+                    // The pieces are not earlier removed from the board, because the returnedPiecesSum variable can
+                    // only be set if all the pieces are still on the board.
+                    removePiecesFromPieceMap(newPieceMap, removedPieces.getValue());
                 }
 
-                if (!gipfBoardState.players.current().isPlacingGipfPieces) {
-                    gipfBoardState.players.current().hasPlacedNormalPieces = true;
+                /*
+                 * Set the properties for the player, based on the move
+                 */
+                if (move.addedPiece.getPieceType() == PieceType.GIPF) {
+                    newPlayers.current().hasPlacedGipfPieces = true;
+                }
+                if (!newPlayers.current().isPlacingGipfPieces) {
+                    newPlayers.current().hasPlacedNormalPieces = true;
                 }
 
-            } catch (InvalidMoveException e) {
-                System.out.println("Move not applied");
+                // Update the current player's reserve for the last added piece
+                newPlayers.current().reserve -= move.addedPiece.getPieceValue();
+
+                /*
+                 * Check whether it is game over
+                 */
+                // If we create a new GipfBoardState based on the calculated properties, will there be a game over situation?
+                if (getGameOverState(new GipfBoardState(null, newPieceMap, newPlayers))) {
+                    // If the current player causes a game over situation, the other player (updateCurrent()), will be
+                    // the winner of the game.
+                    newPlayers = newPlayers.updateCurrent().makeCurrentPlayerWinner();
+                    gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
+                }
+
+
+                // We don't need to update the current player if the game has ended
+                if (newPlayers.winner() == null) {
+                    newPlayers = newPlayers.updateCurrent();
+                }
+
+                // Create a new gipfBoardState, based on the calculated PieceMap and PlayersInGame objects.
+                GipfBoardState newGipfBoardState = new GipfBoardState(gipfBoardState, newPieceMap, newPlayers);
+                boardHistory.add(gipfBoardState);
+                this.gipfBoardState = newGipfBoardState;
+            } else {
+                gameLogger.log("No pieces left");
             }
-        } else {
-            gameLogger.log("No pieces left");
-        }
 
-        gipfBoardState.boardStateProperties.updateBoardState();
+            // Recalculate the properties of this gipfBoardState
+            gipfBoardState.boardStateProperties.updateBoardState();
+
+        } catch (InvalidMoveException e) {
+            System.out.println("Move not applied");
+        }
     }
 
     public GipfBoardState getGipfBoardState() {
@@ -261,9 +337,15 @@ public abstract class Game implements Serializable {
 
         Set<Move> potentialMovesIncludingLineSegmentRemoval = new HashSet<>();
         for (Move potentialMove : potentialMoves) {
-            GipfBoardState temporaryBoardState = new GipfBoardState(getGipfBoardState());
             try {
-                movePiece(temporaryBoardState, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
+                Map<Position, Piece> pieceMap = new HashMap(getGipfBoardState().getPieceMap());
+                movePiece(pieceMap, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
+
+                GipfBoardState temporaryBoardState = new GipfBoardState(
+                        getGipfBoardState(),
+                        pieceMap,
+                        getGipfBoardState().players.updateCurrent()
+                );
 
                 Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(temporaryBoardState, (gipfBoardState.players.current().pieceColor));
                 if (removableLineSegmentsByCurrentPlayer.size() == 0) {
@@ -287,6 +369,34 @@ public abstract class Game implements Serializable {
         }
 
         return potentialMovesIncludingLineSegmentRemoval;
+    }
+
+    private Set<List<Pair<PieceColor, Line.Segment>>> getRemovableLineSetOrderingsFromGipfBoard(GipfBoardState gipfBoardState, PieceColor currentPlayerColor) {
+        Set removableLineSetOrderingsFromGipfboard = new HashSet<>();
+
+        for (Line.Segment lineSegment : getRemovableLineSegments(gipfBoardState, currentPlayerColor)) {
+            Game temporaryGame = new BasicGame();
+            temporaryGame.loadState(gipfBoardState);
+
+            // Line segments removable by the current player
+            for (Position positionOnSegment : lineSegment.getOccupiedPositions(gipfBoardState)) {
+                temporaryGame.getGipfBoardState().getPieceMap().remove(positionOnSegment);
+
+                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(temporaryGame.getGipfBoardState(), currentPlayerColor);
+            }
+
+            // Line segments removable by the current opponent
+            for (Position positionOnSegment : lineSegment.getOccupiedPositions(gipfBoardState)) {
+                temporaryGame.getGipfBoardState().getPieceMap().remove(positionOnSegment);
+
+                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(temporaryGame.getGipfBoardState(), currentPlayerColor);
+            }
+        }
+
+
+        // cal recursively
+
+        return null;
     }
 
     /**
@@ -416,13 +526,13 @@ public abstract class Game implements Serializable {
         return gameLogger;
     }
 
-    private void removePiecesFromBoard(GipfBoardState gipfBoardState, Set<Position> positions) {
+    private void removePiecesFromPieceMap(Map<Position, Piece> pieceMap, Set<Position> positions) {
         for (Position position : positions) {
-            gipfBoardState.getPieceMap().remove(position);
+            pieceMap.remove(position);
         }
     }
 
-    private void removeLines(GipfBoardState gipfBoardState, PieceColor pieceColor, Map<PieceColor, Set<Line.Segment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo) {
+    private void removeLines(Map<Position, Piece> pieceMap, PieceColor pieceColor, Map<PieceColor, Set<Line.Segment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo) {
         Set<Line.Segment> intersectingSegments;
         Set<Line.Segment> segmentsNotRemoved = new HashSet<>();
 
@@ -490,7 +600,7 @@ public abstract class Game implements Serializable {
             }
 
             piecesBackTo.values()
-                    .forEach(positionSet -> removePiecesFromBoard(gipfBoardState, positionSet));
+                    .forEach(positionSet -> removePiecesFromPieceMap(pieceMap, positionSet));
         }
         while (intersectingSegments.size() > 0);
 
@@ -507,7 +617,7 @@ public abstract class Game implements Serializable {
      *
      * @return true if the game over condition has been fulfilled, false otherwise.
      */
-    protected abstract boolean getGameOverState();
+    protected abstract boolean getGameOverState(GipfBoardState gipfBoardState);
 
     public void newGameLogger() {
         this.gameLogger = new GameLogger(this);

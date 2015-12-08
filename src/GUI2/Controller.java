@@ -1,5 +1,6 @@
 package GUI2;
 
+import AI.AssignPureMCTSValue;
 import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
@@ -128,6 +129,7 @@ public class Controller implements Initializable {
             new Thread(() -> {
                 if (!game.automaticPlayThread.isAlive()) {
                     gipfBoardState.boardStateProperties.updateChildren();
+                    new AssignPureMCTSValue().apply(gipfBoardState);
                 }
             }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
@@ -216,11 +218,11 @@ public class Controller implements Initializable {
                     } else if (analyzeGameTab.selectedProperty().getValue()) {
                         if (game.automaticPlayThread.isAlive() || game.getGipfBoardState().boardStateProperties.isExploringChildren) {
                             fastUpdateRate = true;
-                            boardStateTreeTableView.refresh();
                         }
                         else {
                             fastUpdateRate = false;
                         }
+                        boardStateTreeTableView.refresh();
                     }
                     else {
                         fastUpdateRate = false;

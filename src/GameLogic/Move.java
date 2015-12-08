@@ -99,8 +99,30 @@ public class Move implements Comparable<Move> {
 
     @Override
     public int compareTo(Move o) {
-        return this.startPos.getPosId() - o.startPos.getPosId();
+        int comparison1 = this.startPos.getPosId() - o.startPos.getPosId();
+        if (comparison1 != 0) return comparison1;
+
+        // Need a second comparator, because TreeMap cannot distinguish between two objects for which the compareTo method returns 0
+        return hashCode() - o.hashCode();
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Move)) return false;
+//
+//        Move move = (Move) o;
+//
+//        if (isCompleteMove != move.isCompleteMove) return false;
+//        if (addedPiece != move.addedPiece) return false;
+//        if (!startPos.equals(move.startPos)) return false;
+//        if (direction != move.direction) return false;
+//        if (!piecesToWhite.equals(move.piecesToWhite)) return false;
+//        if (!piecesToBlack.equals(move.piecesToBlack)) return false;
+//        return piecesRemoved.equals(move.piecesRemoved);
+//
+//    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -111,23 +133,25 @@ public class Move implements Comparable<Move> {
 
         if (isCompleteMove != move.isCompleteMove) return false;
         if (addedPiece != move.addedPiece) return false;
-        if (!startPos.equals(move.startPos)) return false;
+        if (startPos != null ? !startPos.equals(move.startPos) : move.startPos != null) return false;
         if (direction != move.direction) return false;
-        if (!piecesToWhite.equals(move.piecesToWhite)) return false;
-        if (!piecesToBlack.equals(move.piecesToBlack)) return false;
-        return piecesRemoved.equals(move.piecesRemoved);
+        if (piecesToWhite != null ? !piecesToWhite.equals(move.piecesToWhite) : move.piecesToWhite != null)
+            return false;
+        if (piecesToBlack != null ? !piecesToBlack.equals(move.piecesToBlack) : move.piecesToBlack != null)
+            return false;
+        return !(piecesRemoved != null ? !piecesRemoved.equals(move.piecesRemoved) : move.piecesRemoved != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = addedPiece.hashCode();
-        result = 31 * result + startPos.hashCode();
-        result = 31 * result + direction.hashCode();
+        int result = addedPiece != null ? addedPiece.hashCode() : 0;
+        result = 31 * result + (startPos != null ? startPos.hashCode() : 0);
+        result = 31 * result + (direction != null ? direction.hashCode() : 0);
         result = 31 * result + (isCompleteMove ? 1 : 0);
-        result = 31 * result + piecesToWhite.hashCode();
-        result = 31 * result + piecesToBlack.hashCode();
-        result = 31 * result + piecesRemoved.hashCode();
+        result = 31 * result + (piecesToWhite != null ? piecesToWhite.hashCode() : 0);
+        result = 31 * result + (piecesToBlack != null ? piecesToBlack.hashCode() : 0);
+        result = 31 * result + (piecesRemoved != null ? piecesRemoved.hashCode() : 0);
         return result;
     }
 }

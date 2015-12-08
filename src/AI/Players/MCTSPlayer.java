@@ -12,7 +12,6 @@ import java.util.Optional;
  */
 public class MCTSPlayer extends ComputerPlayer<Double> {
     public MCTSPlayer() {
-        this.maxDepth = Optional.of(2);
         try {
             this.heuristic = Optional.of(BoardStateProperties.class.getField("mctsValue"));
         } catch (NoSuchFieldException e) {

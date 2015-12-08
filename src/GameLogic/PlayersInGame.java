@@ -4,28 +4,55 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 /**
  * Created by frans on 11-10-2015.
  */
 public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Player> {
-    public Player white = new Player(PieceColor.WHITE);
-    public Player black = new Player(PieceColor.BLACK);
+    public Player white = new Player(WHITE);
+    public Player black = new Player(BLACK);
     // The following two Players are pointers to the winning player and the current player
-    private Player winningPlayer = null;
-    private Player currentPlayer = null;
+    private final Player winningPlayer;
+    private final Player currentPlayer;
 
     public PlayersInGame() {
         currentPlayer = white;
+        winningPlayer = null;
     }
 
-    public PlayersInGame(PlayersInGame other) {
-        this.white = new Player(other.white);
-        this.black = new Player(other.black);
+    public PlayersInGame(PlayersInGame oldPlayers) {
+        this.white = new Player(oldPlayers.white);
+        this.black = new Player(oldPlayers.black);
 
-        this.currentPlayer = other.currentPlayer == other.white ? white : black;
-        this.winningPlayer = other.winningPlayer;
+        if (oldPlayers.current().pieceColor == WHITE) {
+            this.currentPlayer = this.white;
+        }
+        else {
+            this.currentPlayer = this.black;
+        }
+
+        if (oldPlayers.winner() == null) {
+            this.winningPlayer = null;
+        }
+        else if (oldPlayers.winner().pieceColor == WHITE) {
+            this.winningPlayer = this.white;
+        }
+        else {
+            this.winningPlayer = this.black;
+        }
+    }
+
+    public PlayersInGame(PlayersInGame oldPlayers, PieceColor newCurrentPlayer, PieceColor winningPlayer) {
+        this.white = new Player(oldPlayers.white);
+        this.black = new Player(oldPlayers.black);
+
+        // currentPlayer can't be null
+        currentPlayer = (newCurrentPlayer == WHITE) ? this.white : this.black;
+
+        if (winningPlayer == null) this.winningPlayer = null;
+        else this.winningPlayer = (winningPlayer == WHITE) ? this.white : this.black;
     }
 
     public Player get(PieceColor pieceColor) {
@@ -34,8 +61,9 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         } else return black;
     }
 
-    public void updateCurrent() {
-        currentPlayer = ((currentPlayer == white) ? black : white);
+    public PlayersInGame updateCurrent() {
+        PieceColor newCurrentPlayer = ((this.currentPlayer == white) ? BLACK : WHITE);
+        return new PlayersInGame(this, newCurrentPlayer, null);
     }
 
     public Player current() {
@@ -46,8 +74,8 @@ public class PlayersInGame implements Serializable, Iterable<PlayersInGame.Playe
         return winningPlayer;
     }
 
-    public void makeCurrentPlayerWinner() {
-        this.winningPlayer = current();
+    public PlayersInGame makeCurrentPlayerWinner() {
+        return new PlayersInGame(this, this.currentPlayer.pieceColor, this.currentPlayer.pieceColor);
     }
 
     @Override

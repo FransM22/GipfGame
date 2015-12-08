@@ -1,11 +1,10 @@
 package AI.Players;
 
-import GameLogic.Game.BasicGame;
-import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -18,21 +17,16 @@ public abstract class ComputerPlayer<T> implements Function<GipfBoardState, Move
     public Optional<Field> heuristic = Optional.empty();
 
     public Move getMoveWithHighestHeuristicValue(GipfBoardState gipfBoardState, boolean reverseOrder) {
-        Game game = new BasicGame();
-        game.loadState(gipfBoardState);
-
         // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
         TreeMap<T, Move> moveGipfBoardStateMap = new TreeMap<>();
-        for (Move move : game.getAllowedMoves()) {
-            Game temporaryGame = new BasicGame();
-            temporaryGame.loadState(gipfBoardState);
-            temporaryGame.applyMove(move);
+        gipfBoardState.exploreAllChildren();
+        for (Map.Entry<Move, GipfBoardState> exploredChildEntry : gipfBoardState.exploredChildren.entrySet()) {
 
-            // Sorts all board states based on heuristicRandomValue
+            // Sorts all board states based on the heuristic
 
             try {
-                T heuristicValue = (T) heuristic.get().get(temporaryGame.getGipfBoardState().boardStateProperties);
-                moveGipfBoardStateMap.put(heuristicValue, move);
+                T heuristicValue = (T) heuristic.get().get(exploredChildEntry.getValue().boardStateProperties);
+                moveGipfBoardStateMap.put(heuristicValue, exploredChildEntry.getKey());
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

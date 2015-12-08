@@ -5,22 +5,22 @@ import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
 /**
  * Created by frans on 8-9-2015.
- * This class represents the board that is used in the game.
+ * This class represents the board that is used in the game. All fields storing properties of the board itself are final,
+ * so have to be recreated when a new child state is used. This is done to avoid problems with multiple GipfBoardStates
+ * belonging to the same game state. The volatile values (such as heuristics) are stored in the BoardStateProperties
+ * class.
  */
 public class GipfBoardState implements Serializable {
-    public GipfBoardState parent;
+    public final GipfBoardState parent;
     public final BoardStateProperties boardStateProperties;
-    private final Map<Position, Piece> pieceMap;
-    public PlayersInGame players;
+    public final PlayersInGame players;
+    private final TreeMap<Position, Piece> pieceMap;
     public Map<Move, GipfBoardState> exploredChildren;
 
     /**
@@ -32,24 +32,22 @@ public class GipfBoardState implements Serializable {
         this.players = new PlayersInGame();
         exploredChildren = new HashMap<>(50);
 
+        parent = null;
         this.boardStateProperties = new BoardStateProperties(this);
     }
 
-    /**
-     * Initialize a new Gipf board, with the same pieces on the same locations as an old board.
-     *
-     * @param old board with pieces that should be copied
-     */
-    public GipfBoardState(GipfBoardState old) {
-        this.pieceMap = new HashMap<>(old.pieceMap);
-        this.players = new PlayersInGame(old.players);
+    public GipfBoardState(GipfBoardState parent, Map<Position, Piece> pieceMap, PlayersInGame players) {
+        // Initialize the lists
+        this.pieceMap = new TreeMap<>(pieceMap);
+        this.players = players;
         exploredChildren = new HashMap<>(50);
 
+        this.parent = parent;
         this.boardStateProperties = new BoardStateProperties(this);
     }
 
     public Map<Position, Piece> getPieceMap() {
-        return pieceMap;
+        return Collections.unmodifiableMap(pieceMap);
     }
 
     @Override
@@ -84,7 +82,6 @@ public class GipfBoardState implements Serializable {
         Game temporaryGame = new BasicGame();
         temporaryGame.loadState(this);
         temporaryGame.applyMove(m);
-        temporaryGame.getGipfBoardState().parent = this;
 
         exploredChildren.put(m, temporaryGame.getGipfBoardState());
     }
