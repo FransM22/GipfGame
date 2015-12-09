@@ -4,6 +4,7 @@ import GameLogic.Game.Game;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
@@ -172,11 +173,10 @@ public class Line implements Iterable<Position> {
             return false;
         }
 
-        public Set<Position> getOccupiedPositions(GipfBoardState gipfBoardState) {
+        public Set<Position> getOccupiedPositions(Map<Position, Piece> pieceMap) {
             return getAllPositions()
                     .stream()
-                    .filter(position -> gipfBoardState.getPieceMap()
-                            .containsKey(position))
+                    .filter(position -> pieceMap.containsKey(position))
                     .collect(toSet());
         }
 

@@ -235,12 +235,18 @@ public abstract class Game implements Serializable {
                     // in the piecesBackTo map. The opponent's pieces are stored in piecesBackTo.get(null), because they
                     // are removed from the board.
                     removeLines(newPieceMap, newPlayers.current().pieceColor, linesTakenBy, piecesBackTo);
+                    //linesTakenBy.get(newPlayers.current().pieceColor).addAll(getRemovableLineSegments(newPieceMap, newPlayers.current().pieceColor));
 
                     // Get the lines that are taken by the opponent (retrieved from the linesTakenBy map), and store
                     // them in the piecesBackTo map. The current player's pieces are stored in piecesBackTO.get(null),
                     // because they are removed from the board.
                     PieceColor opponentColor = newPlayers.current().pieceColor == WHITE ? BLACK : WHITE;
+                    /*
+                     * TODO: REFACTOR, SEE ABOVE EXAMPLE!!!!!!!!!!!!!!!!!!!!!!!!!
+                     * TODO: DOESNT WORK AS EXPECTED
+                     */
                     removeLines(newPieceMap, opponentColor, linesTakenBy, piecesBackTo);
+                    //linesTakenBy.get(opponentColor).addAll(getRemovableLineSegments(newPieceMap, opponentColor));
                 }
                 gameLogger.log(move.toString());
 
@@ -251,9 +257,14 @@ public abstract class Game implements Serializable {
                     if (removedPieces.getKey() != null) {
                         // Calculate the sum for the pieces returned to this player. Normal pieces have a value of 1,
                         // gipf pieces a value of 2 determined in Piece.getPieceValue().
-                        int returnedPiecesSum = removedPieces.getValue().stream().mapToInt(position -> {
-                            return newPieceMap.get(position).getPieceValue();
-                        }).sum();
+                        int returnedPiecesSum = removedPieces.getValue().stream()
+                                .mapToInt(position -> {
+                                    // TODO will only work in basic game
+                                    if (newPieceMap.containsKey(position))
+                                        return newPieceMap.get(position).getPieceValue();
+                                    else
+                                        return 1;
+                                }).sum();
 
                         newPlayers.get(removedPieces.getKey()).reserve += returnedPiecesSum;
                         gameLogger.log(removedPieces.getKey() + " retrieved " + returnedPiecesSum + " pieces");
@@ -347,14 +358,14 @@ public abstract class Game implements Serializable {
                         getGipfBoardState().players.updateCurrent()
                 );
 
-                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(temporaryBoardState, (gipfBoardState.players.current().pieceColor));
+                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, (gipfBoardState.players.current().pieceColor));
                 if (removableLineSegmentsByCurrentPlayer.size() == 0) {
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
                 } else {
                     for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
-                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(temporaryBoardState);
+                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(temporaryBoardState.getPieceMap());
                         if (gipfBoardState.players.current().pieceColor == WHITE)
                             moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
                         if (gipfBoardState.players.current().pieceColor == BLACK)
@@ -373,23 +384,21 @@ public abstract class Game implements Serializable {
 
     private Set<List<Pair<PieceColor, Line.Segment>>> getRemovableLineSetOrderingsFromGipfBoard(GipfBoardState gipfBoardState, PieceColor currentPlayerColor) {
         Set removableLineSetOrderingsFromGipfboard = new HashSet<>();
+        Map<Position, Piece> pieceMap = gipfBoardState.getPieceMap();
 
-        for (Line.Segment lineSegment : getRemovableLineSegments(gipfBoardState, currentPlayerColor)) {
-            Game temporaryGame = new BasicGame();
-            temporaryGame.loadState(gipfBoardState);
-
+        for (Line.Segment lineSegment : getRemovableLineSegments(pieceMap, currentPlayerColor)) {
             // Line segments removable by the current player
-            for (Position positionOnSegment : lineSegment.getOccupiedPositions(gipfBoardState)) {
-                temporaryGame.getGipfBoardState().getPieceMap().remove(positionOnSegment);
+            for (Position positionOnSegment : lineSegment.getOccupiedPositions(pieceMap)) {
+                pieceMap.remove(positionOnSegment);
 
-                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(temporaryGame.getGipfBoardState(), currentPlayerColor);
+                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(pieceMap, currentPlayerColor);
             }
 
             // Line segments removable by the current opponent
-            for (Position positionOnSegment : lineSegment.getOccupiedPositions(gipfBoardState)) {
-                temporaryGame.getGipfBoardState().getPieceMap().remove(positionOnSegment);
+            for (Position positionOnSegment : lineSegment.getOccupiedPositions(pieceMap)) {
+                pieceMap.remove(positionOnSegment);
 
-                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(temporaryGame.getGipfBoardState(), currentPlayerColor);
+                Set segmentsRemovableFromChildBoard = getRemovableLineSegments(pieceMap, currentPlayerColor);
             }
         }
 
@@ -438,7 +447,7 @@ public abstract class Game implements Serializable {
     /**
      * By Dingding
      */
-    private Set<Line.Segment> getRemovableLineSegments(GipfBoardState gipfBoardState, PieceColor pieceColor) {
+    private Set<Line.Segment> getRemovableLineSegments(Map<Position, Piece> pieceMap, PieceColor pieceColor) {
         Set<Line.Segment> removableLines = new HashSet<>();
         Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);
 
@@ -449,8 +458,6 @@ public abstract class Game implements Serializable {
             Direction direction = line.getDirection();
             int consecutivePieces = 0;
             boolean isInLineSegment = false;
-
-            Map<Position, Piece> pieceMap = gipfBoardState.getPieceMap();
 
             // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
             // can't be more than one set of four pieces of the same color (requiring at least 9 positions) on the board.
@@ -528,17 +535,24 @@ public abstract class Game implements Serializable {
 
     private void removePiecesFromPieceMap(Map<Position, Piece> pieceMap, Set<Position> positions) {
         for (Position position : positions) {
-            pieceMap.remove(position);
+            // An extra check. THe removelines method will remove pieces before
+            if (pieceMap.containsKey(position))
+                pieceMap.remove(position);
+            else
+                System.out.println("Can't remove " + position);
         }
     }
 
+    // TODO: Refactor method
     private void removeLines(Map<Position, Piece> pieceMap, PieceColor pieceColor, Map<PieceColor, Set<Line.Segment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo) {
+        // TODO: method seems to recognize lines a move too late
+        // TODO: lines are not properly removed from the piecemap
         Set<Line.Segment> intersectingSegments;
         Set<Line.Segment> segmentsNotRemoved = new HashSet<>();
 
         do {
             intersectingSegments = new HashSet<>();
-            Set<Line.Segment> removableSegmentsThisPlayer = getRemovableLineSegments(gipfBoardState, pieceColor);
+            Set<Line.Segment> removableSegmentsThisPlayer = getRemovableLineSegments(pieceMap, pieceColor);
             for (Line.Segment segment : removableSegmentsThisPlayer) {
                 // Remove the line segments that are not intersecting with other line segments of the set
                 boolean intersectionFound = false;
@@ -563,9 +577,9 @@ public abstract class Game implements Serializable {
 
             if (intersectingSegments.size() > 0) {
                 Line.Segment segment = intersectingSegments.iterator().next();
-                currentRemoveSelection = segment.getOccupiedPositions(gipfBoardState);
+                currentRemoveSelection = segment.getOccupiedPositions(pieceMap);
 
-                int dialogResult = GipfBoardComponent.showConfirmDialog(gipfBoardState.players.current().pieceColor + ", do you want to remove " + segment.getOccupiedPositions(gipfBoardState).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
+                int dialogResult = GipfBoardComponent.showConfirmDialog(gipfBoardState.players.current().pieceColor + ", do you want to remove " + segment.getOccupiedPositions(pieceMap).stream().map(Position::getName).sorted().collect(toList()) + "?", "Remove line segment");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     // Remove the line
                     linesTakenBy.get(pieceColor).add(segment);
@@ -586,7 +600,7 @@ public abstract class Game implements Serializable {
                     return dialogResult == JOptionPane.YES_OPTION;
                 };
 
-                Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(gipfBoardState).stream().collect(toMap(p -> p, p -> gipfBoardState.getPieceMap().get(p)));
+                Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(pieceMap).stream().collect(toMap(p -> p, p -> pieceMap.get(p)));
 
                 piecesBackTo.get(pieceColor).addAll(piecesRemovedMap.entrySet().stream()
                         .filter(isCurrentPlayersColor.and(isNormalPiece.or(doesPlayerWantToRemoveGipf)))
@@ -604,7 +618,7 @@ public abstract class Game implements Serializable {
         }
         while (intersectingSegments.size() > 0);
 
-
+        return;
     }
 
     public Set<Position> getCurrentRemoveSelection() {
