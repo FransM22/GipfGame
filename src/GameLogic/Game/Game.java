@@ -358,21 +358,56 @@ public abstract class Game implements Serializable {
                         getGipfBoardState().players.updateCurrent()
                 );
 
-                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, (gipfBoardState.players.current().pieceColor));
-                if (removableLineSegmentsByCurrentPlayer.size() == 0) {
-                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
-                } else {
+                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, (temporaryBoardState.players.current().pieceColor));
+                PieceColor opponentColor = temporaryBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
+                Set<Line.Segment> removableLineSegmentsByOpponent = getRemovableLineSegments(pieceMap, opponentColor);
+//                if (removableLineSegmentsByCurrentPlayer.size() == 0) {
+//                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
+//                } else {
+//                    for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
+//                        Move moveWithRemovedLineSegment = new Move(potentialMove);
+//
+//                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(pieceMap);
+//                        if (gipfBoardState.players.current().pieceColor == WHITE)
+//                            moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
+//                        if (gipfBoardState.players.current().pieceColor == BLACK)
+//                            moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
+//
+//                        potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
+//                    }
+//                }
+
+                if (removableLineSegmentsByCurrentPlayer.size() != 0) {
                     for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
-                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(temporaryBoardState.getPieceMap());
-                        if (gipfBoardState.players.current().pieceColor == WHITE)
+                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(pieceMap);
+                        if (temporaryBoardState.players.current().pieceColor == WHITE)
                             moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
-                        if (gipfBoardState.players.current().pieceColor == BLACK)
+                        if (temporaryBoardState.players.current().pieceColor == BLACK)
                             moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
+
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
                 }
+                else if (removableLineSegmentsByOpponent.size() != 0) {
+                    for (Line.Segment removedSegment : removableLineSegmentsByOpponent) {
+                        Move moveWithRemovedLineSegment = new Move(potentialMove);
+
+                        Set<Position> piecesToOpponent = removedSegment.getOccupiedPositions(pieceMap);
+                        if (temporaryBoardState.players.current().pieceColor == WHITE)
+                            moveWithRemovedLineSegment.piecesToBlack = piecesToOpponent;
+                        if (temporaryBoardState.players.current().pieceColor == BLACK)
+                            moveWithRemovedLineSegment.piecesToWhite = piecesToOpponent;
+
+                        potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
+                    }
+                }
+                else {
+                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
+                }
+
+                // TODO fix wrong piece removal code
 
             } catch (InvalidMoveException e) {
                 // Don't add it to potentialMovesIncludingLineSegmentRemoval
@@ -538,8 +573,8 @@ public abstract class Game implements Serializable {
             // An extra check. THe removelines method will remove pieces before
             if (pieceMap.containsKey(position))
                 pieceMap.remove(position);
-            else
-                System.out.println("Can't remove " + position);
+//            else
+//                System.out.println("Can't remove " + position);
         }
     }
 
@@ -698,6 +733,8 @@ public abstract class Game implements Serializable {
         @Override
         public void run() {
             Move move;
+            int moveCounter = 0;
+
             while (true) {
                 try {
                     // The waiting time is artificial, it makes the difference between two moves clearer
@@ -715,6 +752,7 @@ public abstract class Game implements Serializable {
 
                 if (move != null) {
                     applyMove(move);
+                    System.out.println("Move: " + ++moveCounter);
                 }
 
                 // A final action to be executed (for example repainting the component)
