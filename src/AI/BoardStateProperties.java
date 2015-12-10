@@ -54,14 +54,15 @@ public class BoardStateProperties {
         Game game = new BasicGame();
         game.loadState(gipfBoardState);
 
-        if (depth <= 2) {
+        if (depth <= 0) {
             gipfBoardState.exploreAllChildren();
             if (!isExploringChildren) {
                 isExploringChildren = true;
-                new Thread(() -> {
+
+                    gipfBoardState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(gipfBoardState);
                     gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.updateChildren());
                     isExploringChildren = false;
-                }).start();
+
             }
         }
 
