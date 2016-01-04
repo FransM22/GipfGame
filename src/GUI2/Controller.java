@@ -248,7 +248,7 @@ public class Controller implements Initializable {
                 RandomPlayer.class,
                 HumanPlayer.class,
                 MCTSPlayer.class,
-                DecisionTreePlayer.class,
+                //DecisionTreePlayer.class,
                 MinimaxPlayer.class,
                 WhiteMinusBlackPlayer.class,
                 RingPlayer.class,

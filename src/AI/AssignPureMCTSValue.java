@@ -72,9 +72,11 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
 
         while (randomGame.getGipfBoardState().players.winner() == null) {
             Set<Move> allowedMoves = randomGame.getAllowedMoves();
+
             int randomMoveId = random.nextInt(allowedMoves.size());
             randomGame.applyMove(allowedMoves.stream().collect(toList()).get(randomMoveId));
         }
+//            System.out.println(randomGame.getGipfBoardState().boardStateProperties.depth);
 
         return randomGame.getGipfBoardState().players.winner().pieceColor;
     }

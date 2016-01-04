@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="GipfGame:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/GipfGame_jar</output-path>
-    <root id="archive" name="GipfGame.jar">
-      <element id="module-output" name="GipfGame" />
-    </root>
-  </artifact>
-</component>

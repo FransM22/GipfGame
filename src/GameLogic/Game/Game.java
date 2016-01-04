@@ -349,7 +349,8 @@ public abstract class Game implements Serializable {
         Set<Move> potentialMovesIncludingLineSegmentRemoval = new HashSet<>();
         for (Move potentialMove : potentialMoves) {
             try {
-                Map<Position, Piece> pieceMap = new HashMap(getGipfBoardState().getPieceMap());
+                Map<Position, Piece> pieceMap = new HashMap<>(getGipfBoardState().getPieceMap());
+
                 movePiece(pieceMap, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
 
                 GipfBoardState temporaryBoardState = new GipfBoardState(
@@ -357,6 +358,7 @@ public abstract class Game implements Serializable {
                         pieceMap,
                         getGipfBoardState().players.updateCurrent()
                 );
+
 
                 Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, (temporaryBoardState.players.current().pieceColor));
                 PieceColor opponentColor = temporaryBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
@@ -752,7 +754,6 @@ public abstract class Game implements Serializable {
 
                 if (move != null) {
                     applyMove(move);
-                    System.out.println("Move: " + ++moveCounter);
                 }
 
                 // A final action to be executed (for example repainting the component)
