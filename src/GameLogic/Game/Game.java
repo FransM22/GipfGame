@@ -729,7 +729,19 @@ public abstract class Game implements Serializable {
         automaticPlayThread.start();
     }
 
-    // TODO allow for only a single (or fixed amount of moves) at a time
+    public void applyCurrentPlayerMove() {
+        Move move;
+
+        if (gipfBoardState.players.current() == gipfBoardState.players.white) {
+            move = whitePlayer.apply(gipfBoardState);
+        } else {
+            move = blackPlayer.apply(gipfBoardState);
+        }
+
+        if (move != null) {
+            applyMove(move);
+        }
+    }
 
     private class GameLoopRunnable implements Runnable {
         public Runnable finalAction;
@@ -747,16 +759,7 @@ public abstract class Game implements Serializable {
                     break;
                 }
 
-
-                if (gipfBoardState.players.current() == gipfBoardState.players.white) {
-                    move = whitePlayer.apply(gipfBoardState);
-                } else {
-                    move = blackPlayer.apply(gipfBoardState);
-                }
-
-                if (move != null) {
-                    applyMove(move);
-                }
+                applyCurrentPlayerMove();
 
                 // A final action to be executed (for example repainting the component)
                 if (finalAction != null) {

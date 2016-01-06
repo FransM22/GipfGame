@@ -20,7 +20,7 @@ public class GameTest {
 
     @BeforeMethod(groups = {"moveTests"})
     public void initializeBoard() throws Exception {
-        System.out.println("Initializing board...");
+        System.out.print("[Initializing board] ");
         basicGame = new BasicGame();
     }
 
@@ -84,8 +84,9 @@ public class GameTest {
         }
         basicGame.applyMove(whiteMoveToBeTested);   // Apply this move one more time
 
-        System.out.println("testApplyMove3(): 3 * applyMove(" + whiteMoveToBeTested + ")\n" +
-                           "                + 2 * applyMove(" + blackMoveToBeTested + ")");
+        System.out.println("testApplyMove3():\n" +
+                "   3 * applyMove(" + whiteMoveToBeTested + ")\n" +
+                " + 2 * applyMove(" + blackMoveToBeTested + ")");
         Game temporaryGame = new BasicGame();
         Map<Position, Piece> expectedPieceMap = new HashMap<>(temporaryGame.gipfBoardState.getPieceMap());
         expectedPieceMap.remove(new Position('b', 5));  // The entire diagonal will be cleared
@@ -100,13 +101,85 @@ public class GameTest {
 
     @Test(groups = {"ringPlayerTests"})
     public void testRingplayer1() throws Exception {
-        System.out.println("ringPlayerTests()");
+        System.out.println("ringPlayer1() -- Lets the ringplayer create a vertical line e2-e8. Should be removed.");
 
         Game basicGame = new BasicGame();
         basicGame.whitePlayer = new RingPlayer();
         basicGame.blackPlayer = new RingPlayer();
 
-//        basicGame.applyMove(basicGame);
-        // TODO: We need to allow only a single move (or a fixed amount of moves) at a time in the automaticPlayThread (gameLoopRunnable)
+        // First move white
+        basicGame.applyMove(new Move(
+                Piece.WHITE_SINGLE,
+                new Position('e', 1),
+                Direction.NORTH)
+        );
+
+        // First move black
+        basicGame.applyMove(new Move(
+                Piece.BLACK_SINGLE,
+                new Position('e', 9),
+                Direction.SOUTH)
+        );
+
+        for (int i = 0; i < 3; i++) {
+            basicGame.applyCurrentPlayerMove();
+        }
+
+        // After 5 moves the ring player must have cleared exactly one row.
+        // this can be checked by counting the remaining number of pieces
+        Map<Position, Piece> expectedPieceMap = new HashMap<>();
+        expectedPieceMap.put(new Position('b', 2), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('h', 2), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('b', 5), Piece.WHITE_SINGLE);
+        expectedPieceMap.put(new Position('h', 5), Piece.WHITE_SINGLE);
+
+        Assert.assertEquals(
+                basicGame.getGipfBoardState().getPieceMap(),
+                expectedPieceMap
+                );
+    }
+
+    @Test(groups = {"ringPlayerTests"})
+    public void testRingplayer2() throws Exception {
+        System.out.println("ringPlayer2() -- Lets the ringplayer create two segments. One should be removed.");
+
+        Game basicGame = new BasicGame();
+        basicGame.whitePlayer = new RingPlayer();
+        basicGame.blackPlayer = new RingPlayer();
+
+        // First move white
+        basicGame.applyMove(new Move(
+                Piece.WHITE_SINGLE,
+                new Position('i', 5),
+                Direction.SOUTH_WEST)
+        );
+
+        // First move black
+        basicGame.applyMove(new Move(
+                Piece.BLACK_SINGLE,
+                new Position('e', 9),
+                Direction.SOUTH)
+        );
+
+        for (int i = 0; i < 3; i++) {
+            basicGame.applyCurrentPlayerMove();
+        }
+
+        // After 5 moves the ring player must have cleared exactly one row.
+        // this can be checked by counting the remaining number of pieces
+        Map<Position, Piece> expectedPieceMap = new HashMap<>();
+        expectedPieceMap.put(new Position('b', 2), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('h', 2), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('e', 6), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('e', 7), Piece.BLACK_SINGLE);
+        expectedPieceMap.put(new Position('e', 8), Piece.BLACK_SINGLE);
+
+        expectedPieceMap.put(new Position('b', 5), Piece.WHITE_SINGLE);
+        expectedPieceMap.put(new Position('e', 2), Piece.WHITE_SINGLE);
+
+        Assert.assertEquals(
+                basicGame.getGipfBoardState().getPieceMap(),
+                expectedPieceMap
+        );
     }
 }
