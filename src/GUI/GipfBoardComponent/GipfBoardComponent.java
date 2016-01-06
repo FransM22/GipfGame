@@ -50,7 +50,7 @@ public class GipfBoardComponent extends JComponent {
         }
         else {
             addMouseListener(new GipfBoardComponentMouseListener(this));
-            setPreferredSize(new Dimension(1000, 1000));
+            setPreferredSize(new Dimension(600, 600));
             pieceSize = UIval.get().pieceSizeNormalView;
             filledCircleSize = UIval.get().filledCircleSizeNormalView;
             pieceStroke = UIval.get().pieceStrokeNormalView;

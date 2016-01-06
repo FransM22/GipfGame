@@ -19,7 +19,7 @@ public class Main extends Application {
         String css = this.getClass().getResource("treeTableView.css").toExternalForm();
 
          Parent root = loader.load();
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add(css);
 
         primaryStage.setTitle("GIPF Game");

@@ -23,7 +23,7 @@
         <Tab fx:id="gameTab" text="Game">
             <HBox prefHeight="9999" prefWidth="9999">
                 <SwingNode fx:id="gipfGameNode"/>
-                <VBox prefWidth="350.0"><!-- This is the right hand part of the window, with the settings for the algorithms -->
+                <VBox prefWidth="300.0"><!-- This is the right hand part of the window, with the settings for the algorithms -->
                     <TitledPane animated="false" collapsible="false" text="Game settings">
                         <VBox>
                             <Label text="Minimum time (ms)"/>
