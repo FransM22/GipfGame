@@ -729,6 +729,8 @@ public abstract class Game implements Serializable {
         automaticPlayThread.start();
     }
 
+    // TODO allow for only a single (or fixed amount of moves) at a time
+
     private class GameLoopRunnable implements Runnable {
         public Runnable finalAction;
 
