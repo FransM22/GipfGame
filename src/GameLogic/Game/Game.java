@@ -360,8 +360,8 @@ public abstract class Game implements Serializable {
                 );
 
 
-                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, (temporaryBoardState.players.current().pieceColor));
-                PieceColor opponentColor = temporaryBoardState.players.current().pieceColor == WHITE ? BLACK : WHITE;
+                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, potentialMove.addedPiece.getPieceColor());
+                PieceColor opponentColor = potentialMove.addedPiece.getPieceColor() == WHITE ? BLACK : WHITE;
                 Set<Line.Segment> removableLineSegmentsByOpponent = getRemovableLineSegments(pieceMap, opponentColor);
 //                if (removableLineSegmentsByCurrentPlayer.size() == 0) {
 //                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
@@ -486,7 +486,7 @@ public abstract class Game implements Serializable {
      */
     private Set<Line.Segment> getRemovableLineSegments(Map<Position, Piece> pieceMap, PieceColor pieceColor) {
         Set<Line.Segment> removableLines = new HashSet<>();
-        Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);
+        Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);      // Get all the possible lines on the board. Positions don't need to be occupied.
 
         for (Line line : linesOnTheBoard) {
             Position currentPosition = line.getStartPosition();
