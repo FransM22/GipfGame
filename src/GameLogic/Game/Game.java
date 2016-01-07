@@ -8,6 +8,8 @@ import javafx.util.Pair;
 
 import javax.swing.*;
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -33,6 +35,8 @@ public abstract class Game implements Serializable {
     public int minWaitTime;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
+    private int moveCounter;    // For debugging output
+    private Instant gameStartInstant = Instant.now();
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
     Game() {
@@ -163,6 +167,7 @@ public abstract class Game implements Serializable {
     public void applyMove(Move move) {
         // An invalidMoveException can be thrown if applying that move would mean to place pieces on an illegal position.
         try {
+            moveCounter++;
             // If there's already a winner, the move won't be applied
             if (gipfBoardState.players.winner() != null) return;
 
@@ -295,6 +300,10 @@ public abstract class Game implements Serializable {
                 if (getGameOverState(new GipfBoardState(null, newPieceMap, newPlayers))) {
                     // If the current player causes a game over situation, the other player (updateCurrent()), will be
                     // the winner of the game.
+                    if (moveCounter != 1) {
+                        System.out.println("Nr of moves: " + moveCounter);
+                        System.out.println("Time: " + Duration.between(gameStartInstant, Instant.now()).toMillis() + "ms");
+                    }
                     newPlayers = newPlayers.updateCurrent().makeCurrentPlayerWinner();
                     gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
                 }
