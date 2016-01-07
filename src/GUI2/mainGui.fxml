@@ -90,7 +90,8 @@
                         <TreeTableColumn fx:id="columnMctsValue" prefWidth="75.0" text="MctsValue"/>
                         <TreeTableColumn fx:id="columnDepth" prefWidth="75.0" text="Depth"/>
                         <TreeTableColumn fx:id="columnRingValue" prefWidth="75.0" text="Ring value" />
-                        <TreeTableColumn fx:id="blobPlayer" prefWidth="75.0" text="Blob value" />
+                        <TreeTableColumn fx:id="blobPlayerValue" prefWidth="75.0" text="Blob value" />
+                        <TreeTableColumn fx:id="longValue" prefWidth="75.0" text="Long value" />
                     </columns>
                 </TreeTableView>
                 <VBox>

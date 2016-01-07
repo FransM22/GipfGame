@@ -22,6 +22,7 @@ public class BoardStateProperties {
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
     public int depth = 0;
+    public int longValue;
     public boolean isExploringChildren = false;
     private GipfBoardState gipfBoardState;
 
@@ -38,6 +39,7 @@ public class BoardStateProperties {
         this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
         this.ringValue = new AssignRingValue().apply(gipfBoardState);
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
+        this.longValue = new AssignLongValue().apply(gipfBoardState);
     }
 
     /**
@@ -62,7 +64,6 @@ public class BoardStateProperties {
                     gipfBoardState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(gipfBoardState);
                     gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.updateChildren());
                     isExploringChildren = false;
-
             }
         }
 
@@ -70,6 +71,4 @@ public class BoardStateProperties {
             this.minMaxValue = new AssignMinMaxValue().apply(gipfBoardState);
         }
     }
-
-
 }

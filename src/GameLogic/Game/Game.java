@@ -489,11 +489,17 @@ public abstract class Game implements Serializable {
         Set<Line> linesOnTheBoard = Line.getLinesOnTheBoard(this);      // Get all the possible lines on the board. Positions don't need to be occupied.
 
         for (Line line : linesOnTheBoard) {
+            /* DEBUGGING CODE */
+            if (line.getPositionsOnLine().contains(new Position('i', 5))) {
+                int need_to_debug_here = 1;
+            }
+            /* END OF DEBUGGING CODE */
+
             Position currentPosition = line.getStartPosition();
             Position startOfSegment = null;
             Position endOfSegment = null;
             Direction direction = line.getDirection();
-            int consecutivePieces = 0;
+            int consecutivePieces = 0;                  // We start at a dot position, so we can assume that we don't start in a set of consecutive pieces
             boolean isInLineSegment = false;
 
             // Break the for-loop if an endOfSegment has been found (because the largest lines only have 7 positions on the board, there
@@ -502,15 +508,9 @@ public abstract class Game implements Serializable {
                 PieceColor currentPieceColor = pieceMap.containsKey(currentPosition) ? pieceMap.get(currentPosition).getPieceColor() : null;
 
                 // Update the consecutivePieces
-                if (currentPieceColor == pieceColor) {
-                    consecutivePieces++;
-                }
-                if (consecutivePieces >= 4) {
-                    isInLineSegment = true;
-                }
-                if (currentPieceColor != pieceColor) {
-                    consecutivePieces = 0;
-                }
+                if (currentPieceColor == pieceColor) consecutivePieces++;
+                if (consecutivePieces == 4) isInLineSegment = true;
+                if (currentPieceColor != pieceColor) consecutivePieces = 0;
 
                 if (isInLineSegment) {
                     if (isDotPosition(currentPosition) || currentPieceColor == null) {

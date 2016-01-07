@@ -67,7 +67,9 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableColumn<GipfBoardState, Long> columnRingValue;
     @FXML
-    private TreeTableColumn<GipfBoardState, Long> blobPlayer;
+    private TreeTableColumn<GipfBoardState, Long> blobPlayerValue;
+    @FXML
+    private TreeTableColumn<GipfBoardState, Integer> longValue;
     @FXML
     private Label boardDescriptionLabel;
     @FXML
@@ -248,11 +250,12 @@ public class Controller implements Initializable {
                 RandomPlayer.class,
                 HumanPlayer.class,
                 MCTSPlayer.class,
-                //DecisionTreePlayer.class,
+                DecisionTreePlayer.class,
                 MinimaxPlayer.class,
                 WhiteMinusBlackPlayer.class,
                 RingPlayer.class,
-                BlobPlayer.class
+                BlobPlayer.class,
+                LongPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -313,8 +316,11 @@ public class Controller implements Initializable {
         columnRingValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
                 p.getValue().getValue().boardStateProperties.ringValue).asObject());
 
-        blobPlayer.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
+        blobPlayerValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
                 p.getValue().getValue().boardStateProperties.blobValue).asObject());
+
+        longValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
+                p.getValue().getValue().boardStateProperties.longValue).asObject());
 
         // MCTS VALUES
         columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
