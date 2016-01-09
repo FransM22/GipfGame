@@ -28,9 +28,7 @@ class GenerateNodes {
 
 
         // Update the board state in another thread (so the GUI will stay responding)
-        new Thread(() -> {
-            setChildNodes(root, depth);
-        }).start();
+        setChildNodes(root, depth);
     }
 
     private void setChildNodes(TreeItem<GipfBoardState> treeItem, OptionalInt depth) {

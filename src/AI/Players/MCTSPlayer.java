@@ -1,6 +1,7 @@
 package AI.Players;
 
 import AI.BoardStateProperties;
+import GUI2.UpdateChildrenThread;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
 import GameLogic.PieceColor;
@@ -77,7 +78,7 @@ public class MCTSPlayer extends ComputerPlayer<Double> {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
-        gipfBoardState.boardStateProperties.updateChildren();
+        UpdateChildrenThread.getInstance().appendBoardState(gipfBoardState);
 
         if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
             return getMoveWithHighestHeuristicValue(gipfBoardState, false);

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import GUI2.GameAnalyzeTab?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI2.Controller">
@@ -27,20 +28,20 @@
                     <TitledPane animated="false" collapsible="false" text="Game settings">
                         <VBox>
                             <Label text="Minimum time (ms)"/>
-                            <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350" />
+                            <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350"/>
                             <Label text="Maximum time (ms)"/>
-                            <Spinner fx:id="maxThinkingTimeSpinner" prefWidth="350" />
+                            <Spinner fx:id="maxThinkingTimeSpinner" prefWidth="350"/>
                             <Separator>
                                 <VBox.margin>
-                                    <Insets top="10.0" bottom="10.0" />
+                                    <Insets top="10.0" bottom="10.0"/>
                                 </VBox.margin>
                             </Separator>
                             <HBox alignment="CENTER">
-                            <ToggleButton fx:id="playButton" text="Play">
-                                <font>
-                                    <Font size="30.0" />
-                                </font>
-                            </ToggleButton>
+                                <ToggleButton fx:id="playButton" text="Play">
+                                    <font>
+                                        <Font size="30.0"/>
+                                    </font>
+                                </ToggleButton>
                             </HBox>
                         </VBox>
                     </TitledPane>
@@ -50,8 +51,8 @@
                             <ComboBox fx:id="whitePlayerCombobox" prefWidth="350.0"/>
                             <Label visible="false" text="Select heuristic"/>
                             <ComboBox visible="false" fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
-                            <Separator />
-                            <Label fx:id="whiteInfoLabel" text="" />
+                            <Separator/>
+                            <Label fx:id="whiteInfoLabel" text=""/>
                         </VBox>
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="Black">
@@ -60,14 +61,14 @@
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
                             <Label visible="false" text="Select heuristic"/>
                             <ComboBox visible="false" fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
-                            <Separator />
-                            <Label fx:id="blackInfoLabel" text="" />
+                            <Separator/>
+                            <Label fx:id="blackInfoLabel" text=""/>
                         </VBox>
                     </TitledPane>
                 </VBox>
             </HBox>
         </Tab>
-        <Tab fx:id="analyzeGameTab" text="Game Analysis">
+        <GameAnalyzeTab fx:id="analyzeGameTab">
             <HBox>
                 <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
                                prefWidth="9999">
@@ -89,9 +90,9 @@
                         <TreeTableColumn fx:id="columnMctsWN" prefWidth="75.0" text="Mcts W/N"/>
                         <TreeTableColumn fx:id="columnMctsValue" prefWidth="75.0" text="MctsValue"/>
                         <TreeTableColumn fx:id="columnDepth" prefWidth="75.0" text="Depth"/>
-                        <TreeTableColumn fx:id="columnRingValue" prefWidth="75.0" text="Ring value" />
-                        <TreeTableColumn fx:id="blobPlayerValue" prefWidth="75.0" text="Blob value" />
-                        <TreeTableColumn fx:id="longValue" prefWidth="75.0" text="Long value" />
+                        <TreeTableColumn fx:id="columnRingValue" prefWidth="75.0" text="Ring value"/>
+                        <TreeTableColumn fx:id="blobPlayerValue" prefWidth="75.0" text="Blob value"/>
+                        <TreeTableColumn fx:id="longValue" prefWidth="75.0" text="Long value"/>
                     </columns>
                 </TreeTableView>
                 <VBox>
@@ -100,6 +101,6 @@
                            wrapText="true"/>
                 </VBox>
             </HBox>
-        </Tab>
+        </GameAnalyzeTab>
     </TabPane>
 </VBox>

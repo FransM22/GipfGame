@@ -77,7 +77,7 @@ public class Controller implements Initializable {
     @FXML
     private TreeTableView<GipfBoardState> boardStateTreeTableView;
     @FXML
-    private Tab analyzeGameTab;
+    private GameAnalyzeTab analyzeGameTab;
     @FXML
     private Tab gameTab;
     @FXML
@@ -131,13 +131,14 @@ public class Controller implements Initializable {
             // If no game is running, assign values to the nodes
             new Thread(() -> {
                 if (!game.automaticPlayThread.isAlive()) {
-                    gipfBoardState.boardStateProperties.updateChildren();
+                    UpdateChildrenThread.getInstance().appendBoardState(gipfBoardState);
                     new AssignPureMCTSValue().apply(gipfBoardState);
                 }
             }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
+        UpdateChildrenThread.getInstance().setGameAnalyzeTab(analyzeGameTab);
 
         minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 100, 100));
         maxThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 5000, 100));
@@ -221,13 +222,11 @@ public class Controller implements Initializable {
                     } else if (analyzeGameTab.selectedProperty().getValue()) {
                         if (game.automaticPlayThread.isAlive() || game.getGipfBoardState().boardStateProperties.isExploringChildren) {
                             fastUpdateRate = true;
-                        }
-                        else {
+                        } else {
                             fastUpdateRate = false;
                         }
                         boardStateTreeTableView.refresh();
-                    }
-                    else {
+                    } else {
                         fastUpdateRate = false;
                     }
                     Thread.sleep((fastUpdateRate ? 200 : 1000));

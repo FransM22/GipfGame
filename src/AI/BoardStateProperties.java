@@ -7,7 +7,7 @@ import GameLogic.GipfBoardState;
 /**
  * This class stores different values assigned to a board state. (Evaluatged boards have a 1-1 relation with BoardStateProperties
  * objects.
- * <p/>
+ * <p>
  * All fields in this class are automatically added to the heuristic selection combo box in GUI2.
  * Created by frans on 12-11-2015.
  */
@@ -41,7 +41,7 @@ public class BoardStateProperties {
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
         this.longValue = new AssignLongValue().apply(gipfBoardState);
     }
-
+    
     /**
      * Updates all values for the board state
      * Should preferably be ran in a separate thread
@@ -61,9 +61,9 @@ public class BoardStateProperties {
             if (!isExploringChildren) {
                 isExploringChildren = true;
 
-                    gipfBoardState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(gipfBoardState);
-                    gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.updateChildren());
-                    isExploringChildren = false;
+                gipfBoardState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(gipfBoardState);
+                gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.updateChildren());
+                isExploringChildren = false;
             }
         }
 

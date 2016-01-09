@@ -300,10 +300,11 @@ public abstract class Game implements Serializable {
                 if (getGameOverState(new GipfBoardState(null, newPieceMap, newPlayers))) {
                     // If the current player causes a game over situation, the other player (updateCurrent()), will be
                     // the winner of the game.
-                    if (moveCounter != 1) {
-                        System.out.println("Nr of moves: " + moveCounter);
-                        System.out.println("Time: " + Duration.between(gameStartInstant, Instant.now()).toMillis() + "ms");
-                    }
+                    // TODO enable again
+//                    if (moveCounter != 1) {
+//                        System.out.println("Nr of moves: " + moveCounter);
+//                        System.out.println("Time: " + Duration.between(gameStartInstant, Instant.now()).toMillis() + "ms");
+//                    }
                     newPlayers = newPlayers.updateCurrent().makeCurrentPlayerWinner();
                     gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
                 }
