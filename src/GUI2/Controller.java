@@ -51,6 +51,7 @@ public class Controller implements Initializable {
     public TreeTableColumn<GipfBoardState, Long> longValue;
     public Label boardDescriptionLabel;
     public ToggleButton playButton;
+    public Button newGameButton;
     public TreeTableView<GipfBoardState> boardStateTreeTableView;
     public GameAnalyzeTab analyzeGameTab;
     public Tab gameTab;
@@ -136,6 +137,14 @@ public class Controller implements Initializable {
                 setActivatedStateDuringPlay(true);
                 gipfBoardComponent.game.automaticPlayThread.interrupt();
             }
+        });
+        newGameButton.setOnAction((p) -> {
+            if (playButton.isSelected()) {
+                playButton.fire();
+            }
+            game = new BasicGame();
+            gipfBoardComponent.game = game;
+            repaintGipfBoards();
         });
 
         minThinkingTimeSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> gipfBoardComponent.game.minWaitTime = newValue));

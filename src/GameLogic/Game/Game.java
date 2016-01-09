@@ -3,6 +3,7 @@ package GameLogic.Game;
 import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
 import GUI.GipfBoardComponent.GipfBoardComponent;
+import GUI2.SettingsSingleton;
 import GameLogic.*;
 import javafx.util.Pair;
 
@@ -24,7 +25,7 @@ import static java.util.stream.Collectors.*;
 
 /**
  * The Game class controls whether the moves are according to the game rules, and if so, applies those moves to the board
- * <p/>
+ * <p>
  * Created by frans on 21-9-2015.
  */
 public abstract class Game implements Serializable {
@@ -105,7 +106,7 @@ public abstract class Game implements Serializable {
     /**
      * Checks whether the position is located on the inner board (the playing area). Returns false for positions on the
      * outer positions, as well as positions that are not on the board.
-     * <p/>
+     * <p>
      * By Leroy
      *
      * @param p position of which is to be determined whether the position is located on the inner board
@@ -300,13 +301,24 @@ public abstract class Game implements Serializable {
                 if (getGameOverState(new GipfBoardState(null, newPieceMap, newPlayers))) {
                     // If the current player causes a game over situation, the other player (updateCurrent()), will be
                     // the winner of the game.
-                    // TODO enable again
-//                    if (moveCounter != 1) {
-//                        System.out.println("Nr of moves: " + moveCounter);
-//                        System.out.println("Time: " + Duration.between(gameStartInstant, Instant.now()).toMillis() + "ms");
-//                    }
                     newPlayers = newPlayers.updateCurrent().makeCurrentPlayerWinner();
                     gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
+
+                    if (moveCounter != 1) {
+                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd)
+                            System.out.print(moveCounter + "; ");
+                        if (SettingsSingleton.getInstance().showTimeAtGameEnd)
+                            System.out.print(Duration.between(gameStartInstant, Instant.now()).toMillis() + "; ");
+                        if (SettingsSingleton.getInstance().showWinner) {
+                            System.out.print(newPlayers.winner().pieceColor);
+                        }
+
+                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd ||
+                                SettingsSingleton.getInstance().showTimeAtGameEnd ||
+                                SettingsSingleton.getInstance().showWinner) {
+                            System.out.println();   // Print newline
+                        }
+                    }
                 }
 
 
@@ -401,8 +413,7 @@ public abstract class Game implements Serializable {
 
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
-                }
-                else if (removableLineSegmentsByOpponent.size() != 0) {
+                } else if (removableLineSegmentsByOpponent.size() != 0) {
                     for (Line.Segment removedSegment : removableLineSegmentsByOpponent) {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
@@ -414,8 +425,7 @@ public abstract class Game implements Serializable {
 
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
-                }
-                else {
+                } else {
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
                 }
 
