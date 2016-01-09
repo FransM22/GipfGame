@@ -5,18 +5,18 @@ import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.StringConverters.AlgorithmStringConverter;
-import GUI2.StringConverters.HeuristicStringConverter;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.util.Callback;
 
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -26,70 +26,39 @@ import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
-    @FXML
-    private Spinner<Integer> maxThinkingTimeSpinner;
-    @FXML
-    private Spinner<Integer> minThinkingTimeSpinner;
-    @FXML
-    private ComboBox<Class<? extends ComputerPlayer>> whitePlayerCombobox;
-    @FXML
-    private ComboBox<Class<? extends ComputerPlayer>> blackPlayerCombobox;
-    @FXML
-    private SwingNode gipfGameNode;
-    @FXML
-    private SwingNode smallGipfGameVisualisationNode;
-    @FXML
-    private TreeTableColumn<GipfBoardState, String> columnBoardName;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
-    @FXML
-    private TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnMinMax;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnHeuristic1;
-    @FXML
-    private TreeTableColumn<GipfBoardState, String> columnMctsWN;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> columnDepth;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Double> columnMctsValue;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Long> columnRingValue;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Long> blobPlayerValue;
-    @FXML
-    private TreeTableColumn<GipfBoardState, Integer> longValue;
-    @FXML
-    private Label boardDescriptionLabel;
-    @FXML
-    private ToggleButton playButton;
-    @FXML
-    private TreeTableView<GipfBoardState> boardStateTreeTableView;
-    @FXML
-    private GameAnalyzeTab analyzeGameTab;
-    @FXML
-    private Tab gameTab;
-    @FXML
-    private ComboBox<Field> whiteHeuristicCombobox;
-    @FXML
-    private ComboBox<Field> blackHeuristicCombobox;
-    @FXML
-    private Label whiteInfoLabel;
-    @FXML
-    private Label blackInfoLabel;
-    @FXML
-    private MenuItem menuItemNewBasicGame;
+    // These come from the mainGui.fxml file
+    public Spinner<Integer> maxThinkingTimeSpinner;
+    public Spinner<Integer> minThinkingTimeSpinner;
+    public ComboBox<Class<? extends ComputerPlayer>> whitePlayerCombobox;
+    public ComboBox<Class<? extends ComputerPlayer>> blackPlayerCombobox;
+    public SwingNode gipfGameNode;
+    public SwingNode smallGipfGameVisualisationNode;
+    public TreeTableColumn<GipfBoardState, String> columnBoardName;
+    public TreeTableColumn<GipfBoardState, Integer> columnWhiteReserve;
+    public TreeTableColumn<GipfBoardState, Integer> columnBlackReserve;
+    public TreeTableColumn<GipfBoardState, String> columnCurrentPlayer;
+    public TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
+    public TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
+    public TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
+    public TreeTableColumn<GipfBoardState, Long> columnMinMax;
+    public TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
+    public TreeTableColumn<GipfBoardState, Long> columnWhiteMinusBlack;
+    public TreeTableColumn<GipfBoardState, String> columnMctsWN;
+    public TreeTableColumn<GipfBoardState, Long> columnDepth;
+    public TreeTableColumn<GipfBoardState, Double> columnMctsValue;
+    public TreeTableColumn<GipfBoardState, Long> columnRingValue;
+    public TreeTableColumn<GipfBoardState, Long> blobPlayerValue;
+    public TreeTableColumn<GipfBoardState, Long> longValue;
+    public Label boardDescriptionLabel;
+    public ToggleButton playButton;
+    public TreeTableView<GipfBoardState> boardStateTreeTableView;
+    public GameAnalyzeTab analyzeGameTab;
+    public Tab gameTab;
+    public ComboBox<Field> whiteHeuristicCombobox;
+    public ComboBox<Field> blackHeuristicCombobox;
+    public Label whiteInfoLabel;
+    public Label blackInfoLabel;
+    public MenuItem menuItemNewBasicGame;
 
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
@@ -184,6 +153,7 @@ public class Controller implements Initializable {
         );
     }
 
+    // TODO refactor
     private void startWindowUpdateThread() {
         new Thread(() -> {
             boolean fastUpdateRate = true;
@@ -259,7 +229,6 @@ public class Controller implements Initializable {
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
         ObservableList<Field> heuristicOList = FXCollections.observableList(Arrays.asList(BoardStateProperties.class.getFields()));
-        HeuristicStringConverter heuristicStringConverter = new HeuristicStringConverter();
         AlgorithmStringConverter algorithmStringConverter = new AlgorithmStringConverter(playerOList);
 
         whitePlayerCombobox.setItems(playerOList);
@@ -268,8 +237,6 @@ public class Controller implements Initializable {
         blackHeuristicCombobox.setItems(heuristicOList);
         whitePlayerCombobox.setConverter(algorithmStringConverter);
         blackPlayerCombobox.setConverter(algorithmStringConverter);
-        whiteHeuristicCombobox.setConverter(heuristicStringConverter);
-        blackHeuristicCombobox.setConverter(heuristicStringConverter);
 
         whitePlayerCombobox.setValue(playerOList.get(0));
         whitePlayerCombobox.setValue(playerOList.get(0));
@@ -303,36 +270,65 @@ public class Controller implements Initializable {
 
         columnIsPruned.setCellValueFactory((p) -> new ReadOnlyBooleanWrapper(false).asObject());
 
-        columnMinMax.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.minMaxValue).asObject());
-
         columnHeuristic0.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicRandomValue).asObject());
 
-        columnHeuristic1.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.heuristicWhiteMinusBlack).asObject());
+        try {
+            // Long values
+            columnDepth.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("depth")));
+            columnMinMax.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("minMaxValue")));
+            blobPlayerValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValue")));
+            longValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("longValue")));
+            columnRingValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("ringValue")));
+            columnWhiteMinusBlack.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("heuristicWhiteMinusBlack")));
 
-        columnRingValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
-                p.getValue().getValue().boardStateProperties.ringValue).asObject());
+            // Double values
+            columnMctsValue.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("mctsValue")));
+        } catch (NoSuchFieldException e) {
+            System.err.println("Can't access field");
+            e.printStackTrace();
+        }
 
-        blobPlayerValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> new ReadOnlyLongWrapper(
-                p.getValue().getValue().boardStateProperties.blobValue).asObject());
-
-        longValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.longValue).asObject());
-
-        // MCTS VALUES
-        columnMctsValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
-                p.getValue().getValue().boardStateProperties.mctsValue).asObject());
         columnMctsWN.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> new ReadOnlyStringWrapper(
                 p.getValue().getValue().boardStateProperties.mcts_w + "/" + p.getValue().getValue().boardStateProperties.mcts_n));
-        columnDepth.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Integer> p) -> new ReadOnlyIntegerWrapper(
-                p.getValue().getValue().boardStateProperties.depth).asObject());
     }
 
     private void setActivatedStateDuringPlay(boolean setActive) {
         for (Control control : controlsToBeInactiveDuringPlay) {
             control.setDisable(!setActive);
         }
+    }
+
+    private Callback<TreeTableColumn.CellDataFeatures<GipfBoardState, Long>, ObservableValue<Long>> cellFactoryLongField(Field field) {
+        return (TreeTableColumn.CellDataFeatures<GipfBoardState, Long> p) -> {
+            try {
+                return new ReadOnlyLongWrapper((Long) field.get(p.getValue().getValue().boardStateProperties)).asObject();
+            } catch (IllegalAccessException e) {
+                System.out.println("Can't access the field " + field);
+                return null;
+            }
+        };
+    }
+
+    private Callback<TreeTableColumn.CellDataFeatures<GipfBoardState, Double>, ObservableValue<Double>> cellFactoryDoubleField(Field field) {
+        return (TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> {
+            try {
+                return new ReadOnlyDoubleWrapper((Double) field.get(p.getValue().getValue().boardStateProperties)).asObject();
+            } catch (IllegalAccessException e) {
+                System.out.println("Can't access the field " + field);
+                return null;
+            }
+        };
+    }
+
+    private Callback<TreeTableColumn.CellDataFeatures<GipfBoardState, String>, ObservableValue<String>> cellFactoryStringField(Field field) {
+        return (TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> {
+            try {
+                return new ReadOnlyStringWrapper((String) field.get(p.getValue().getValue().boardStateProperties.toString()));
+            } catch (IllegalAccessException e) {
+                System.out.println("Can't access the field " + field);
+                return null;
+            }
+        };
     }
 }

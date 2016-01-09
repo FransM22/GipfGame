@@ -14,15 +14,15 @@ import GameLogic.GipfBoardState;
 public class BoardStateProperties {
     public static long run_counter = 0;     // For yielding to other processes
     public double heuristicRandomValue;
-    public int heuristicWhiteMinusBlack;
+    public long heuristicWhiteMinusBlack;
     public double mctsValue;
     public long ringValue;
     public long blobValue;
-    public int minMaxValue;
+    public long minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
-    public int depth = 0;
-    public int longValue;
+    public long depth = 0;
+    public long longValue;
     public boolean isExploringChildren = false;
     private GipfBoardState gipfBoardState;
 
@@ -41,7 +41,7 @@ public class BoardStateProperties {
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
         this.longValue = new AssignLongValue().apply(gipfBoardState);
     }
-    
+
     /**
      * Updates all values for the board state
      * Should preferably be ran in a separate thread

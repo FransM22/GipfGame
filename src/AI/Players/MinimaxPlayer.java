@@ -25,14 +25,14 @@ public class MinimaxPlayer extends ComputerPlayer<Integer> {
 
 
         // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
-        TreeMap<Integer, Move> moveGipfBoardStateMap = new TreeMap<>();
+        TreeMap<Long, Move> moveGipfBoardStateMap = new TreeMap<>();
         for (Move move : game.getAllowedMoves()) {
             Game temporaryGame = new BasicGame();
             temporaryGame.loadState(gipfBoardState);
             temporaryGame.applyMove(move);
 
             // Sorts all board states based on heuristicRandomValue
-            int minmaxvalue = temporaryGame.getGipfBoardState().boardStateProperties.minMaxValue;
+            long minmaxvalue = temporaryGame.getGipfBoardState().boardStateProperties.minMaxValue;
 
             // White is the minimizing player, so if the current player is black, we flip the values
             if (temporaryGame.getGipfBoardState().players.current().pieceColor == PieceColor.BLACK) {
