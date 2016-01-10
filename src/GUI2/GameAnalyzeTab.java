@@ -12,26 +12,19 @@ import javafx.scene.layout.HBox;
  */
 public class GameAnalyzeTab extends Tab {
     ProgressBar progressBar;
-    Hyperlink hyperlink;
 
     public GameAnalyzeTab() {
         progressBar = new ProgressBar();
-        hyperlink = new Hyperlink("[stop]");
 
         progressBar.setVisible(false);
-        hyperlink.setVisible(false);
 
-        hyperlink.setOnAction((a) -> {
-            UpdateChildrenThread.getInstance().setIsActive(false);
-        });
 
         HBox tabTitleHbox = new HBox();
         tabTitleHbox.setAlignment(Pos.CENTER_LEFT);
         tabTitleHbox.setSpacing(10);
         tabTitleHbox.getChildren().addAll(
                 new Label("Analyze game"),
-                progressBar,
-                hyperlink
+                progressBar
         );
 
         setGraphic(tabTitleHbox);
@@ -40,10 +33,8 @@ public class GameAnalyzeTab extends Tab {
     public void setIsProgressing(boolean isProgressing) {
         if (isProgressing) {
             progressBar.setVisible(true);
-            hyperlink.setVisible(true);
         } else {
             progressBar.setVisible(false);
-            hyperlink.setVisible(false);
         }
     }
 

@@ -60,6 +60,7 @@ public class Controller implements Initializable {
     public Label whiteInfoLabel;
     public Label blackInfoLabel;
     public MenuItem menuItemNewBasicGame;
+    public CheckBox run50timesCheckBox;
 
     private Game game;
     private GipfBoardComponent gipfBoardComponent;
@@ -132,7 +133,13 @@ public class Controller implements Initializable {
                     System.err.println("Could not instantiate player.");
                     e.printStackTrace();
                 }
-                gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
+
+                if (run50timesCheckBox.isSelected()) {
+                    gipfBoardComponent.game.startNGameCycles(gipfBoardComponent::repaint, 50);
+                }
+                else {
+                    gipfBoardComponent.game.startGameCycle(gipfBoardComponent::repaint);
+                }
             } else {
                 setActivatedStateDuringPlay(true);
                 gipfBoardComponent.game.automaticPlayThread.interrupt();

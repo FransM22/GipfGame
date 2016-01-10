@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import GUI2.GameAnalyzeTab?>
 <?import javafx.embed.swing.SwingNode?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import GUI2.GameAnalyzeTab?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI2.Controller">
@@ -47,28 +47,27 @@
                                         <Font size="30.0"/>
                                     </font>
                                 </Button>
-
                             </HBox>
                         </VBox>
                     </TitledPane>
-                    <TitledPane animated="false" collapsible="false" text="White">
+                    <TitledPane animated="false" collapsible="false" text="Players">
                         <VBox>
-                            <Label text="Select player"/>
+                            <Label text="Select white player" style="-fx-font-weight: bold"/>
                             <ComboBox fx:id="whitePlayerCombobox" prefWidth="350.0"/>
                             <Label visible="false" text="Select heuristic"/>
                             <ComboBox visible="false" fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
-                            <Separator/>
                             <Label fx:id="whiteInfoLabel" text=""/>
-                        </VBox>
-                    </TitledPane>
-                    <TitledPane animated="false" collapsible="false" text="Black">
-                        <VBox>
-                            <Label text="Select player"/>
+                            <Separator />
+                            <Label text="Select black player" style="-fx-font-weight: bold;"/>
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
                             <Label visible="false" text="Select heuristic"/>
                             <ComboBox visible="false" fx:id="blackHeuristicCombobox" prefWidth="350.0"/>
-                            <Separator/>
                             <Label fx:id="blackInfoLabel" text=""/>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane animated="false" collapsible="false" text="Experiments">
+                        <VBox>
+                            <CheckBox fx:id="run50timesCheckBox" text="Run 50 times"/>
                         </VBox>
                     </TitledPane>
                 </VBox>

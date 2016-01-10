@@ -37,6 +37,7 @@ public abstract class Game implements Serializable {
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
     private int moveCounter;    // For debugging output
+    private int runCounter;
     private Instant gameStartInstant = Instant.now();
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
@@ -305,18 +306,18 @@ public abstract class Game implements Serializable {
                     gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
 
                     if (moveCounter != 1) {
-                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd)
-                            System.out.print(moveCounter + "; ");
-                        if (SettingsSingleton.getInstance().showTimeAtGameEnd)
-                            System.out.print(Duration.between(gameStartInstant, Instant.now()).toMillis() + "; ");
-                        if (SettingsSingleton.getInstance().showWinner) {
-                            System.out.print(newPlayers.winner().pieceColor);
-                        }
+                        String moveCountString = Integer.toString(moveCounter);
+                        String durationString = Long.toString(Duration.between(gameStartInstant, Instant.now()).toMillis());
+                        String winnerString = newPlayers.winner().pieceColor.toString();
+                        String whiteAlgorithm = whitePlayer.getClass().getSimpleName();
+                        String blackAlgorithm = blackPlayer.getClass().getSimpleName();
 
                         if (SettingsSingleton.getInstance().showMoveCountAtGameEnd ||
                                 SettingsSingleton.getInstance().showTimeAtGameEnd ||
-                                SettingsSingleton.getInstance().showWinner) {
-                            System.out.println();   // Print newline
+                                SettingsSingleton.getInstance().showWinner ||
+                                SettingsSingleton.getInstance().showWhiteAlgorithm ||
+                                SettingsSingleton.getInstance().showBlackAlgorithm) {
+                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
                         }
                     }
                 }
@@ -749,7 +750,32 @@ public abstract class Game implements Serializable {
         automaticPlayThread.start();
     }
 
-    public void applyCurrentPlayerMove() {
+    public void startNGameCycles(Runnable finalAction, int nrOfRuns) {
+        Class currWhitePlayer = whitePlayer.getClass();
+        Class currBlackPlayer = blackPlayer.getClass();
+
+        automaticPlayThread = new Thread(() -> {
+            for (int i = 0; i < nrOfRuns; i++) {
+                GipfBoardState gipfBoardStateCopy = new GipfBoardState(getGipfBoardState(), gipfBoardState.getPieceMap(), gipfBoardState.players);
+                Game copyOfGame = new BasicGame();
+                try {
+                    copyOfGame.whitePlayer = (ComputerPlayer) currWhitePlayer.newInstance();
+                    copyOfGame.blackPlayer = (ComputerPlayer) currBlackPlayer.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                copyOfGame.loadState(gipfBoardStateCopy);
+                System.out.print(i + ": ");
+                GameLoopRunnable gameLoopRunnable = new GameLoopRunnable(copyOfGame);
+                gameLoopRunnable.finalAction = finalAction;
+                gameLoopRunnable.run();
+            }
+        });
+
+        automaticPlayThread.start();
+    }
+
+    public void applyCurrentPlayerMove() throws GameEndException {
         Move move;
 
         if (gipfBoardState.players.current() == gipfBoardState.players.white) {
@@ -760,18 +786,26 @@ public abstract class Game implements Serializable {
 
         if (move != null) {
             applyMove(move);
+        } else {
+            throw new GameEndException();
         }
     }
 
     private class GameLoopRunnable implements Runnable {
+        public Game game;
         public Runnable finalAction;
+
+        public GameLoopRunnable() {
+            game = Game.this;
+        }
+
+        public GameLoopRunnable(Game game) {
+            this.game = game;
+        }
 
         @Override
         public void run() {
-            Move move;
-            int moveCounter = 0;
-
-            while (true) {
+            while (true) {  // This loop performs all moves in a game
                 try {
                     // The waiting time is artificial, it makes the difference between two moves clearer
                     Thread.sleep(Game.this.minWaitTime);
@@ -779,13 +813,19 @@ public abstract class Game implements Serializable {
                     break;
                 }
 
-                applyCurrentPlayerMove();
+                try {
+                    this.game.applyCurrentPlayerMove();
+                } catch (GameEndException e) {
+                    break;
+                }
 
                 // A final action to be executed (for example repainting the component)
                 if (finalAction != null) {
                     finalAction.run();
                 }
             }
+
         }
     }
 }
+

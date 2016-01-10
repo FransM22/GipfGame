@@ -8,9 +8,11 @@ public class SettingsSingleton {
     public boolean showMoveCountAtGameEnd = true;
     public boolean showTimeAtGameEnd = true;
     public boolean showWinner = true;
+    public boolean showWhiteAlgorithm = true;
+    public boolean showBlackAlgorithm = true;
 
     private SettingsSingleton() {
-        System.out.println("Number of moves; Time (ms); Winning player");
+        System.out.println("White player; Black player; Number of moves; Time (ms); Winning player");
     }
 
     public static SettingsSingleton getInstance() { return instance; }
