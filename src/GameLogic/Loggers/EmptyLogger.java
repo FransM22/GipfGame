@@ -1,4 +1,4 @@
-package GameLogic;
+package GameLogic.Loggers;
 
 import GameLogic.Game.Game;
 
@@ -7,7 +7,7 @@ import GameLogic.Game.Game;
  */
 public class EmptyLogger extends GameLogger {
     public EmptyLogger(Game game) {
-        super(game);
+        super();
     }
 
     @Override

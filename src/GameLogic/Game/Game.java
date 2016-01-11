@@ -7,6 +7,8 @@ import Exceptions.InvalidMoveException;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.SettingsSingleton;
 import GameLogic.*;
+import GameLogic.Loggers.EmptyLogger;
+import GameLogic.Loggers.GameLogger;
 import javafx.util.Pair;
 
 import javax.swing.*;
@@ -690,7 +692,8 @@ public abstract class Game implements Serializable {
     protected abstract boolean getGameOverState(GipfBoardState gipfBoardState);
 
     public void newGameLogger() {
-        this.gameLogger = new GameLogger(this);
+        this.gameLogger = gameLogger.getInstance();
+        this.gameLogger.setGame(this);
     }
 
     private Set<Move> getPotentialStartMoves(Piece piece) {

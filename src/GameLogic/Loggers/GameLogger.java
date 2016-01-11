@@ -1,4 +1,4 @@
-package GameLogic;
+package GameLogic.Loggers;
 
 import GameLogic.Game.Game;
 
@@ -14,10 +14,18 @@ import java.util.LinkedList;
  */
 public class GameLogger implements Serializable {
     public final LinkedList<String> logMessages;                // Messages displayed in the log in the window (if there is a GipfWindow instance connected to this game)
-    private final Instant gameStartedTime;
+    private Instant gameStartedTime;
+    private static GameLogger gameLogger = new GameLogger();
 
-    public GameLogger(Game game) {
+    GameLogger() {
         logMessages = new LinkedList<>();
+    }
+
+    public GameLogger getInstance() {
+        return gameLogger;
+    }
+
+    public void setGame(Game game) {
         gameStartedTime = Instant.now();
         log("Started a new " + game.getClass() + " GIPF game.");
     }
