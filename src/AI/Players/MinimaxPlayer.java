@@ -15,6 +15,7 @@ import java.util.TreeMap;
 public class MinimaxPlayer extends ComputerPlayer<Integer> {
 
     public MinimaxPlayer() {
+        // TODO fix minimax player
         maxDepth = Optional.of(2);
     }
 
