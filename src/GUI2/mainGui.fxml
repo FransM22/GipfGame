@@ -29,8 +29,6 @@
                         <VBox>
                             <Label text="Minimum time (ms)"/>
                             <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350"/>
-                            <Label text="Maximum time (ms)"/>
-                            <Spinner fx:id="maxThinkingTimeSpinner" prefWidth="350"/>
                             <Separator>
                                 <VBox.margin>
                                     <Insets top="10.0" bottom="10.0"/>

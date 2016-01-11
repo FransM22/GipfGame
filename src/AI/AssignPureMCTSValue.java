@@ -1,6 +1,9 @@
 package AI;
 
+import AI.Players.ComputerPlayer;
 import AI.Players.MCTSPlayer;
+import AI.Players.RandomPlayer;
+import Exceptions.GameEndException;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
@@ -68,15 +71,18 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
 
     private PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {
         Game randomGame = new BasicGame();
+        randomGame.whitePlayer = new RandomPlayer();
+        randomGame.blackPlayer = new RandomPlayer();
+
         randomGame.loadState(gipfBoardState);
 
         while (randomGame.getGipfBoardState().players.winner() == null) {
-            Set<Move> allowedMoves = randomGame.getAllowedMoves();
-
-            int randomMoveId = random.nextInt(allowedMoves.size());
-            randomGame.applyMove(allowedMoves.stream().collect(toList()).get(randomMoveId));
+            try {
+                randomGame.applyCurrentPlayerMove();
+            } catch (GameEndException e) {
+                break;
+            }
         }
-//            System.out.println(randomGame.getGipfBoardState().boardStateProperties.depth);
 
         return randomGame.getGipfBoardState().players.winner().pieceColor;
     }

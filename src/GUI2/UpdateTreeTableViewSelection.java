@@ -7,10 +7,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 
 /**
+ * This class controls the board properties shown next to the TreeTableView on the GameAnalyzeTab
+ *
  * Created by frans on 10-11-2015.
  */
 class UpdateTreeTableViewSelection {
-    // TODO merge with WindowUpdateThread
     private final TreeTableView<GipfBoardState> gipfBoardStateTreeTableView;
     private Label boardDescriptionLabel;
 

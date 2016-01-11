@@ -27,7 +27,6 @@ import static GameLogic.PieceColor.WHITE;
 
 public class Controller implements Initializable {
     // These come from the mainGui.fxml file
-    public Spinner<Integer> maxThinkingTimeSpinner;
     public Spinner<Integer> minThinkingTimeSpinner;
     public ComboBox<Class<? extends ComputerPlayer>> whitePlayerCombobox;
     public ComboBox<Class<? extends ComputerPlayer>> blackPlayerCombobox;
@@ -113,7 +112,6 @@ public class Controller implements Initializable {
         UpdateChildrenThread.getInstance().setGameAnalyzeTab(gameAnalyzeTab);
 
         minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 100, 100));
-        maxThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 5000, 100));
 
 
         /*
