@@ -67,7 +67,7 @@
                     </TitledPane>
                     <TitledPane animated="false" collapsible="false" text="Experiments">
                         <VBox>
-                            <CheckBox fx:id="run50timesCheckBox" text="Run 50 times"/>
+                            <CheckBox fx:id="run100TimesCheckbox" text="Run 100 times"/>
                         </VBox>
                     </TitledPane>
                 </VBox>
