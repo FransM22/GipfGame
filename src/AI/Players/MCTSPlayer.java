@@ -1,7 +1,7 @@
 package AI.Players;
 
 import AI.BoardStateProperties;
-import GUI2.UpdateChildrenThread;
+import GUI2.Threads.UpdateChildrenThread;
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
 import GameLogic.PieceColor;

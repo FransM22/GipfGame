@@ -5,6 +5,8 @@ import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.StringConverters.AlgorithmStringConverter;
+import GUI2.Threads.UpdateChildrenThread;
+import GUI2.Threads.WindowUpdateThread;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
@@ -63,7 +65,7 @@ public class Controller implements Initializable {
     public MenuItem menuItemNewBasicGame;
     public CheckBox run100TimesCheckbox;
 
-    private Game game;
+    public Game game;
     private GipfBoardComponent gipfBoardComponent;
     private GipfBoardComponent smallVisualisationComponent;
     private List<Control> controlsToBeInactiveDuringPlay;
@@ -170,59 +172,11 @@ public class Controller implements Initializable {
         );
     }
 
-    // TODO refactor
     private void startWindowUpdateThread() {
-        new Thread(() -> {
-            boolean fastUpdateRate = true;
-            while (true) {
-                try {
-                    // If the analyze game tab is selected
-                    if (gameTab.selectedProperty().getValue()) {
-                        fastUpdateRate = true;
-                        // Update player stats
-
-                        // The label update should happen in the FX application thread:
-                        Platform.runLater(() -> {
-
-                            String whiteInfoLabelText = "";
-                            String blackInfoLabelText = "";
-
-                            if (game.whitePlayer.maxDepth.isPresent()) {
-                                whiteInfoLabelText += "Max depth: " + game.whitePlayer.maxDepth.get() + "\n";
-                            }
-                            if (game.whitePlayer.heuristic.isPresent()) {
-                                whiteInfoLabelText += "Heuristic:  " + ((Field) game.whitePlayer.heuristic.get()).getName() + "\n";
-                            }
-                            whiteInfoLabelText += "Reserve: " + game.getGipfBoardState().players.white.reserve;
-                            whiteInfoLabel.setText(whiteInfoLabelText);
-
-                            if (game.blackPlayer.maxDepth.isPresent()) {
-                                blackInfoLabelText += "Max depth: " + game.blackPlayer.maxDepth.get() + "\n";
-                            }
-                            if (game.blackPlayer.heuristic.isPresent()) {
-                                blackInfoLabelText += "Heuristic:  " + ((Field) game.blackPlayer.heuristic.get()).getName() + "\n";
-                            }
-                            blackInfoLabelText += "Reserve: " + game.getGipfBoardState().players.black.reserve;
-                            blackInfoLabel.setText(blackInfoLabelText);
-
-                        });
-                    } else if (analyzeGameTab.selectedProperty().getValue()) {
-                        if (game.automaticPlayThread.isAlive() || game.getGipfBoardState().boardStateProperties.isExploringChildren) {
-                            fastUpdateRate = true;
-                        } else {
-                            fastUpdateRate = false;
-                        }
-                        boardStateTreeTableView.refresh();
-                    } else {
-                        fastUpdateRate = false;
-                    }
-                    Thread.sleep((fastUpdateRate ? 200 : 1000));
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-
-        }).start();
+        WindowUpdateThread windowUpdateThread = WindowUpdateThread.getInstance();
+        if (windowUpdateThread.getState() == Thread.State.RUNNABLE) {
+            windowUpdateThread.start();
+        }
     }
 
     /**
