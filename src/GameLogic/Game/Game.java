@@ -817,7 +817,7 @@ public abstract class Game implements Serializable {
                 try {
                     this.game.applyCurrentPlayerMove();
                 } catch (GameEndException e) {
-                    break;
+                    //break; TODO
                 }
 
                 // A final action to be executed (for example repainting the component)
