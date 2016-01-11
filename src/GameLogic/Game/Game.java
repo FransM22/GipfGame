@@ -787,7 +787,11 @@ public abstract class Game implements Serializable {
         if (move != null) {
             applyMove(move);
         } else {
-            throw new GameEndException();
+            if (gipfBoardState.players.winner() != null) {
+                throw new GameEndException();
+            }
+            // If the winning player is not yet defined, the game is still continuing.
+            // (For example the human player is on turn)
         }
     }
 
@@ -816,7 +820,7 @@ public abstract class Game implements Serializable {
                 try {
                     this.game.applyCurrentPlayerMove();
                 } catch (GameEndException e) {
-                    break; // TODO this breaks the human player
+                    break;
                 }
 
                 // A final action to be executed (for example repainting the component)
