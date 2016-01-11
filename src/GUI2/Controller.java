@@ -47,8 +47,9 @@ public class Controller implements Initializable {
     public TreeTableColumn<GipfBoardState, Long> columnDepth;
     public TreeTableColumn<GipfBoardState, Double> columnMctsValue;
     public TreeTableColumn<GipfBoardState, Long> columnRingValue;
-    public TreeTableColumn<GipfBoardState, Long> blobPlayerValue;
-    public TreeTableColumn<GipfBoardState, Long> longValue;
+    public TreeTableColumn<GipfBoardState, Long> columnBlobPlayerValue;
+    public TreeTableColumn<GipfBoardState, Long> columnLongValue;
+    public TreeTableColumn<GipfBoardState, Double> columnWeightedValue;
     public Label boardDescriptionLabel;
     public ToggleButton playButton;
     public Button newGameButton;
@@ -240,7 +241,8 @@ public class Controller implements Initializable {
                 WhiteMinusBlackPlayer.class,
                 RingPlayer.class,
                 BlobPlayer.class,
-                LongPlayer.class
+                LongPlayer.class,
+                WeightPlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -289,12 +291,15 @@ public class Controller implements Initializable {
         columnHeuristic0.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
                 p.getValue().getValue().boardStateProperties.heuristicRandomValue).asObject());
 
+        columnWeightedValue.setCellValueFactory((TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> new ReadOnlyDoubleWrapper(
+                p.getValue().getValue().boardStateProperties.weightedHeuristic).asObject());
+
         try {
             // Long values
             columnDepth.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("depth")));
             columnMinMax.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("minMaxValue")));
-            blobPlayerValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValue")));
-            longValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("longValue")));
+            columnBlobPlayerValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValue")));
+            columnLongValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("longValue")));
             columnRingValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("ringValue")));
             columnWhiteMinusBlack.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("heuristicWhiteMinusBlack")));
 

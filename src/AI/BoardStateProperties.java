@@ -24,6 +24,7 @@ public class BoardStateProperties {
     public long depth = 0;
     public long longValue;
     public boolean isExploringChildren = false;
+    public double weightedHeuristic;
     private GipfBoardState gipfBoardState;
 
 
@@ -40,6 +41,7 @@ public class BoardStateProperties {
         this.ringValue = new AssignRingValue().apply(gipfBoardState);
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
         this.longValue = new AssignLongValue().apply(gipfBoardState);
+        this.weightedHeuristic = new AssignWeightedHeuristicValue().apply(gipfBoardState);
     }
 
     /**
