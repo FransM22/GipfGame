@@ -8,6 +8,7 @@ import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.SettingsSingleton;
 import GameLogic.*;
 import GameLogic.Loggers.EmptyLogger;
+import GameLogic.Loggers.ExperimentLogger;
 import GameLogic.Loggers.GameLogger;
 import javafx.util.Pair;
 
@@ -317,7 +318,13 @@ public abstract class Game implements Serializable {
                             String whiteAlgorithm = whitePlayer.getClass().getSimpleName();
                             String blackAlgorithm = blackPlayer.getClass().getSimpleName();
 
-                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
+                            ExperimentLogger.get().log(
+                                    whiteAlgorithm + "; " +
+                                            blackAlgorithm + "; " +
+                                            moveCountString + "; " +
+                                            durationString + "; " +
+                                            winnerString
+                            );
                         }
                     }
                 }
@@ -767,10 +774,6 @@ public abstract class Game implements Serializable {
                 }
                 copyOfGame.loadState(gipfBoardStateCopy);
 
-                // TODO move this to somewhere else
-                if (SettingsSingleton.getInstance().showExperimentOutput) {
-                    System.out.print(i + ": ");
-                }
                 GameLoopRunnable gameLoopRunnable = new GameLoopRunnable(copyOfGame);
                 gameLoopRunnable.finalAction = finalAction;
                 gameLoopRunnable.run();

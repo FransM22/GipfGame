@@ -73,7 +73,7 @@
                 </VBox>
             </HBox>
         </Tab>
-        <GameAnalyzeTab fx:id="analyzeGameTab">
+        <GameAnalyzeTab fx:id="gameAnalyzeTab">
             <HBox>
                 <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
                                prefWidth="9999">

@@ -5,16 +5,17 @@ import GameLogic.Game.Game;
 /**
  * Created by frans on 11-1-2016.
  */
-public class ExperimentLogger extends GameLogger {
+public class ExperimentLogger {
     private static long gameNr = 0;
+    private static final ExperimentLogger INSTANCE = new ExperimentLogger();
 
-    public ExperimentLogger() {
-        super();
+    private ExperimentLogger() {}
+
+    public static ExperimentLogger get() {
+        return INSTANCE;
     }
 
-    @Override
     public void log(String debug) {
-        System.out.println(gameNr + "; " + debug);
-        // TODO implement the experiment logger
+        System.out.println(gameNr++ + "; " + debug);
     }
 }

@@ -3,6 +3,7 @@ package GUI2.Threads;
 import GUI2.GameAnalyzeTab;
 import GameLogic.GipfBoardState;
 
+import java.time.Instant;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -13,7 +14,8 @@ public class UpdateChildrenThread extends Thread {
     private static final UpdateChildrenThread updateChildrenThread = new UpdateChildrenThread();
     private Queue<GipfBoardState> boardStatesToUpdate;
     private GameAnalyzeTab gameAnalyzeTab;
-    private boolean isActive = false;
+    public static boolean isActive = false;
+    public static Instant latestUpdatedAt = Instant.EPOCH;
 
     private UpdateChildrenThread() {
         super(() -> {
@@ -24,6 +26,7 @@ public class UpdateChildrenThread extends Thread {
                     while (!updateChildrenThread.boardStatesToUpdate.isEmpty()) {
                         GipfBoardState currentGipfBoardState = updateChildrenThread.boardStatesToUpdate.poll();
                         currentGipfBoardState.boardStateProperties.updateChildren();
+                        latestUpdatedAt = Instant.now();
                     }
 
                     if (updateChildrenThread.gameAnalyzeTab != null) {
