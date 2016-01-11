@@ -1,4 +1,4 @@
-package GameLogic.Game;
+package Exceptions;
 
 /**
  * Created by frans on 10-1-2016.

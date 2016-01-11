@@ -1,4 +1,4 @@
-package GUI2.StringConverters;
+package GUI2;
 
 import AI.Players.ComputerPlayer;
 import javafx.collections.ObservableList;

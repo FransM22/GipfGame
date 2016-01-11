@@ -2,6 +2,8 @@ package GameLogic.Game;
 
 import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
+import Exceptions.GameEndException;
+import Exceptions.InvalidMoveException;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.SettingsSingleton;
 import GameLogic.*;

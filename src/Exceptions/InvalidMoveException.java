@@ -1,4 +1,4 @@
-package GameLogic;
+package Exceptions;
 
 /**
  * This Exception is thrown if a class tries to handle a position that is invalid for that operation.
