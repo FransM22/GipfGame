@@ -66,7 +66,7 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
             }
         }
 
-        return 0.0; // MCTSValue (current_w / current_n) + c * Math.sqrt(current_n / t); // This line gives a division by 0 error
+        return 0.0;
     }
 
     private PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {

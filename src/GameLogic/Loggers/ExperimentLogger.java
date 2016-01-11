@@ -5,7 +5,7 @@ import GameLogic.Game.Game;
 /**
  * Created by frans on 11-1-2016.
  */
-public class ExperimentLogger {
+public class ExperimentLogger { // TODO make output faster
     private static long gameNr = 0;
     private static final ExperimentLogger INSTANCE = new ExperimentLogger();
 
