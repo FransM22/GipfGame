@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static GameLogic.Direction.*;
@@ -376,13 +377,6 @@ public abstract class Game implements Serializable {
 
                 movePiece(pieceMap, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
 
-                GipfBoardState temporaryBoardState = new GipfBoardState(
-                        getGipfBoardState(),
-                        pieceMap,
-                        getGipfBoardState().players.updateCurrent()
-                );
-
-
                 Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, potentialMove.addedPiece.getPieceColor());
                 PieceColor opponentColor = potentialMove.addedPiece.getPieceColor() == WHITE ? BLACK : WHITE;
                 Set<Line.Segment> removableLineSegmentsByOpponent = getRemovableLineSegments(pieceMap, opponentColor);
@@ -407,10 +401,14 @@ public abstract class Game implements Serializable {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
                         Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(pieceMap);
-                        if (temporaryBoardState.players.current().pieceColor == WHITE)
+
+
+                        if (gipfBoardState.players.current().pieceColor == WHITE) {
                             moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
-                        if (temporaryBoardState.players.current().pieceColor == BLACK)
+                        }
+                        if (gipfBoardState.players.current().pieceColor == BLACK) {
                             moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
+                        }
 
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
@@ -419,10 +417,13 @@ public abstract class Game implements Serializable {
                         Move moveWithRemovedLineSegment = new Move(potentialMove);
 
                         Set<Position> piecesToOpponent = removedSegment.getOccupiedPositions(pieceMap);
-                        if (temporaryBoardState.players.current().pieceColor == WHITE)
-                            moveWithRemovedLineSegment.piecesToBlack = piecesToOpponent;
-                        if (temporaryBoardState.players.current().pieceColor == BLACK)
+
+                        if (gipfBoardState.players.current().pieceColor == WHITE) {
                             moveWithRemovedLineSegment.piecesToWhite = piecesToOpponent;
+                        }
+                        if (gipfBoardState.players.current().pieceColor == BLACK) {
+                            moveWithRemovedLineSegment.piecesToWhite = piecesToOpponent;
+                        }
 
                         potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
                     }
