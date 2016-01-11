@@ -237,12 +237,13 @@ public class Controller implements Initializable {
                 HumanPlayer.class,
                 MCTSPlayer.class,
                 DecisionTreePlayer.class,
-                MinimaxPlayer.class,
+                MinimaxPlayer.class,            // TODO
                 WhiteMinusBlackPlayer.class,
                 RingPlayer.class,
                 BlobPlayer.class,
                 LongPlayer.class,
-                WeightPlayer.class
+                WeightPlayer.class,
+                MutualExchangePlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
