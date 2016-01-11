@@ -312,14 +312,14 @@ public abstract class Game implements Serializable {
                         String winnerString = newPlayers.winner().pieceColor.toString();
                         String whiteAlgorithm = whitePlayer.getClass().getSimpleName();
                         String blackAlgorithm = blackPlayer.getClass().getSimpleName();
-
-                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd ||
-                                SettingsSingleton.getInstance().showTimeAtGameEnd ||
-                                SettingsSingleton.getInstance().showWinner ||
-                                SettingsSingleton.getInstance().showWhiteAlgorithm ||
-                                SettingsSingleton.getInstance().showBlackAlgorithm) {
-                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
-                        }
+// TODO
+//                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd ||
+//                                SettingsSingleton.getInstance().showTimeAtGameEnd ||
+//                                SettingsSingleton.getInstance().showWinner ||
+//                                SettingsSingleton.getInstance().showWhiteAlgorithm ||
+//                                SettingsSingleton.getInstance().showBlackAlgorithm) {
+//                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
+//                        }
                     }
                 }
 

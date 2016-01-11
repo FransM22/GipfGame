@@ -1,5 +1,6 @@
-package GUI2;
+package GUI2.Threads;
 
+import GUI2.GameAnalyzeTab;
 import GameLogic.GipfBoardState;
 
 import java.util.Queue;
