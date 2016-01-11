@@ -13,15 +13,15 @@ import java.util.LinkedList;
  * Created by frans on 5-10-2015.
  */
 public class GameLogger implements Serializable {
+    private static GameLogger gameLogger = new GameLogger();
     public final LinkedList<String> logMessages;                // Messages displayed in the log in the window (if there is a GipfWindow instance connected to this game)
     private Instant gameStartedTime;
-    private static GameLogger gameLogger = new GameLogger();
 
     GameLogger() {
         logMessages = new LinkedList<>();
     }
 
-    public GameLogger getInstance() {
+    public static GameLogger getInstance() {
         return gameLogger;
     }
 
