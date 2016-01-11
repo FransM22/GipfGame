@@ -5,14 +5,12 @@ package GUI2;
  */
 public class SettingsSingleton {
     private static final SettingsSingleton instance = new SettingsSingleton();
-    public boolean showMoveCountAtGameEnd = true;
-    public boolean showTimeAtGameEnd = true;
-    public boolean showWinner = true;
-    public boolean showWhiteAlgorithm = true;
-    public boolean showBlackAlgorithm = true;
+    public boolean showExperimentOutput = true;
 
     private SettingsSingleton() {
-        System.out.println("White player; Black player; Number of moves; Time (ms); Winning player");
+        if (showExperimentOutput) {
+            System.out.println("White player; Black player; Number of moves; Time (ms); Winning player");
+        }
     }
 
     public static SettingsSingleton getInstance() { return instance; }

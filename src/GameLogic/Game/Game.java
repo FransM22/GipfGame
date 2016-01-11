@@ -13,7 +13,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static GameLogic.Direction.*;
@@ -307,19 +306,15 @@ public abstract class Game implements Serializable {
                     gameLogger.log("Game over! " + newPlayers.winner().pieceColor + " won!");
 
                     if (moveCounter != 1) {
-                        String moveCountString = Integer.toString(moveCounter);
-                        String durationString = Long.toString(Duration.between(gameStartInstant, Instant.now()).toMillis());
-                        String winnerString = newPlayers.winner().pieceColor.toString();
-                        String whiteAlgorithm = whitePlayer.getClass().getSimpleName();
-                        String blackAlgorithm = blackPlayer.getClass().getSimpleName();
-// TODO
-//                        if (SettingsSingleton.getInstance().showMoveCountAtGameEnd ||
-//                                SettingsSingleton.getInstance().showTimeAtGameEnd ||
-//                                SettingsSingleton.getInstance().showWinner ||
-//                                SettingsSingleton.getInstance().showWhiteAlgorithm ||
-//                                SettingsSingleton.getInstance().showBlackAlgorithm) {
-//                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
-//                        }
+                        if (SettingsSingleton.getInstance().showExperimentOutput) {
+                            String moveCountString = Integer.toString(moveCounter);
+                            String durationString = Long.toString(Duration.between(gameStartInstant, Instant.now()).toMillis());
+                            String winnerString = newPlayers.winner().pieceColor.toString();
+                            String whiteAlgorithm = whitePlayer.getClass().getSimpleName();
+                            String blackAlgorithm = blackPlayer.getClass().getSimpleName();
+
+                            System.out.printf("%s; %s; %s; %s; %s\n", whiteAlgorithm, blackAlgorithm, moveCountString, durationString, winnerString);   // Output line + newline
+                        }
                     }
                 }
 
@@ -766,7 +761,11 @@ public abstract class Game implements Serializable {
                     e.printStackTrace();
                 }
                 copyOfGame.loadState(gipfBoardStateCopy);
-                System.out.print(i + ": ");
+
+                // TODO move this to somewhere else
+                if (SettingsSingleton.getInstance().showExperimentOutput) {
+                    System.out.print(i + ": ");
+                }
                 GameLoopRunnable gameLoopRunnable = new GameLoopRunnable(copyOfGame);
                 gameLoopRunnable.finalAction = finalAction;
                 gameLoopRunnable.run();
@@ -817,7 +816,7 @@ public abstract class Game implements Serializable {
                 try {
                     this.game.applyCurrentPlayerMove();
                 } catch (GameEndException e) {
-                    //break; TODO
+                    break; // TODO this breaks the human player
                 }
 
                 // A final action to be executed (for example repainting the component)
