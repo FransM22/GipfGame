@@ -29,7 +29,7 @@ public class AssignLongValue implements Function<GipfBoardState, Integer> {
         return value;
     }
 
-    public Set<Position> getDiagonalPositions() {
+    private Set<Position> getDiagonalPositions() {
         return Arrays.asList(
                 new Position('e', 1),
                 new Position('e', 2),

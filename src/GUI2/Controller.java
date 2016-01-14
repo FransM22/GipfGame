@@ -55,7 +55,7 @@ public class Controller implements Initializable {
     public ToggleButton playButton;
     public Button newGameButton;
     public TreeTableView<GipfBoardState> boardStateTreeTableView;
-    public GameAnalyzeTab gameAnalyzeTab;
+    public Tab gameAnalyzeTab;
     public Tab gameTab;
     public ComboBox<Field> whiteHeuristicCombobox;
     public ComboBox<Field> blackHeuristicCombobox;
@@ -116,7 +116,6 @@ public class Controller implements Initializable {
                 CalculateMctsThread.setCurrentRootState(null);
             }
         });
-        UpdateChildrenThread.setGameAnalyzeTab(gameAnalyzeTab);
 
         minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000000, 5000, 5000));
 
@@ -290,17 +289,6 @@ public class Controller implements Initializable {
         return (TreeTableColumn.CellDataFeatures<GipfBoardState, Double> p) -> {
             try {
                 return new ReadOnlyDoubleWrapper((Double) field.get(p.getValue().getValue().boardStateProperties)).asObject();
-            } catch (IllegalAccessException e) {
-                System.out.println("Can't access the field " + field);
-                return null;
-            }
-        };
-    }
-
-    private Callback<TreeTableColumn.CellDataFeatures<GipfBoardState, String>, ObservableValue<String>> cellFactoryStringField(Field field) {
-        return (TreeTableColumn.CellDataFeatures<GipfBoardState, String> p) -> {
-            try {
-                return new ReadOnlyStringWrapper((String) field.get(p.getValue().getValue().boardStateProperties.toString()));
             } catch (IllegalAccessException e) {
                 System.out.println("Can't access the field " + field);
                 return null;

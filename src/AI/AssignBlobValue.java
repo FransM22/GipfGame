@@ -17,7 +17,6 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
     @Override
     public Long apply(GipfBoardState gipfBoardState) {
         Map<Position, Piece> pieceMap = gipfBoardState.getPieceMap();
-        PlayersInGame players = gipfBoardState.players;
 
         long value = 0;
         for (Map.Entry<Position, Piece> pieceEntry : pieceMap.entrySet()) {
@@ -29,14 +28,14 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
             // Only consider the current player's pieces for addition
             if (piece.getPieceColor() == gipfBoardState.players.current().pieceColor) {
                 value += neighborsOf(position).stream()
-                        .filter(neighborPosition -> pieceMap.containsKey(neighborPosition))
+                        .filter(pieceMap::containsKey)
                         .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() == gipfBoardState.players.current().pieceColor)
                         .count();
             }
             // Else, subtract the values
             else {
                 value -= neighborsOf(position).stream()
-                        .filter(neighborPosition -> pieceMap.containsKey(neighborPosition))
+                        .filter(pieceMap::containsKey)
                         .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() != gipfBoardState.players.current().pieceColor)
                         .count();
             }

@@ -65,7 +65,7 @@ public abstract class Game implements Serializable {
          * Empty logger, for now it makes no sense to store all the log data in all generated games. String concatenations
          * are relatively expensive and the output is shown nowhere.
          */
-        gameLogger = new EmptyLogger(this);
+        gameLogger = new EmptyLogger();
     }
 
     /**
@@ -518,28 +518,6 @@ public abstract class Game implements Serializable {
         return removableLineSetOrderingsFromGipfboard;
     }
 
-    /**
-     * Gets the border positions (dots) by concatenating all the positions per border line. The border lines are hardcoded in this
-     * method.
-     *
-     * @return a set of positions positioned just out of the play area
-     */
-    private Set<Position> getDots() {
-        return Stream.concat(
-                new Line(this, new Position('a', 1), SOUTH_EAST).getPositionsOnLine().stream(),
-                Stream.concat(new Line(this, new Position('e', 1), NORTH_EAST).getPositionsOnLine().stream(),
-                        Stream.concat(new Line(this, new Position('i', 1), NORTH).getPositionsOnLine().stream(),
-                                Stream.concat(new Line(this, new Position('i', 5), NORTH_WEST).getPositionsOnLine().stream(),
-                                        Stream.concat(
-                                                new Line(this, new Position('e', 9), SOUTH_WEST).getPositionsOnLine().stream(),
-                                                new Line(this, new Position('a', 5), SOUTH).getPositionsOnLine().stream()
-                                        )
-                                )
-                        )
-                )
-        ).collect(toSet());
-    }
-
     public Piece getCurrentPiece() {
         PlayersInGame.Player currentPlayer = gipfBoardState.players.current();
         if (currentPlayer.pieceColor == WHITE && currentPlayer.isPlacingGipfPieces)
@@ -702,7 +680,7 @@ public abstract class Game implements Serializable {
                     return dialogResult == JOptionPane.YES_OPTION;
                 };
 
-                Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(pieceMap).stream().collect(toMap(p -> p, p -> pieceMap.get(p)));
+                Map<Position, Piece> piecesRemovedMap = segment.getOccupiedPositions(pieceMap).stream().collect(toMap(p -> p, pieceMap::get));
 
                 piecesBackTo.get(pieceColor).addAll(piecesRemovedMap.entrySet().stream()
                         .filter(isCurrentPlayersColor.and(isNormalPiece.or(doesPlayerWantToRemoveGipf)))

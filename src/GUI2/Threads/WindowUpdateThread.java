@@ -14,7 +14,6 @@ public class WindowUpdateThread extends Thread {
     public static boolean propertiesAreSet = false;
     private static WindowUpdateThread INSTANCE = new WindowUpdateThread();
     private static Controller controller;
-    private static Instant latestUpdatedAt = Instant.EPOCH;
 
     private WindowUpdateThread() {
         super(() -> {
@@ -50,7 +49,7 @@ public class WindowUpdateThread extends Thread {
 
                         // Show how far in the min waiting time progress the player is
                         if (WindowUpdateThread.controller.game.automaticPlayThread != null) {
-                            OptionalDouble sleepingProgress = ((GameLoopThread) WindowUpdateThread.controller.game.automaticPlayThread).getSleepingProgress();
+                            OptionalDouble sleepingProgress = WindowUpdateThread.controller.game.automaticPlayThread.getSleepingProgress();
 
                             // Refresh rate is too slow to update it when the waiting time is less than 500 ms
                             if (sleepingProgress.isPresent() && WindowUpdateThread.controller.game.minWaitTime > 500) {
@@ -75,8 +74,6 @@ public class WindowUpdateThread extends Thread {
                         controller.boardStateTreeTableView.refresh();
                 }
 
-                latestUpdatedAt = Instant.now();
-
                 try {
                     sleep(200);
                 } catch (InterruptedException e) {
@@ -95,9 +92,5 @@ public class WindowUpdateThread extends Thread {
         WindowUpdateThread.controller = controller;
 
         propertiesAreSet = true;
-    }
-
-    public static WindowUpdateThread getInstance() {
-        return INSTANCE;
     }
 }

@@ -176,7 +176,7 @@ public class Line implements Iterable<Position> {
         public Set<Position> getOccupiedPositions(Map<Position, Piece> pieceMap) {
             return getAllPositions()
                     .stream()
-                    .filter(position -> pieceMap.containsKey(position))
+                    .filter(pieceMap::containsKey)
                     .collect(toSet());
         }
 

@@ -28,7 +28,7 @@ public class AssignRingValue implements Function<GipfBoardState, Long> {
             return -value;
     }
 
-    int getRingValueForPosition(Position p) {
+    private int getRingValueForPosition(Position p) {
         Game temporaryGame = new BasicGame();
         if (new Line.Segment(temporaryGame, new Position('b', 2), new Position('b', 5), Direction.NORTH).getAllPositions().contains(p) ||
                 new Line.Segment(temporaryGame, new Position('b', 5), new Position('e', 8), Direction.NORTH_EAST).getAllPositions().contains(p) ||
@@ -64,7 +64,7 @@ public class AssignRingValue implements Function<GipfBoardState, Long> {
         return 0;   // Won't happen
     }
 
-    int getColorValue(Piece p) {
+    private int getColorValue(Piece p) {
         if (p.getPieceColor() == PieceColor.WHITE) {
             return 1;
         }

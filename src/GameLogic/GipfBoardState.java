@@ -89,9 +89,7 @@ public class GipfBoardState implements Serializable {
         game.loadState(this);
         return game.getAllowedMoves()
                 .stream()
-                .filter(move -> {
-                    return !exploredChildren.keySet().contains(move);
-                })
+                .filter(move -> !exploredChildren.keySet().contains(move))
                 .collect(toList());
     }
 }

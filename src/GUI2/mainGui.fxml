@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import GUI2.GameAnalyzeTab?>
 <?import javafx.embed.swing.SwingNode?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -29,7 +28,8 @@
                         <VBox>
                             <Label text="Minimum time (ms)"/>
                             <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350"/>
-                            <ProgressBar styleClass="smallProgressBar" fx:id="thinkingTimeProgress" visible="false" prefWidth="350" />
+                            <ProgressBar styleClass="smallProgressBar" fx:id="thinkingTimeProgress" visible="false"
+                                         prefWidth="350"/>
                             <Separator>
                                 <VBox.margin>
                                     <Insets top="10.0" bottom="10.0"/>
@@ -56,7 +56,7 @@
                             <Label visible="false" text="Select heuristic"/>
                             <ComboBox visible="false" fx:id="whiteHeuristicCombobox" prefWidth="350.0"/>
                             <Label fx:id="whiteInfoLabel" text=""/>
-                            <Separator />
+                            <Separator/>
                             <Label text="Select black player" style="-fx-font-weight: bold;"/>
                             <ComboBox fx:id="blackPlayerCombobox" prefWidth="350.0"/>
                             <Label visible="false" text="Select heuristic"/>
@@ -67,13 +67,14 @@
                     <TitledPane animated="false" collapsible="false" text="Experiments">
                         <VBox>
                             <CheckBox fx:id="run100TimesCheckbox" text="Run 100 times"/>
-                            <ProgressBar fx:id="run100TimesProgressBar" styleClass="smallProgressBar" visible="false" prefWidth="350"/>
+                            <ProgressBar fx:id="run100TimesProgressBar" styleClass="smallProgressBar" visible="false"
+                                         prefWidth="350"/>
                         </VBox>
                     </TitledPane>
                 </VBox>
             </HBox>
         </Tab>
-        <GameAnalyzeTab fx:id="gameAnalyzeTab">
+        <Tab text="Game analysis" fx:id="gameAnalyzeTab">
             <HBox>
                 <TreeTableView fx:id="boardStateTreeTableView" tableMenuButtonVisible="true"
                                prefWidth="9999">
@@ -98,7 +99,7 @@
                         <TreeTableColumn fx:id="columnRingValue" prefWidth="75.0" text="Ring value"/>
                         <TreeTableColumn fx:id="columnBlobPlayerValue" prefWidth="75.0" text="Blob value"/>
                         <TreeTableColumn fx:id="columnLongValue" prefWidth="75.0" text="Long value"/>
-                        <TreeTableColumn fx:id="columnWeightedValue" prefWidth="75.0" text="Weighted value" />
+                        <TreeTableColumn fx:id="columnWeightedValue" prefWidth="75.0" text="Weighted value"/>
                     </columns>
                 </TreeTableView>
                 <VBox>
@@ -107,6 +108,6 @@
                            wrapText="true"/>
                 </VBox>
             </HBox>
-        </GameAnalyzeTab>
+        </Tab>
     </TabPane>
 </VBox>

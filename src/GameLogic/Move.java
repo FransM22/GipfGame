@@ -60,17 +60,6 @@ public class Move implements Comparable<Move> {
         this.piecesRemoved = new HashSet<>();
     }
 
-
-    public Move(Move otherMove) {
-        this.addedPiece = otherMove.addedPiece;
-        this.startPos = otherMove.startPos;
-        this.direction = otherMove.direction;
-        this.isCompleteMove = otherMove.isCompleteMove;
-        this.piecesToWhite = otherMove.piecesToWhite;
-        this.piecesToBlack = otherMove.piecesToBlack;
-        this.piecesRemoved = otherMove.piecesRemoved;
-    }
-
     @Override
     public String toString() {
         Position toPos = new Position(startPos.getPosId() + direction.getDeltaPos());

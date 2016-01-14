@@ -1,7 +1,7 @@
 package GUI2.Threads;
 
-import GUI2.GameAnalyzeTab;
 import GameLogic.GipfBoardState;
+import javafx.scene.control.Tab;
 
 import java.time.Instant;
 import java.util.Queue;
@@ -12,10 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class UpdateChildrenThread extends Thread {
     private static final UpdateChildrenThread INSTANCE = new UpdateChildrenThread();
-    private static Queue<GipfBoardState> boardStatesToUpdate;
-    private static GameAnalyzeTab gameAnalyzeTab;
     public static boolean isActive = false;
-    public static Instant latestUpdatedAt = Instant.EPOCH;
+    private static Queue<GipfBoardState> boardStatesToUpdate;
 
     private UpdateChildrenThread() {
         super(() -> {
@@ -24,7 +22,6 @@ public class UpdateChildrenThread extends Thread {
                     while (!boardStatesToUpdate.isEmpty()) {
                         GipfBoardState currentGipfBoardState = boardStatesToUpdate.poll();
                         currentGipfBoardState.boardStateProperties.updateChildren();
-                        latestUpdatedAt = Instant.now();
                     }
 
                     setIsActive(false);
@@ -45,10 +42,6 @@ public class UpdateChildrenThread extends Thread {
         start();
     }
 
-    public static void setGameAnalyzeTab(GameAnalyzeTab gameAnalyzeTab) {
-        UpdateChildrenThread.gameAnalyzeTab = gameAnalyzeTab;
-    }
-
     public static void setIsActive(boolean isActive) {
         UpdateChildrenThread.isActive = isActive;
     }
@@ -57,7 +50,6 @@ public class UpdateChildrenThread extends Thread {
         boardStatesToUpdate.add(gipfBoardState);
 
         if (!isActive) {
-//            if (gameAnalyzeTab != null) gameAnalyzeTab.setIsProgressing(true);
             setIsActive(true);
         }
     }

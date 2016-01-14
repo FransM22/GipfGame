@@ -1,6 +1,5 @@
 package AI;
 
-import AI.Players.ComputerPlayer;
 import AI.Players.MCTSPlayer;
 import AI.Players.RandomPlayer;
 import Exceptions.GameEndException;
@@ -10,18 +9,12 @@ import GameLogic.GipfBoardState;
 import GameLogic.Move;
 import GameLogic.PieceColor;
 
-import java.util.Random;
-import java.util.Set;
 import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by Dingding
  */
 public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
-    private Random random = new Random();
-
     private double calculateUCT(GipfBoardState gipfBoardState, int t) {
         BoardStateProperties bsp = gipfBoardState.boardStateProperties;
 
@@ -52,9 +45,7 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
 
             // Calculate the mcts value for all siblings
             final int finalCurrent_t = current_t;
-            startNodeBoardState.exploredChildren.values().forEach(boardState -> {
-                boardState.boardStateProperties.mctsValue = calculateUCT(boardState, finalCurrent_t);
-            });
+            startNodeBoardState.exploredChildren.values().forEach(boardState -> boardState.boardStateProperties.mctsValue = calculateUCT(boardState, finalCurrent_t));
             outcomeOfFavourableMove.boardStateProperties.mctsValue = calculateUCT(outcomeOfFavourableMove, finalCurrent_t);
 
             // Phase 4: Backpropagation. update the parents recursively
