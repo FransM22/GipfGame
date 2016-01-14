@@ -57,7 +57,7 @@ public class UpdateChildrenThread extends Thread {
         boardStatesToUpdate.add(gipfBoardState);
 
         if (!isActive) {
-            if (gameAnalyzeTab != null) gameAnalyzeTab.setIsProgressing(true);
+//            if (gameAnalyzeTab != null) gameAnalyzeTab.setIsProgressing(true);
             setIsActive(true);
         }
     }

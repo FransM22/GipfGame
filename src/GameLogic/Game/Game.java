@@ -38,12 +38,12 @@ public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     public ComputerPlayer whitePlayer;
     public ComputerPlayer blackPlayer;
-    public Thread automaticPlayThread = new Thread();
+    public GameLoopThread automaticPlayThread;
+    public OptionalDouble progressOfNGames = OptionalDouble.empty();
     public int minWaitTime;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
     private GameLogger gameLogger;
     private int moveCounter;    // For debugging output
-    private int runCounter;
     private Instant gameStartInstant = Instant.now();
     private Set<Position> currentRemoveSelection = new HashSet<>(); // Makes it possible for the gipfboardcomponent to display crosses on the pieces and lines that can be selected for removal
 
@@ -736,7 +736,7 @@ public abstract class Game implements Serializable {
     protected abstract boolean getGameOverState(GipfBoardState gipfBoardState);
 
     public void newGameLogger() {
-        this.gameLogger = gameLogger.getInstance();
+        this.gameLogger = GameLogger.getInstance();
         this.gameLogger.setGame(this);
     }
 
@@ -798,19 +798,31 @@ public abstract class Game implements Serializable {
         Class currWhitePlayer = whitePlayer.getClass();
         Class currBlackPlayer = blackPlayer.getClass();
 
-        for (int i = 0; i < nrOfRuns; i++) {
-            GipfBoardState gipfBoardStateCopy = new GipfBoardState(getGipfBoardState(), gipfBoardState.getPieceMap(), gipfBoardState.players);
-            Game copyOfGame = new BasicGame();
-            try {
-                copyOfGame.whitePlayer = (ComputerPlayer) currWhitePlayer.newInstance();
-                copyOfGame.blackPlayer = (ComputerPlayer) currBlackPlayer.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            copyOfGame.loadState(gipfBoardStateCopy);
+        new Thread(() -> {
+            for (int i = 0; i < nrOfRuns; i++) {
+                progressOfNGames = OptionalDouble.of((double) i / nrOfRuns);
 
-            new GameLoopThread(copyOfGame, finalAction).start();
-        }
+                GipfBoardState gipfBoardStateCopy = new GipfBoardState(getGipfBoardState(), gipfBoardState.getPieceMap(), gipfBoardState.players);
+                Game copyOfGame = new BasicGame();
+                try {
+                    copyOfGame.whitePlayer = (ComputerPlayer) currWhitePlayer.newInstance();
+                    copyOfGame.blackPlayer = (ComputerPlayer) currBlackPlayer.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                copyOfGame.loadState(gipfBoardStateCopy);
+
+                GameLoopThread gameLoopThread = new GameLoopThread(copyOfGame, finalAction);
+                gameLoopThread.start();
+                try {
+                    gameLoopThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            progressOfNGames = OptionalDouble.empty();
+        }).start();
     }
 
     public void applyCurrentPlayerMove() throws GameEndException {

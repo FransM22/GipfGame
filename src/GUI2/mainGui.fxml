@@ -29,6 +29,7 @@
                         <VBox>
                             <Label text="Minimum time (ms)"/>
                             <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350"/>
+                            <ProgressBar styleClass="smallProgressBar" fx:id="thinkingTimeProgress" visible="false" prefWidth="350" />
                             <Separator>
                                 <VBox.margin>
                                     <Insets top="10.0" bottom="10.0"/>
@@ -66,6 +67,7 @@
                     <TitledPane animated="false" collapsible="false" text="Experiments">
                         <VBox>
                             <CheckBox fx:id="run100TimesCheckbox" text="Run 100 times"/>
+                            <ProgressBar fx:id="run100TimesProgressBar" styleClass="smallProgressBar" visible="false" prefWidth="350"/>
                         </VBox>
                     </TitledPane>
                 </VBox>

@@ -17,10 +17,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainGui.fxml"));
         String css = this.getClass().getResource("treeTableView.css").toExternalForm();
+        String customCss = this.getClass().getResource("custom.css").toExternalForm();
 
-         Parent root = loader.load();
+        Parent root = loader.load();
         Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add(css);
+        scene.getStylesheets().addAll(css, customCss);
 
         primaryStage.setTitle("GIPF Game");
         primaryStage.setScene(scene);

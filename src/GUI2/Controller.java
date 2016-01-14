@@ -1,6 +1,5 @@
 package GUI2;
 
-import AI.AssignPureMCTSValue;
 import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
@@ -50,6 +49,8 @@ public class Controller implements Initializable {
     public TreeTableColumn<GipfBoardState, Long> columnBlobPlayerValue;
     public TreeTableColumn<GipfBoardState, Long> columnLongValue;
     public TreeTableColumn<GipfBoardState, Double> columnWeightedValue;
+    public ProgressBar thinkingTimeProgress;
+    public ProgressBar run100TimesProgressBar;
     public Label boardDescriptionLabel;
     public ToggleButton playButton;
     public Button newGameButton;
@@ -83,7 +84,8 @@ public class Controller implements Initializable {
                 whiteHeuristicCombobox,
                 blackHeuristicCombobox,
                 whitePlayerCombobox,
-                blackPlayerCombobox
+                blackPlayerCombobox,
+                run100TimesCheckbox
         );
 
         initializeColumns();
@@ -98,7 +100,7 @@ public class Controller implements Initializable {
             }
         });
 
-        gameAnalyzeTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        gameAnalyzeTab.selectedProperty().addListener((observable, oldValue, isSelectedNewValue) -> {
             GipfBoardState gipfBoardState = game.getGipfBoardState();
             // If no game is running, assign values to the nodes
             new Thread(() -> {
@@ -107,11 +109,16 @@ public class Controller implements Initializable {
                 }
             }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
-            boardStateTreeTableView.setRoot(generateNodes.root);
+
+            if (isSelectedNewValue) {
+                boardStateTreeTableView.setRoot(generateNodes.root);
+            } else {
+                CalculateMctsThread.setCurrentRootState(null);
+            }
         });
         UpdateChildrenThread.setGameAnalyzeTab(gameAnalyzeTab);
 
-        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 100, 100));
+        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000000, 5000, 5000));
 
 
         /*

@@ -1,0 +1,5 @@
+.smallProgressBar > .bar {
+    -fx-background-insets: 1 1 2 1;
+    -fx-padding: 0.40em;
+    -fx-progress-color: aquamarine;
+}

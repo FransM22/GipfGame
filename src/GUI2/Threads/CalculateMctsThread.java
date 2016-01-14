@@ -16,11 +16,16 @@ public class CalculateMctsThread extends Thread {
                 try {
                     if (currentRootState != null) {
                         currentRootState.exploreAllChildren();
-                        new AssignPureMCTSValue().apply(currentRootState);
+                        currentRootState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(currentRootState);
+                    }
+                    else {
+                        Thread.sleep(100);
                     }
                 }
                 catch (NullPointerException e) {
                     currentRootState = null;
+                } catch (InterruptedException e) {
+                    // Just keep going
                 }
             }
         });

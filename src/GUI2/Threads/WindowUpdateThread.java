@@ -5,6 +5,7 @@ import javafx.application.Platform;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
+import java.util.OptionalDouble;
 
 /**
  * Created by frans on 11-1-2016.
@@ -46,6 +47,29 @@ public class WindowUpdateThread extends Thread {
                         blackInfoLabelText += "Reserve: " + controller.game.getGipfBoardState().players.black.reserve;
                         controller.blackInfoLabel.setText(blackInfoLabelText);
 
+
+                        // Show how far in the min waiting time progress the player is
+                        if (WindowUpdateThread.controller.game.automaticPlayThread != null) {
+                            OptionalDouble sleepingProgress = ((GameLoopThread) WindowUpdateThread.controller.game.automaticPlayThread).getSleepingProgress();
+
+                            // Refresh rate is too slow to update it when the waiting time is less than 500 ms
+                            if (sleepingProgress.isPresent() && WindowUpdateThread.controller.game.minWaitTime > 500) {
+                                controller.thinkingTimeProgress.setVisible(true);
+                                controller.thinkingTimeProgress.setProgress(sleepingProgress.getAsDouble());
+                            } else {
+                                controller.thinkingTimeProgress.setVisible(false);
+                            }
+                        }
+
+                        // Show how far in the N games the player is
+                        OptionalDouble NGamesProgress = controller.game.progressOfNGames;
+                        if (NGamesProgress.isPresent()) {
+                            controller.run100TimesProgressBar.setVisible(true);
+                            controller.run100TimesProgressBar.setProgress(NGamesProgress.getAsDouble());
+                        }
+                        else {
+                            controller.run100TimesProgressBar.setVisible(false);
+                        }
                     });
                 } else if (controller.gameAnalyzeTab.isSelected()) {
                         controller.boardStateTreeTableView.refresh();
@@ -54,7 +78,7 @@ public class WindowUpdateThread extends Thread {
                 latestUpdatedAt = Instant.now();
 
                 try {
-                    sleep(500);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     // Keep running
                     e.printStackTrace();
