@@ -2,10 +2,12 @@ package GameLogic.Game;
 
 import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
+import AI.Players.MCTSPlayer;
 import Exceptions.GameEndException;
 import Exceptions.InvalidMoveException;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.SettingsSingleton;
+import GUI2.Threads.CalculateMctsThread;
 import GameLogic.*;
 import GameLogic.Loggers.EmptyLogger;
 import GameLogic.Loggers.ExperimentLogger;
@@ -411,8 +413,7 @@ public abstract class Game implements Serializable {
                                         piecesRemoved)
                         );
                     }
-                }
-                else {
+                } else {
                     // If no line segments can be removed, just add the original move
                     potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
                 }
@@ -420,74 +421,6 @@ public abstract class Game implements Serializable {
                 // We don't consider this move if it is invalid
             }
         }
-
-//        Set<Move> potentialMovesIncludingLineSegmentRemoval = new HashSet<>();
-//        for (Move potentialMove : potentialMoves) {
-//            try {
-//                Map<Position, Piece> pieceMap = new HashMap<>(getGipfBoardState().getPieceMap());
-//
-//                movePiece(pieceMap, potentialMove.getStartingPosition(), potentialMove.getDirection().getDeltaPos());
-//
-//                Set<Line.Segment> removableLineSegmentsByCurrentPlayer = getRemovableLineSegments(pieceMap, potentialMove.addedPiece.getPieceColor());
-//                PieceColor opponentColor = potentialMove.addedPiece.getPieceColor() == WHITE ? BLACK : WHITE;
-//                Set<Line.Segment> removableLineSegmentsByOpponent = getRemovableLineSegments(pieceMap, opponentColor);
-////                if (removableLineSegmentsByCurrentPlayer.size() == 0) {
-////                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
-////                } else {
-////                    for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
-////                        Move moveWithRemovedLineSegment = new Move(potentialMove);
-////
-////                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(pieceMap);
-////                        if (gipfBoardState.players.current().pieceColor == WHITE)
-////                            moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
-////                        if (gipfBoardState.players.current().pieceColor == BLACK)
-////                            moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
-////
-////                        potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
-////                    }
-////                }
-//
-//                if (removableLineSegmentsByCurrentPlayer.size() != 0) {
-//                    for (Line.Segment removedSegment : removableLineSegmentsByCurrentPlayer) {
-//                        Move moveWithRemovedLineSegment = new Move(potentialMove);
-//
-//                        Set<Position> piecesToCurrentPlayer = removedSegment.getOccupiedPositions(pieceMap);
-//
-//
-//                        if (gipfBoardState.players.current().pieceColor == WHITE) {
-//                            moveWithRemovedLineSegment.piecesToWhite = piecesToCurrentPlayer;
-//                        }
-//                        if (gipfBoardState.players.current().pieceColor == BLACK) {
-//                            moveWithRemovedLineSegment.piecesToBlack = piecesToCurrentPlayer;
-//                        }
-//
-//                        potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
-//                    }
-//                } else if (removableLineSegmentsByOpponent.size() != 0) {
-//                    for (Line.Segment removedSegment : removableLineSegmentsByOpponent) {
-//                        Move moveWithRemovedLineSegment = new Move(potentialMove);
-//
-//                        Set<Position> piecesToOpponent = removedSegment.getOccupiedPositions(pieceMap);
-//
-//                        if (gipfBoardState.players.current().pieceColor == WHITE) {
-//                            moveWithRemovedLineSegment.piecesToWhite = piecesToOpponent;
-//                        }
-//                        if (gipfBoardState.players.current().pieceColor == BLACK) {
-//                            moveWithRemovedLineSegment.piecesToWhite = piecesToOpponent;
-//                        }
-//
-//                        potentialMovesIncludingLineSegmentRemoval.add(moveWithRemovedLineSegment);
-//                    }
-//                } else {
-//                    potentialMovesIncludingLineSegmentRemoval.add(potentialMove);
-//                }
-//
-//                // TODO fix wrong piece removal code
-//
-//            } catch (InvalidMoveException e) {
-//                // Don't add it to potentialMovesIncludingLineSegmentRemoval
-//            }
-//        }
 
         return potentialMovesIncludingLineSegmentRemoval;
     }
@@ -498,15 +431,14 @@ public abstract class Game implements Serializable {
      *
      * @param pieceMap
      * @param currentPlayerColor
-     * @return
-     * An example output could be:
-     *  {set:
-     *    ["white", "segment from a to b"]
-     *    ["white", "segment from b to c"]
-     *    ["black", "segment from x to y"]
-     *    ["black", "segment from z to a"; after that "white", "segment from a to b"]
-     *    ["black", "segment from d to f"]
-     *  }
+     * @return An example output could be:
+     * {set:
+     * ["white", "segment from a to b"]
+     * ["white", "segment from b to c"]
+     * ["black", "segment from x to y"]
+     * ["black", "segment from z to a"; after that "white", "segment from a to b"]
+     * ["black", "segment from d to f"]
+     * }
      */
     private Set<List<Pair<PieceColor, Line.Segment>>> getRemovableLineOrderingsSetFromGipfBoard(Map<Position, Piece> pieceMap, PieceColor currentPlayerColor) {
         Set<List<Pair<PieceColor, Line.Segment>>> removableLineSetOrderingsFromGipfboard = new HashSet<>();
@@ -535,8 +467,7 @@ public abstract class Game implements Serializable {
                     ordering.addAll(removableLineSegmentList);
                     removableLineSetOrderingsFromGipfboard.add(ordering);
                 }
-            }
-            else {
+            } else {
                 removableLineSetOrderingsFromGipfboard.add(removableLineSegmentOrdering);
             }
 
@@ -560,8 +491,7 @@ public abstract class Game implements Serializable {
                         ordering.addAll(removableLineSegmentOpponentList);
                         removableLineSetOrderingsFromGipfboard.add(ordering);
                     }
-                }
-                else {
+                } else {
                     removableLineSetOrderingsFromGipfboard.add(opponentRemovableLineSegmentOrdering);
                 }
             }
@@ -585,8 +515,7 @@ public abstract class Game implements Serializable {
                         ordering.addAll(removableLineSegmentList);
                         removableLineSetOrderingsFromGipfboard.add(ordering);
                     }
-                }
-                else {
+                } else {
                     removableLineSetOrderingsFromGipfboard.add(removableLineSegmentOrdering);
                 }
             }
@@ -660,7 +589,7 @@ public abstract class Game implements Serializable {
 
                 if (isInLineSegment) {
                     if (isDotPosition(currentPosition) || currentPieceColor == null) {
-                            endOfSegment = currentPosition.previous(direction);
+                        endOfSegment = currentPosition.previous(direction);
                     }
                 }
 
@@ -936,12 +865,21 @@ public abstract class Game implements Serializable {
         @Override
         public void run() {
             while (true) {  // This loop performs all moves in a game
+                // Calculate mcts if the next player requires it
+//                if (Game.this.gipfBoardState.players.current().pieceColor == WHITE && Game.this.whitePlayer.getClass().equals(MCTSPlayer.class))
+                    CalculateMctsThread.setCurrentRootState(Game.this.getGipfBoardState());
+//                else if (Game.this.gipfBoardState.players.current().pieceColor == BLACK && Game.this.blackPlayer.getClass().equals(MCTSPlayer.class))
+//                    CalculateMctsThread.setCurrentRootState(Game.this.getGipfBoardState());
+
                 try {
                     // The waiting time is artificial, it makes the difference between two moves clearer
                     Thread.sleep(Game.this.minWaitTime);
                 } catch (InterruptedException e) {
                     break;
                 }
+
+                if (SettingsSingleton.getInstance().showMCTSOutput)
+                    System.out.println("Analyzed " + CalculateMctsThread.getGamesPlayedForCurrentRootState() + " games before performing a move");
 
                 try {
                     this.game.applyCurrentPlayerMove();

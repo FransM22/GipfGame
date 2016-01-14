@@ -73,9 +73,7 @@ public class GipfBoardState implements Serializable {
     public void exploreAllChildren() {
         List<Move> unexploredChildren = getUnexploredChildren();
 
-        unexploredChildren.parallelStream().forEach(move -> {
-            exploreChild(move);
-        });
+        unexploredChildren.stream().forEach(this::exploreChild);
     }
 
     public void exploreChild(Move m) {

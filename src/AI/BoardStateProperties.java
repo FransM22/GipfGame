@@ -12,7 +12,6 @@ import GameLogic.GipfBoardState;
  * Created by frans on 12-11-2015.
  */
 public class BoardStateProperties {
-    public static long run_counter = 0;     // For yielding to other processes
     public double heuristicRandomValue;
     public long heuristicWhiteMinusBlack;
     public double mctsValue;
@@ -42,6 +41,7 @@ public class BoardStateProperties {
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
         this.longValue = new AssignLongValue().apply(gipfBoardState);
         this.weightedHeuristic = new AssignWeightedHeuristicValue().apply(gipfBoardState);
+        // The mcts value is updated in a separate thread
     }
 
     /**
@@ -50,9 +50,6 @@ public class BoardStateProperties {
      */
     public void updateChildren() {
         updateBoardState();
-        run_counter++;
-        if (run_counter % 100 == 0)
-            Thread.yield(); // Don't consume everything on the thread
 
         // The maximum depth required. Can be updated if a different algorithm requires a deeper traversal of the tree.
         Game game = new BasicGame();
@@ -63,7 +60,6 @@ public class BoardStateProperties {
             if (!isExploringChildren) {
                 isExploringChildren = true;
 
-                gipfBoardState.boardStateProperties.mctsValue = new AssignPureMCTSValue().apply(gipfBoardState);
                 gipfBoardState.exploredChildren.values().stream().forEach(childState -> childState.boardStateProperties.updateChildren());
                 isExploringChildren = false;
             }

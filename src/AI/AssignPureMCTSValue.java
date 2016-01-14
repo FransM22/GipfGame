@@ -36,9 +36,10 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
     public Double apply(GipfBoardState startNodeBoardState) {
         startNodeBoardState.exploreAllChildren();
 
-        for (int current_t = 1; current_t <= 100; current_t++) {
+        for (int current_t = 1; current_t <= 3; current_t++) {
             // Phase 1: Selection
             Move favourableMove = new MCTSPlayer().getMoveWithHighestHeuristicValue(startNodeBoardState, true);
+
             GipfBoardState outcomeOfFavourableMove = startNodeBoardState.exploredChildren.get(favourableMove);
 
             // Phase 2 & 3: Expansion & Simulation

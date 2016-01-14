@@ -1,5 +1,6 @@
 package GUI2;
 
+import GUI2.Threads.CalculateMctsThread;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
 import GameLogic.GipfBoardState;
@@ -26,8 +27,7 @@ class GenerateNodes {
             root.setValue(new GipfBoardState());
         }
 
-
-        // Update the board state in another thread (so the GUI will stay responding)
+        CalculateMctsThread.setCurrentRootState(root.getValue());
         setChildNodes(root, depth);
     }
 
@@ -48,6 +48,11 @@ class GenerateNodes {
                     if (childItem.getChildren().size() == 0) {
                         childItem.getValue().boardStateProperties.updateBoardState();
                         this.setChildNodes(childItem, OptionalInt.of(1));
+                    }
+
+                    // If the tree item is expanded
+                    if (newValue) {
+                        CalculateMctsThread.setCurrentRootState(treeItem.getValue());
                     }
                 }));
             }

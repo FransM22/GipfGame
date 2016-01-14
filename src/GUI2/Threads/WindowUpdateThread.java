@@ -48,10 +48,10 @@ public class WindowUpdateThread extends Thread {
 
                     });
                 } else if (controller.gameAnalyzeTab.isSelected()) {
-                    if (UpdateChildrenThread.isActive ||
-                            UpdateChildrenThread.latestUpdatedAt.isAfter(WindowUpdateThread.latestUpdatedAt)) {
+//                    if (UpdateChildrenThread.isActive ||
+//                            UpdateChildrenThread.latestUpdatedAt.isAfter(WindowUpdateThread.latestUpdatedAt)) {
                         controller.boardStateTreeTableView.refresh();
-                    }
+//                    }
                 }
 
                 latestUpdatedAt = Instant.now();

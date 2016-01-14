@@ -4,6 +4,7 @@ import AI.AssignPureMCTSValue;
 import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
+import GUI2.Threads.CalculateMctsThread;
 import GUI2.Threads.UpdateChildrenThread;
 import GUI2.Threads.WindowUpdateThread;
 import GameLogic.Game.BasicGame;
@@ -103,7 +104,6 @@ public class Controller implements Initializable {
             new Thread(() -> {
                 if (!game.automaticPlayThread.isAlive()) {
                     UpdateChildrenThread.getInstance().appendBoardState(gipfBoardState);
-                    new AssignPureMCTSValue().apply(gipfBoardState);
                 }
             }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
