@@ -2,12 +2,11 @@ package GameLogic.Game;
 
 import AI.Players.ComputerPlayer;
 import AI.Players.HumanPlayer;
-import AI.Players.MCTSPlayer;
 import Exceptions.GameEndException;
 import Exceptions.InvalidMoveException;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.SettingsSingleton;
-import GUI2.Threads.CalculateMctsThread;
+import GUI2.Threads.GameLoopThread;
 import GameLogic.*;
 import GameLogic.Loggers.EmptyLogger;
 import GameLogic.Loggers.ExperimentLogger;
@@ -789,36 +788,29 @@ public abstract class Game implements Serializable {
     }
 
     public void startGameCycle(Runnable finalAction) {
-        GameLoopRunnable gameLoopRunnable = new GameLoopRunnable();
-        gameLoopRunnable.finalAction = finalAction;
-        automaticPlayThread = new Thread(gameLoopRunnable);
+        GameLoopThread gameLoopThread = new GameLoopThread(this, finalAction);
+        this.automaticPlayThread = gameLoopThread;
 
-        automaticPlayThread.start();
+        gameLoopThread.start();
     }
 
     public void startNGameCycles(Runnable finalAction, int nrOfRuns) {
         Class currWhitePlayer = whitePlayer.getClass();
         Class currBlackPlayer = blackPlayer.getClass();
 
-        automaticPlayThread = new Thread(() -> {
-            for (int i = 0; i < nrOfRuns; i++) {
-                GipfBoardState gipfBoardStateCopy = new GipfBoardState(getGipfBoardState(), gipfBoardState.getPieceMap(), gipfBoardState.players);
-                Game copyOfGame = new BasicGame();
-                try {
-                    copyOfGame.whitePlayer = (ComputerPlayer) currWhitePlayer.newInstance();
-                    copyOfGame.blackPlayer = (ComputerPlayer) currBlackPlayer.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                copyOfGame.loadState(gipfBoardStateCopy);
-
-                GameLoopRunnable gameLoopRunnable = new GameLoopRunnable(copyOfGame);
-                gameLoopRunnable.finalAction = finalAction;
-                gameLoopRunnable.run();
+        for (int i = 0; i < nrOfRuns; i++) {
+            GipfBoardState gipfBoardStateCopy = new GipfBoardState(getGipfBoardState(), gipfBoardState.getPieceMap(), gipfBoardState.players);
+            Game copyOfGame = new BasicGame();
+            try {
+                copyOfGame.whitePlayer = (ComputerPlayer) currWhitePlayer.newInstance();
+                copyOfGame.blackPlayer = (ComputerPlayer) currBlackPlayer.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
             }
-        });
+            copyOfGame.loadState(gipfBoardStateCopy);
 
-        automaticPlayThread.start();
+            new GameLoopThread(copyOfGame, finalAction).start();
+        }
     }
 
     public void applyCurrentPlayerMove() throws GameEndException {
@@ -838,52 +830,6 @@ public abstract class Game implements Serializable {
             }
             // If the winning player is not yet defined, the game is still continuing.
             // (For example the human player is on turn)
-        }
-    }
-
-    private class GameLoopRunnable implements Runnable {
-        public Game game;
-        public Runnable finalAction;
-
-        public GameLoopRunnable() {
-            game = Game.this;
-        }
-
-        public GameLoopRunnable(Game game) {
-            this.game = game;
-        }
-
-        @Override
-        public void run() {
-            while (true) {  // This loop performs all moves in a game
-                // Calculate mcts if the next player requires it
-//                if (Game.this.gipfBoardState.players.current().pieceColor == WHITE && Game.this.whitePlayer.getClass().equals(MCTSPlayer.class))
-                    CalculateMctsThread.setCurrentRootState(Game.this.getGipfBoardState());
-//                else if (Game.this.gipfBoardState.players.current().pieceColor == BLACK && Game.this.blackPlayer.getClass().equals(MCTSPlayer.class))
-//                    CalculateMctsThread.setCurrentRootState(Game.this.getGipfBoardState());
-
-                try {
-                    // The waiting time is artificial, it makes the difference between two moves clearer
-                    Thread.sleep(Game.this.minWaitTime);
-                } catch (InterruptedException e) {
-                    break;
-                }
-
-                if (SettingsSingleton.getInstance().showMCTSOutput)
-                    System.out.println("Analyzed " + CalculateMctsThread.getGamesPlayedForCurrentRootState() + " games before performing a move");
-
-                try {
-                    this.game.applyCurrentPlayerMove();
-                } catch (GameEndException e) {
-                    break;
-                }
-
-                // A final action to be executed (for example repainting the component)
-                if (finalAction != null) {
-                    finalAction.run();
-                }
-            }
-
         }
     }
 }
