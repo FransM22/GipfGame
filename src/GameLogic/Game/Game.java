@@ -38,7 +38,7 @@ public abstract class Game implements Serializable {
     private final BoardHistory boardHistory;            // Stores the history of the boards
     public ComputerPlayer whitePlayer;
     public ComputerPlayer blackPlayer;
-    public GameLoopThread automaticPlayThread;
+    public GameLoopThread automaticPlayThread = new GameLoopThread(this, null);
     public OptionalDouble progressOfNGames = OptionalDouble.empty();
     public int minWaitTime;
     GipfBoardState gipfBoardState;                              // The board where the pieces are stored.
