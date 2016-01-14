@@ -11,29 +11,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by frans on 8-1-2016.
  */
 public class UpdateChildrenThread extends Thread {
-    private static final UpdateChildrenThread updateChildrenThread = new UpdateChildrenThread();
-    private Queue<GipfBoardState> boardStatesToUpdate;
-    private GameAnalyzeTab gameAnalyzeTab;
+    private static final UpdateChildrenThread INSTANCE = new UpdateChildrenThread();
+    private static Queue<GipfBoardState> boardStatesToUpdate;
+    private static GameAnalyzeTab gameAnalyzeTab;
     public static boolean isActive = false;
     public static Instant latestUpdatedAt = Instant.EPOCH;
 
     private UpdateChildrenThread() {
         super(() -> {
-            UpdateChildrenThread updateChildrenThread = UpdateChildrenThread.getInstance();
-
             while (true) {
-                if (updateChildrenThread.isActive) {
-                    while (!updateChildrenThread.boardStatesToUpdate.isEmpty()) {
-                        GipfBoardState currentGipfBoardState = updateChildrenThread.boardStatesToUpdate.poll();
+                if (isActive) {
+                    while (!boardStatesToUpdate.isEmpty()) {
+                        GipfBoardState currentGipfBoardState = boardStatesToUpdate.poll();
                         currentGipfBoardState.boardStateProperties.updateChildren();
                         latestUpdatedAt = Instant.now();
                     }
 
-                    if (updateChildrenThread.gameAnalyzeTab != null) {
-                        updateChildrenThread.gameAnalyzeTab.setIsProgressing(false);
-                    }
-
-                    updateChildrenThread.setIsActive(false);
+                    setIsActive(false);
                 } else {
                     try {
                         Thread.sleep(500);
@@ -51,19 +45,15 @@ public class UpdateChildrenThread extends Thread {
         start();
     }
 
-    public static UpdateChildrenThread getInstance() {
-        return updateChildrenThread;
+    public static void setGameAnalyzeTab(GameAnalyzeTab gameAnalyzeTab) {
+        UpdateChildrenThread.gameAnalyzeTab = gameAnalyzeTab;
     }
 
-    public void setGameAnalyzeTab(GameAnalyzeTab gameAnalyzeTab) {
-        this.gameAnalyzeTab = gameAnalyzeTab;
+    public static void setIsActive(boolean isActive) {
+        UpdateChildrenThread.isActive = isActive;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public void appendBoardState(GipfBoardState gipfBoardState) {
+    public static void appendBoardState(GipfBoardState gipfBoardState) {
         boardStatesToUpdate.add(gipfBoardState);
 
         if (!isActive) {

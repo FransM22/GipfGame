@@ -252,10 +252,6 @@ public abstract class Game implements Serializable {
                     // them in the piecesBackTo map. The current player's pieces are stored in piecesBackTO.get(null),
                     // because they are removed from the board.
                     PieceColor opponentColor = newPlayers.current().pieceColor == WHITE ? BLACK : WHITE;
-                    /*
-                     * TODO: REFACTOR, SEE ABOVE EXAMPLE!!!!!!!!!!!!!!!!!!!!!!!!!
-                     * TODO: DOESNT WORK AS EXPECTED
-                     */
                     removeLines(newPieceMap, opponentColor, linesTakenBy, piecesBackTo);
                     //linesTakenBy.get(opponentColor).addAll(getRemovableLineSegments(newPieceMap, opponentColor));
                 }
@@ -270,7 +266,6 @@ public abstract class Game implements Serializable {
                         // gipf pieces a value of 2 determined in Piece.getPieceValue().
                         int returnedPiecesSum = removedPieces.getValue().stream()
                                 .mapToInt(position -> {
-                                    // TODO will only work in basic game
                                     if (newPieceMap.containsKey(position))
                                         return newPieceMap.get(position).getPieceValue();
                                     else
@@ -650,15 +645,11 @@ public abstract class Game implements Serializable {
             // An extra check. THe removelines method will remove pieces before
             if (pieceMap.containsKey(position))
                 pieceMap.remove(position);
-//            else
-//                System.out.println("Can't remove " + position);
         }
     }
 
     // TODO: Refactor method
     private void removeLines(Map<Position, Piece> pieceMap, PieceColor pieceColor, Map<PieceColor, Set<Line.Segment>> linesTakenBy, Map<PieceColor, Set<Position>> piecesBackTo) {
-        // TODO: method seems to recognize lines a move too late
-        // TODO: lines are not properly removed from the piecemap
         Set<Line.Segment> intersectingSegments;
         Set<Line.Segment> segmentsNotRemoved = new HashSet<>();
 

@@ -1,15 +1,14 @@
 package GameLogic.Loggers;
 
-import GameLogic.Game.Game;
-
 /**
  * Created by frans on 11-1-2016.
  */
 public class ExperimentLogger { // TODO make output faster
-    private static long gameNr = 0;
     private static final ExperimentLogger INSTANCE = new ExperimentLogger();
+    private static long gameNr = 0;
 
-    private ExperimentLogger() {}
+    private ExperimentLogger() {
+    }
 
     public static ExperimentLogger get() {
         return INSTANCE;

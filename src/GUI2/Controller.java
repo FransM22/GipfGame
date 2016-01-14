@@ -103,13 +103,13 @@ public class Controller implements Initializable {
             // If no game is running, assign values to the nodes
             new Thread(() -> {
                 if (!game.automaticPlayThread.isAlive()) {
-                    UpdateChildrenThread.getInstance().appendBoardState(gipfBoardState);
+                    UpdateChildrenThread.appendBoardState(gipfBoardState);
                 }
             }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
             boardStateTreeTableView.setRoot(generateNodes.root);
         });
-        UpdateChildrenThread.getInstance().setGameAnalyzeTab(gameAnalyzeTab);
+        UpdateChildrenThread.setGameAnalyzeTab(gameAnalyzeTab);
 
         minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 100, 100));
 
