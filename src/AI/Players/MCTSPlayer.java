@@ -22,8 +22,6 @@ public class MCTSPlayer extends ComputerPlayer<Double> {
 
     @Override
     public Move apply(GipfBoardState gipfBoardState) {
-        UpdateChildrenThread.appendBoardState(gipfBoardState);
-
         if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
             return getMoveWithLowestHeuristicValue(gipfBoardState, true);
         }

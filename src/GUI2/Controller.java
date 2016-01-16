@@ -103,11 +103,6 @@ public class Controller implements Initializable {
         gameAnalyzeTab.selectedProperty().addListener((observable, oldValue, isSelectedNewValue) -> {
             GipfBoardState gipfBoardState = game.getGipfBoardState();
             // If no game is running, assign values to the nodes
-            new Thread(() -> {
-                if (!game.automaticPlayThread.isAlive()) {
-                    UpdateChildrenThread.appendBoardState(gipfBoardState);
-                }
-            }).start();
             GenerateNodes generateNodes = new GenerateNodes(Optional.of(gipfBoardState), OptionalInt.of(1), boardStateTreeTableView);
 
             if (isSelectedNewValue) {
