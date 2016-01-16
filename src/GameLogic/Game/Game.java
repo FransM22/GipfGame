@@ -57,11 +57,6 @@ public abstract class Game implements Serializable {
         boardHistory = new BoardHistory();
         boardHistory.add(gipfBoardState);
 
-        // Set pointers to the algorithms used for each player
-        // TODO are the following lines ignored?
-        whitePlayer = new HumanPlayer();
-        blackPlayer = new HumanPlayer();
-
         /*
          * Empty logger, for now it makes no sense to store all the log data in all generated games. String concatenations
          * are relatively expensive and the output is shown nowhere.

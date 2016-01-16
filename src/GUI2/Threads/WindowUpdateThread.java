@@ -28,24 +28,27 @@ public class WindowUpdateThread extends Thread {
                         String whiteInfoLabelText = "";
                         String blackInfoLabelText = "";
 
-                        if (controller.game.whitePlayer.maxDepth.isPresent()) {
-                            whiteInfoLabelText += "Max depth: " + controller.game.whitePlayer.maxDepth.getAsInt() + "\n";
+                        if (controller.game.whitePlayer != null) {
+                            if (controller.game.whitePlayer.maxDepth.isPresent()) {
+                                whiteInfoLabelText += "Max depth: " + controller.game.whitePlayer.maxDepth.getAsInt() + "\n";
+                            }
+                            if (controller.game.whitePlayer.heuristic.isPresent()) {
+                                whiteInfoLabelText += "Heuristic:  " + ((Field) controller.game.whitePlayer.heuristic.get()).getName() + "\n";
+                            }
+                            whiteInfoLabelText += "Reserve: " + controller.game.getGipfBoardState().players.white.reserve;
+                            controller.whiteInfoLabel.setText(whiteInfoLabelText);
                         }
-                        if (controller.game.whitePlayer.heuristic.isPresent()) {
-                            whiteInfoLabelText += "Heuristic:  " + ((Field) controller.game.whitePlayer.heuristic.get()).getName() + "\n";
-                        }
-                        whiteInfoLabelText += "Reserve: " + controller.game.getGipfBoardState().players.white.reserve;
-                        controller.whiteInfoLabel.setText(whiteInfoLabelText);
 
-                        if (controller.game.blackPlayer.maxDepth.isPresent()) {
-                            blackInfoLabelText += "Max depth: " + controller.game.blackPlayer.maxDepth.getAsInt() + "\n";
+                        if (controller.game.blackPlayer != null) {
+                            if (controller.game.blackPlayer.maxDepth.isPresent()) {
+                                blackInfoLabelText += "Max depth: " + controller.game.blackPlayer.maxDepth.getAsInt() + "\n";
+                            }
+                            if (controller.game.blackPlayer.heuristic.isPresent()) {
+                                blackInfoLabelText += "Heuristic:  " + ((Field) controller.game.blackPlayer.heuristic.get()).getName() + "\n";
+                            }
+                            blackInfoLabelText += "Reserve: " + controller.game.getGipfBoardState().players.black.reserve;
+                            controller.blackInfoLabel.setText(blackInfoLabelText);
                         }
-                        if (controller.game.blackPlayer.heuristic.isPresent()) {
-                            blackInfoLabelText += "Heuristic:  " + ((Field) controller.game.blackPlayer.heuristic.get()).getName() + "\n";
-                        }
-                        blackInfoLabelText += "Reserve: " + controller.game.getGipfBoardState().players.black.reserve;
-                        controller.blackInfoLabel.setText(blackInfoLabelText);
-
 
                         // Show how far in the min waiting time progress the player is
                         if (WindowUpdateThread.controller.game.automaticPlayThread != null) {

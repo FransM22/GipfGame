@@ -27,7 +27,7 @@
                     <TitledPane animated="false" collapsible="false" text="Game settings">
                         <VBox>
                             <Label text="Minimum time (ms)"/>
-                            <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350"/>
+                            <Spinner fx:id="minThinkingTimeSpinner" prefWidth="350" editable="true"/>
                             <ProgressBar styleClass="smallProgressBar" fx:id="thinkingTimeProgress" visible="false"
                                          prefWidth="350"/>
                             <Separator>

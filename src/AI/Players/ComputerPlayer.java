@@ -47,7 +47,6 @@ public abstract class ComputerPlayer<T> implements Function<GipfBoardState, Move
                 if (isNondetermenistic) {
                     doubleHeuristicValue += Math.random();
                 }
-
                 moveGipfBoardStateMap.put(doubleHeuristicValue, exploredChildEntry.getKey());
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
