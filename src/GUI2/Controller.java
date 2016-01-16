@@ -4,7 +4,6 @@ import AI.BoardStateProperties;
 import AI.Players.*;
 import GUI.GipfBoardComponent.GipfBoardComponent;
 import GUI2.Threads.CalculateMctsThread;
-import GUI2.Threads.UpdateChildrenThread;
 import GUI2.Threads.WindowUpdateThread;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;

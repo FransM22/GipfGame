@@ -17,6 +17,8 @@ public class BoardStateProperties {
     public double mctsValue;
     public long ringValue;
     public long blobValue;
+    public long blobValueMin;
+    public long blobValueMax;
     public long minMaxValue;
     public int mcts_n; // The number of this node
     public int mcts_w; // The number of wins (including the current move)
