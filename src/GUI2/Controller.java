@@ -135,17 +135,8 @@ public class Controller implements Initializable {
                     Class<? extends ComputerPlayer> whitePlayerComboboxValue = whitePlayerCombobox.getValue();
                     Class<? extends ComputerPlayer> blackPlayerComboboxValue = blackPlayerCombobox.getValue();
 
-
-                    // The Human player requires a different constructor
-                    if (whitePlayerComboboxValue == HumanPlayer.class)
-                        gipfBoardComponent.game.whitePlayer = new HumanPlayer();
-                    else
-                        gipfBoardComponent.game.whitePlayer = whitePlayerComboboxValue.newInstance();
-
-                    if (blackPlayerComboboxValue == HumanPlayer.class)
-                        gipfBoardComponent.game.whitePlayer = new HumanPlayer();
-                    else
-                        gipfBoardComponent.game.blackPlayer = blackPlayerComboboxValue.newInstance();
+                    gipfBoardComponent.game.whitePlayer = whitePlayerComboboxValue.newInstance();
+                    gipfBoardComponent.game.blackPlayer = blackPlayerComboboxValue.newInstance();
 
                 } catch (Exception e) {
                     System.err.println("Could not instantiate player.");

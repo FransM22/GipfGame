@@ -2,7 +2,6 @@ package AI.Players;
 
 import GameLogic.GipfBoardState;
 import GameLogic.Move;
-import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -19,7 +18,7 @@ public abstract class ComputerPlayer<T> implements Function<GipfBoardState, Move
     public Optional<Field> heuristic = Optional.empty();
     public boolean isNondetermenistic = false;
 
-    public Move getMoveWithHighestHeuristicValue(GipfBoardState gipfBoardState, boolean reverseOrder) {
+    public Move getMoveWithLowestHeuristicValue(GipfBoardState gipfBoardState, boolean reverseOrder) {
         // Using a treemap instead of a hashmap, because treemaps automatically sort their elements (in this case doubles)
         TreeMap<Double, Move> moveGipfBoardStateMap = new TreeMap<>();
         gipfBoardState.exploreAllChildren();
@@ -63,6 +62,6 @@ public abstract class ComputerPlayer<T> implements Function<GipfBoardState, Move
     }
 
     public Move apply(GipfBoardState gipfBoardState) {
-        return getMoveWithHighestHeuristicValue(gipfBoardState, false);
+        return getMoveWithLowestHeuristicValue(gipfBoardState, false);
     }
 }

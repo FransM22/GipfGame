@@ -21,10 +21,10 @@ public class WhiteMinusBlackPlayer extends ComputerPlayer<Integer> {
 
     public Move apply(GipfBoardState gipfBoardState) {
         if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
-            return getMoveWithHighestHeuristicValue(gipfBoardState, false);
+            return getMoveWithLowestHeuristicValue(gipfBoardState, false);
         }
         else {
-            return getMoveWithHighestHeuristicValue(gipfBoardState, true);
+            return getMoveWithLowestHeuristicValue(gipfBoardState, true);
         }
     }
 }

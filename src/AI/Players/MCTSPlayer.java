@@ -25,10 +25,10 @@ public class MCTSPlayer extends ComputerPlayer<Double> {
         UpdateChildrenThread.appendBoardState(gipfBoardState);
 
         if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
-            return getMoveWithHighestHeuristicValue(gipfBoardState, false);
+            return getMoveWithLowestHeuristicValue(gipfBoardState, true);
         }
         else {
-            return getMoveWithHighestHeuristicValue(gipfBoardState, true);
+            return getMoveWithLowestHeuristicValue(gipfBoardState, false);
         }
     }
 }

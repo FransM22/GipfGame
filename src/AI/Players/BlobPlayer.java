@@ -1,8 +1,12 @@
 package AI.Players;
 
 import AI.BoardStateProperties;
+import GameLogic.GipfBoardState;
+import GameLogic.Move;
 
 import java.util.Optional;
+
+import static GameLogic.PieceColor.*;
 
 /**
  * Created by frans on 8-12-2015.
@@ -27,5 +31,14 @@ public class BlobPlayer extends ComputerPlayer<Long> {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Move apply(GipfBoardState gipfBoardState) {
+        // White minimizes, black maximizes
+        if (gipfBoardState.players.current().pieceColor == WHITE)
+            return super.getMoveWithLowestHeuristicValue(gipfBoardState, false);
+        else
+            return super.getMoveWithLowestHeuristicValue(gipfBoardState, true);
     }
 }

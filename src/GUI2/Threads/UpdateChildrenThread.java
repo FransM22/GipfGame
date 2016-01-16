@@ -19,12 +19,12 @@ public class UpdateChildrenThread extends Thread {
         super(() -> {
             while (true) {
                 if (isActive) {
-                    while (!boardStatesToUpdate.isEmpty()) {
-                        GipfBoardState currentGipfBoardState = boardStatesToUpdate.poll();
-                        currentGipfBoardState.boardStateProperties.updateChildren();
-                    }
-
-                    setIsActive(false);
+//                    while (!boardStatesToUpdate.isEmpty()) {
+//                        GipfBoardState currentGipfBoardState = boardStatesToUpdate.poll();
+//                        currentGipfBoardState.boardStateProperties.updateChildren();
+//                    }
+//
+//                    setIsActive(false);
                 } else {
                     try {
                         Thread.sleep(500);

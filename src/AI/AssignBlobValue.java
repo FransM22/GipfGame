@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import static GameLogic.PieceColor.BLACK;
 import static GameLogic.PieceColor.WHITE;
 import static java.util.stream.Collectors.toSet;
 
@@ -22,28 +23,26 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
         for (Map.Entry<Position, Piece> pieceEntry : pieceMap.entrySet()) {
             Position position = pieceEntry.getKey();
             Piece piece = pieceEntry.getValue();
-            PieceColor opponentColor;
-            opponentColor = gipfBoardState.players.current().pieceColor == WHITE ? PieceColor.BLACK : WHITE;
 
-            // Only consider the current player's pieces for addition
-            if (piece.getPieceColor() == gipfBoardState.players.current().pieceColor) {
-                value += neighborsOf(position).stream()
-                        .filter(pieceMap::containsKey)
-                        .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() == gipfBoardState.players.current().pieceColor)
-                        .count();
-            }
-            // Else, subtract the values
-            else {
+            // Only consider the white player's pieces for subtraction
+            if (piece.getPieceColor() == WHITE) {
                 value -= neighborsOf(position).stream()
                         .filter(pieceMap::containsKey)
-                        .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() != gipfBoardState.players.current().pieceColor)
+                        .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() == WHITE)
+                        .count();
+            }
+            // Else, add the values
+            else {
+                value += neighborsOf(position).stream()
+                        .filter(pieceMap::containsKey)
+                        .filter(neighborPosition -> pieceMap.get(neighborPosition).getPieceColor() == BLACK)
                         .count();
             }
 
 
             // We don't want to empty the reserve, so we add it, combined with a high coefficient
-            value += gipfBoardState.players.current().reserve * 500;
-            value -= gipfBoardState.players.get(opponentColor).reserve * 100;
+            value -= gipfBoardState.players.white.reserve * 500;
+            value += gipfBoardState.players.black.reserve * 100;
         }
 
         return value;

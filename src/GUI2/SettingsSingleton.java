@@ -5,8 +5,8 @@ package GUI2;
  */
 public class SettingsSingleton {
     private static final SettingsSingleton instance = new SettingsSingleton();
-    public boolean showExperimentOutput = false;
-    public boolean showMCTSOutput = true;
+    public boolean showExperimentOutput = true;
+    public boolean showMCTSOutput = false;
 
     private SettingsSingleton() {
         if (showExperimentOutput) {

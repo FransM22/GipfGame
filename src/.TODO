@@ -1,0 +1,3 @@
+#TODO update heuristics to be consistent for black and white
+#TODO let UpdateChildrenThread use limited depth search for min / max values
+#TODO let gipfBoardState properties store min / max value for each heuristic

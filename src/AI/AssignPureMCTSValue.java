@@ -3,7 +3,6 @@ package AI;
 import AI.Players.BlobPlayer;
 import AI.Players.MCTSPlayer;
 import AI.Players.RandomPlayer;
-import AI.Players.WhiteMinusBlackPlayer;
 import Exceptions.GameEndException;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;
@@ -33,15 +32,15 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
 
         for (int current_t = 1; current_t <= 3; current_t++) {
             // Phase 1: Selection
-            Move favourableMove = new MCTSPlayer().getMoveWithHighestHeuristicValue(startNodeBoardState, true);
+            Move favourableMove = new MCTSPlayer().getMoveWithLowestHeuristicValue(startNodeBoardState, true);
 
             GipfBoardState outcomeOfFavourableMove = startNodeBoardState.exploredChildren.get(favourableMove);
 
             // Phase 2 & 3: Expansion & Simulation
             PieceColor winnerOfRandomGame = winnerOfRandomGame(outcomeOfFavourableMove);
 
-            boolean current_player_won = (winnerOfRandomGame == startNodeBoardState.players.current().pieceColor);
-            outcomeOfFavourableMove.boardStateProperties.mcts_w += current_player_won ? 1 : 0;      // w increases only if we won the random game
+            boolean white_won = (winnerOfRandomGame == PieceColor.WHITE);
+            outcomeOfFavourableMove.boardStateProperties.mcts_w += white_won ? 1 : 0;      // w increases only if we won the random game
             outcomeOfFavourableMove.boardStateProperties.mcts_n += 1;          // We played a game, so n increases
 
 
@@ -54,7 +53,7 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
             GipfBoardState currentParent = startNodeBoardState;
             while (currentParent != null) {
                 currentParent.boardStateProperties.mcts_n++;
-                currentParent.boardStateProperties.mcts_w += current_player_won ? 1 : 0;
+                currentParent.boardStateProperties.mcts_w += white_won ? 1 : 0;
                 currentParent.boardStateProperties.mctsValue = calculateUCT(currentParent, current_t);
                 currentParent = currentParent.parent;
             }
@@ -65,8 +64,8 @@ public class AssignPureMCTSValue implements Function<GipfBoardState, Double> {
 
     private PieceColor winnerOfRandomGame(GipfBoardState gipfBoardState) {
         Game randomGame = new BasicGame();
-        randomGame.whitePlayer = new RandomPlayer();
         randomGame.blackPlayer = new RandomPlayer();
+        randomGame.whitePlayer = new RandomPlayer();
 
         randomGame.loadState(gipfBoardState);
 
