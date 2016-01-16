@@ -117,7 +117,7 @@ public class Controller implements Initializable {
             }
         });
 
-        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000000, 5000, 5000));
+        minThinkingTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000000, 5000, 2500));
 
 
         /*
@@ -132,8 +132,21 @@ public class Controller implements Initializable {
                 setActivatedStateDuringPlay(false);
 
                 try {
-                    gipfBoardComponent.game.whitePlayer = whitePlayerCombobox.getValue().newInstance();
-                    gipfBoardComponent.game.blackPlayer = blackPlayerCombobox.getValue().newInstance();
+                    Class<? extends ComputerPlayer> whitePlayerComboboxValue = whitePlayerCombobox.getValue();
+                    Class<? extends ComputerPlayer> blackPlayerComboboxValue = blackPlayerCombobox.getValue();
+
+
+                    // The Human player requires a different constructor
+                    if (whitePlayerComboboxValue == HumanPlayer.class)
+                        gipfBoardComponent.game.whitePlayer = new HumanPlayer();
+                    else
+                        gipfBoardComponent.game.whitePlayer = whitePlayerComboboxValue.newInstance();
+
+                    if (blackPlayerComboboxValue == HumanPlayer.class)
+                        gipfBoardComponent.game.whitePlayer = new HumanPlayer();
+                    else
+                        gipfBoardComponent.game.blackPlayer = blackPlayerComboboxValue.newInstance();
+
                 } catch (Exception e) {
                     System.err.println("Could not instantiate player.");
                     e.printStackTrace();

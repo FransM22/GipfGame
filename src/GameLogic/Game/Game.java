@@ -58,6 +58,7 @@ public abstract class Game implements Serializable {
         boardHistory.add(gipfBoardState);
 
         // Set pointers to the algorithms used for each player
+        // TODO are the following lines ignored?
         whitePlayer = new HumanPlayer();
         blackPlayer = new HumanPlayer();
 
@@ -806,11 +807,8 @@ public abstract class Game implements Serializable {
     public void applyCurrentPlayerMove() throws GameEndException {
         Move move;
 
-        if (gipfBoardState.players.current() == gipfBoardState.players.white) {
-            move = whitePlayer.apply(gipfBoardState);
-        } else {
-            move = blackPlayer.apply(gipfBoardState);
-        }
+        ComputerPlayer currentPlayer = (gipfBoardState.players.current().pieceColor == WHITE ? whitePlayer : blackPlayer);
+        move = currentPlayer.apply(gipfBoardState);
 
         if (move != null) {
             applyMove(move);

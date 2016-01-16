@@ -7,6 +7,7 @@ import GameLogic.Move;
 import GameLogic.PieceColor;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.TreeMap;
 
 /**
@@ -16,7 +17,7 @@ public class MinimaxPlayer extends ComputerPlayer<Integer> {
 
     public MinimaxPlayer() {
         // TODO fix minimax player
-        maxDepth = Optional.of(2);
+        maxDepth = OptionalInt.of(2);
     }
 
     @Override

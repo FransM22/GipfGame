@@ -29,7 +29,7 @@ public class WindowUpdateThread extends Thread {
                         String blackInfoLabelText = "";
 
                         if (controller.game.whitePlayer.maxDepth.isPresent()) {
-                            whiteInfoLabelText += "Max depth: " + controller.game.whitePlayer.maxDepth.get() + "\n";
+                            whiteInfoLabelText += "Max depth: " + controller.game.whitePlayer.maxDepth.getAsInt() + "\n";
                         }
                         if (controller.game.whitePlayer.heuristic.isPresent()) {
                             whiteInfoLabelText += "Heuristic:  " + ((Field) controller.game.whitePlayer.heuristic.get()).getName() + "\n";
@@ -38,7 +38,7 @@ public class WindowUpdateThread extends Thread {
                         controller.whiteInfoLabel.setText(whiteInfoLabelText);
 
                         if (controller.game.blackPlayer.maxDepth.isPresent()) {
-                            blackInfoLabelText += "Max depth: " + controller.game.blackPlayer.maxDepth.get() + "\n";
+                            blackInfoLabelText += "Max depth: " + controller.game.blackPlayer.maxDepth.getAsInt() + "\n";
                         }
                         if (controller.game.blackPlayer.heuristic.isPresent()) {
                             blackInfoLabelText += "Heuristic:  " + ((Field) controller.game.blackPlayer.heuristic.get()).getName() + "\n";

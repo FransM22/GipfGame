@@ -1,7 +1,9 @@
 package AI;
 
+import AI.Players.BlobPlayer;
 import AI.Players.MCTSPlayer;
 import AI.Players.RandomPlayer;
+import AI.Players.WhiteMinusBlackPlayer;
 import Exceptions.GameEndException;
 import GameLogic.Game.BasicGame;
 import GameLogic.Game.Game;

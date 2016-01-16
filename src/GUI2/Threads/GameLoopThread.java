@@ -35,6 +35,7 @@ public class GameLoopThread extends Thread {
                         CalculateMctsThread.setCurrentRootState(null);
                     }
 
+
                     try {
                         // The waiting time is artificial, it makes the difference between two moves clearer
                         ((GameLoopThread) Thread.currentThread()).setSleepingInstance(Instant.now(), Instant.now().plusMillis(game.minWaitTime));
