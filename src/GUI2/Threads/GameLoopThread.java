@@ -1,5 +1,7 @@
 package GUI2.Threads;
 
+import AI.Players.BlobPlayer;
+import AI.Players.BlobPlayerMinMax;
 import AI.Players.ComputerPlayer;
 import AI.Players.MCTSPlayer;
 import Exceptions.GameEndException;
@@ -33,6 +35,13 @@ public class GameLoopThread extends Thread {
                         CalculateMctsThread.setCurrentRootState(game.getGipfBoardState());
                     } else {
                         CalculateMctsThread.setCurrentRootState(null);
+                    }
+
+                    if (currentPlayer.getClass() == BlobPlayerMinMax.class) {
+                        // If the current player uses the Blob algorithm, let the CalculateHeuristicsThread use iterative deepening
+                        CalculateHeuristicsThread.setCurrentRootState(game.getGipfBoardState());
+                    } else {
+                        CalculateHeuristicsThread.calculationIsDone = true;
                     }
 
 

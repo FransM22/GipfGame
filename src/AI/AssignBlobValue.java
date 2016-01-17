@@ -41,8 +41,26 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
 
 
             // We don't want to empty the reserve, so we add it, combined with a high coefficient
-            value -= gipfBoardState.players.white.reserve * 500;
-            value += gipfBoardState.players.black.reserve * 100;
+            long whitePiecesInReserve = gipfBoardState.players.white.reserve;
+            long blackPiecesInReserve = gipfBoardState.players.black.reserve;
+
+//            value -= whitePiecesInReserve * 50;
+//            value += blackPiecesInReserve * 50;
+
+            // Include the pieces lost / gained
+            long whitePiecesOnTheBoard = gipfBoardState.getPieceMap().values().stream().filter(p -> p.getPieceColor() == WHITE).count();
+            long blackPiecesOnTheBoard = gipfBoardState.getPieceMap().values().stream().filter(p -> p.getPieceColor() == BLACK).count();
+
+            long whitePiecesLost = 15 - whitePiecesOnTheBoard - whitePiecesInReserve;
+            long blackPiecesLost = 15 - blackPiecesOnTheBoard - blackPiecesInReserve;
+
+            value += 100 * blackPiecesLost;
+            value -= 100 * whitePiecesLost;
+
+            if (gipfBoardState.players.winner() != null) {
+                if (gipfBoardState.players.winner().pieceColor == WHITE) value -= 100_000;
+                if (gipfBoardState.players.winner().pieceColor == BLACK) value += 100_000;
+            }
         }
 
         return value;
