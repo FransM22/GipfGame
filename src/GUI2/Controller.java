@@ -38,15 +38,15 @@ public class Controller implements Initializable {
     public TreeTableColumn<GipfBoardState, Boolean> columnWhiteGipf;
     public TreeTableColumn<GipfBoardState, Boolean> columnBlackGipf;
     public TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
-    public TreeTableColumn<GipfBoardState, Long> columnMinMax;
+    public TreeTableColumn<GipfBoardState, Double> columnMinMax;
     public TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
     public TreeTableColumn<GipfBoardState, Long> columnBlackMinusWhite;
     public TreeTableColumn<GipfBoardState, String> columnMctsWN;
     public TreeTableColumn<GipfBoardState, Long> columnDepth;
     public TreeTableColumn<GipfBoardState, Double> columnMctsValue;
     public TreeTableColumn<GipfBoardState, Long> columnRingValue;
-    public TreeTableColumn<GipfBoardState, Long> columnBlobPlayerMinValue;
-    public TreeTableColumn<GipfBoardState, Long> columnBlobPlayerMaxValue;
+    public TreeTableColumn<GipfBoardState, Double> columnHeuristicMin;
+    public TreeTableColumn<GipfBoardState, Double> columnHeuristicMax;
     public TreeTableColumn<GipfBoardState, Long> columnBlobPlayerValue;
     public TreeTableColumn<GipfBoardState, Long> columnLongValue;
     public TreeTableColumn<GipfBoardState, Double> columnWeightedValue;
@@ -195,7 +195,7 @@ public class Controller implements Initializable {
                 BlackMinusWhitePlayer.class,
                 RingPlayer.class,
                 BlobPlayer.class,
-                BlobPlayerMinMax.class,
+                WeightedMinMax.class,
                 LongPlayer.class,
                 WeightPlayer.class
                 //MutualExchangePlayer.class
@@ -253,16 +253,16 @@ public class Controller implements Initializable {
         try {
             // Long values
             columnDepth.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("depth")));
-            columnMinMax.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("minMaxValue")));
-            columnBlobPlayerMinValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValueMin")));
             columnBlobPlayerValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValue")));
-            columnBlobPlayerMaxValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValueMax")));
             columnLongValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("longValue")));
             columnRingValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("ringValue")));
             columnBlackMinusWhite.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("heuristicBlackMinusWhite")));
 
             // Double values
+            columnMinMax.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("minMaxValue")));
             columnMctsValue.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("mctsValue")));
+            columnHeuristicMin.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("heuristicMin")));
+            columnHeuristicMax.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("heuristicMax")));
         } catch (NoSuchFieldException e) {
             System.err.println("Can't access field");
             e.printStackTrace();

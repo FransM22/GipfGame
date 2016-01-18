@@ -1,7 +1,6 @@
 package GUI2.Threads;
 
 import GameLogic.GipfBoardState;
-import GameLogic.PieceColor;
 
 /**
  * Created by frans on 8-1-2016.
@@ -40,11 +39,11 @@ public class CalculateHeuristicsThread extends Thread {
 
         // Backpropagate to the direct child of the root state node
         GipfBoardState directChildOfRoot = directChildBelow(root, nodeToExplore);
-        if (nodeToExplore.boardStateProperties.blobValue < root.boardStateProperties.blobValueMin) {
-            directChildOfRoot.boardStateProperties.blobValueMin = nodeToExplore.boardStateProperties.blobValue;
+        if (nodeToExplore.boardStateProperties.weightedHeuristic < root.boardStateProperties.heuristicMin) {
+            directChildOfRoot.boardStateProperties.heuristicMin = nodeToExplore.boardStateProperties.weightedHeuristic;
         }
-        if (nodeToExplore.boardStateProperties.blobValue > root.boardStateProperties.blobValueMax) {
-            directChildOfRoot.boardStateProperties.blobValueMax = nodeToExplore.boardStateProperties.blobValue;
+        if (nodeToExplore.boardStateProperties.weightedHeuristic > root.boardStateProperties.heuristicMax) {
+            directChildOfRoot.boardStateProperties.heuristicMax = nodeToExplore.boardStateProperties.weightedHeuristic;
         }
 
         if (nodeToExplore.boardStateProperties.depth - root.boardStateProperties.depth < maxDepthFromRoot) {

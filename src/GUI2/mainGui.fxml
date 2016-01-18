@@ -97,9 +97,9 @@
                         <TreeTableColumn fx:id="columnMctsValue" prefWidth="75.0" text="MctsValue"/>
                         <TreeTableColumn fx:id="columnDepth" prefWidth="75.0" text="Depth"/>
                         <TreeTableColumn fx:id="columnRingValue" prefWidth="75.0" text="Ring value"/>
-                        <TreeTableColumn fx:id="columnBlobPlayerMinValue" prefWidth="75.0" text="Blob min value"/>
+                        <TreeTableColumn fx:id="columnHeuristicMin" prefWidth="75.0" text="Blob min value"/>
                         <TreeTableColumn fx:id="columnBlobPlayerValue" prefWidth="75.0" text="Blob value"/>
-                        <TreeTableColumn fx:id="columnBlobPlayerMaxValue" prefWidth="75.0" text="Blob max value"/>
+                        <TreeTableColumn fx:id="columnHeuristicMax" prefWidth="75.0" text="Blob max value"/>
                         <TreeTableColumn fx:id="columnLongValue" prefWidth="75.0" text="Long value"/>
                         <TreeTableColumn fx:id="columnWeightedValue" prefWidth="75.0" text="Weighted value"/>
                     </columns>

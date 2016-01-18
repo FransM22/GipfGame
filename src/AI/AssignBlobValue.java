@@ -1,6 +1,8 @@
 package AI;
 
-import GameLogic.*;
+import GameLogic.GipfBoardState;
+import GameLogic.Piece;
+import GameLogic.Position;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -44,8 +46,11 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
             long whitePiecesInReserve = gipfBoardState.players.white.reserve;
             long blackPiecesInReserve = gipfBoardState.players.black.reserve;
 
-//            value -= whitePiecesInReserve * 50;
-//            value += blackPiecesInReserve * 50;
+            if (whitePiecesInReserve <= 3)
+                value -= whitePiecesInReserve * 50;
+
+            if (blackPiecesInReserve <= 3)
+                value += blackPiecesInReserve * 50;
 
             // Include the pieces lost / gained
             long whitePiecesOnTheBoard = gipfBoardState.getPieceMap().values().stream().filter(p -> p.getPieceColor() == WHITE).count();
@@ -54,12 +59,12 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
             long whitePiecesLost = 15 - whitePiecesOnTheBoard - whitePiecesInReserve;
             long blackPiecesLost = 15 - blackPiecesOnTheBoard - blackPiecesInReserve;
 
-            value += 100 * blackPiecesLost;
-            value -= 100 * whitePiecesLost;
+            value -= 1000 * blackPiecesLost;
+            value += 1000 * whitePiecesLost;
 
             if (gipfBoardState.players.winner() != null) {
-                if (gipfBoardState.players.winner().pieceColor == WHITE) value -= 100_000;
-                if (gipfBoardState.players.winner().pieceColor == BLACK) value += 100_000;
+                if (gipfBoardState.players.winner().pieceColor == WHITE) value -= 1_0000_000;
+                if (gipfBoardState.players.winner().pieceColor == BLACK) value += 1_0000_000;
             }
         }
 
@@ -74,6 +79,6 @@ public class AssignBlobValue implements Function<GipfBoardState, Long> {
                 new Position(p.posId + 1),
                 new Position(p.posId + 10),
                 new Position(p.posId + 11)
-                ).stream().collect(toSet());
+        ).stream().collect(toSet());
     }
 }
