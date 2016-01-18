@@ -13,7 +13,7 @@ import GameLogic.GipfBoardState;
  */
 public class BoardStateProperties {
     public double heuristicRandomValue;
-    public long heuristicWhiteMinusBlack;
+    public long heuristicBlackMinusWhite;
     public double mctsValue;
     public long ringValue;
     public long blobValue;
@@ -38,7 +38,7 @@ public class BoardStateProperties {
             this.depth = gipfBoardState.parent.boardStateProperties.depth + 1;
         }
         this.heuristicRandomValue = new AssignRandomValue().apply(gipfBoardState);
-        this.heuristicWhiteMinusBlack = new AssignWhiteMinusBlack().apply(gipfBoardState);
+        this.heuristicBlackMinusWhite = new AssignBlackMinusWhite().apply(gipfBoardState);
         this.ringValue = new AssignRingValue().apply(gipfBoardState);
         this.blobValue = new AssignBlobValue().apply(gipfBoardState);
         this.longValue = new AssignLongValue().apply(gipfBoardState);

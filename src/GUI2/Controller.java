@@ -40,7 +40,7 @@ public class Controller implements Initializable {
     public TreeTableColumn<GipfBoardState, Boolean> columnIsPruned;
     public TreeTableColumn<GipfBoardState, Long> columnMinMax;
     public TreeTableColumn<GipfBoardState, Double> columnHeuristic0;
-    public TreeTableColumn<GipfBoardState, Long> columnWhiteMinusBlack;
+    public TreeTableColumn<GipfBoardState, Long> columnBlackMinusWhite;
     public TreeTableColumn<GipfBoardState, String> columnMctsWN;
     public TreeTableColumn<GipfBoardState, Long> columnDepth;
     public TreeTableColumn<GipfBoardState, Double> columnMctsValue;
@@ -190,15 +190,15 @@ public class Controller implements Initializable {
                 RandomPlayer.class,
                 HumanPlayer.class,
                 MCTSPlayer.class,
-                DecisionTreePlayer.class,
-                MinimaxPlayer.class,
-                WhiteMinusBlackPlayer.class,
+                //DecisionTreePlayer.class,
+                //MinimaxPlayer.class,
+                BlackMinusWhitePlayer.class,
                 RingPlayer.class,
                 BlobPlayer.class,
                 BlobPlayerMinMax.class,
                 LongPlayer.class,
-                WeightPlayer.class,
-                MutualExchangePlayer.class
+                WeightPlayer.class
+                //MutualExchangePlayer.class
         ));
 
         // Because all the heuristics are fields in the BoardStateProperties class, we can add them all automatically.
@@ -259,7 +259,7 @@ public class Controller implements Initializable {
             columnBlobPlayerMaxValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("blobValueMax")));
             columnLongValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("longValue")));
             columnRingValue.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("ringValue")));
-            columnWhiteMinusBlack.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("heuristicWhiteMinusBlack")));
+            columnBlackMinusWhite.setCellValueFactory(cellFactoryLongField(BoardStateProperties.class.getField("heuristicBlackMinusWhite")));
 
             // Double values
             columnMctsValue.setCellValueFactory(cellFactoryDoubleField(BoardStateProperties.class.getField("mctsValue")));

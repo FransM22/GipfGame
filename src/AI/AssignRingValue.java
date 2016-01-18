@@ -22,10 +22,7 @@ public class AssignRingValue implements Function<GipfBoardState, Long> {
             value += getColorValue(piece) * getRingValueForPosition(position);
         }
 
-        if (gipfBoardState.players.current().pieceColor == PieceColor.WHITE) {
-            return value;
-        } else
-            return -value;
+        return value;
     }
 
     private int getRingValueForPosition(Position p) {
@@ -66,8 +63,8 @@ public class AssignRingValue implements Function<GipfBoardState, Long> {
 
     private int getColorValue(Piece p) {
         if (p.getPieceColor() == PieceColor.WHITE) {
-            return 1;
+            return -1;
         }
-        return -1;
+        return 1;
     }
 }

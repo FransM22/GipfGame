@@ -91,8 +91,8 @@
                         <TreeTableColumn fx:id="columnIsPruned" prefWidth="40" text="pruned" visible="false"/>
                         <TreeTableColumn fx:id="columnMinMax" prefWidth="75.0" text="MinMax"/>
                         <TreeTableColumn fx:id="columnHeuristic0" prefWidth="75.0" text="H0: random" visible="false"/>
-                        <TreeTableColumn fx:id="columnWhiteMinusBlack" prefWidth="75.0"
-                                         text="H1: #white - #black" visible="false"/>
+                        <TreeTableColumn fx:id="columnBlackMinusWhite" prefWidth="75.0"
+                                         text="#black - #white" visible="false"/>
                         <TreeTableColumn fx:id="columnMctsWN" prefWidth="75.0" text="Mcts W/N"/>
                         <TreeTableColumn fx:id="columnMctsValue" prefWidth="75.0" text="MctsValue"/>
                         <TreeTableColumn fx:id="columnDepth" prefWidth="75.0" text="Depth"/>

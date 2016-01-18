@@ -10,10 +10,10 @@ import java.util.Optional;
 /**
  * Created by frans on 2-12-2015.
  */
-public class WhiteMinusBlackPlayer extends ComputerPlayer<Integer> {
-    public WhiteMinusBlackPlayer() {
+public class BlackMinusWhitePlayer extends ComputerPlayer<Integer> {
+    public BlackMinusWhitePlayer() {
         try {
-            this.heuristic = Optional.of(BoardStateProperties.class.getField("heuristicWhiteMinusBlack"));
+            this.heuristic = Optional.of(BoardStateProperties.class.getField("heuristicBlackMinusWhite"));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
